@@ -27,8 +27,8 @@ import com.owow.rich.entity.SearchTermExtractor;
 import com.owow.rich.items.Highlight;
 import com.owow.rich.items.SearchTerm;
 import com.owow.rich.items.WebPage;
+import com.owow.rich.memcache.Memcache;
 import com.owow.rich.view.TemplateUtil;
-
 
 @SuppressWarnings("serial")
 public class Rich_Snippet extends HttpServlet {
@@ -46,6 +46,26 @@ public class Rich_Snippet extends HttpServlet {
 		req.getServerName();
 		this.req = req;
 		resp.setContentType("application/json");
+
+		if (req.getParameter("q") != null) {
+
+			Manager m = new Manager();
+
+			final String url = req.getParameter("url");
+			WebPage wp = new WebPage(null, null, url);
+			String query = req.getParameter("q");
+
+			ApiResponse ar;
+			ar = ApiResponseFactory.queryMemcache(query, Memcache.getInstance());
+			if (ar == null)
+			{
+				ar = m.query(wp, query);
+				if (ar == null) ar = ApiResponseFactory.getApiResponse(query);
+			}
+			if (ar != null) printApiResposeView(ar, resp);
+			m.storage.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, url, ar != null);
+			return;
+		}
 
 		final String showView = req.getParameter("v");
 
@@ -66,22 +86,7 @@ public class Rich_Snippet extends HttpServlet {
 			}
 			return;
 		}
-		if (req.getParameter("q") != null) {
 
-			Manager m = new Manager();
-
-			final String url = req.getParameter("url");
-			WebPage wp = new WebPage(null, null, url);
-			String query = req.getParameter("q");
-			ApiResponse ar = m.query(wp, query);
-
-			if (ar == null) ar = ApiResponseFactory.getApiResponse(query);
-
-			if (ar != null) printApiResposeView(ar, resp);
-
-			m.storage.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, url, ar != null);
-			return;
-		}
 		final String ngram = req.getParameter("ngram");
 
 		String highlight = getParam(req, "highlight");

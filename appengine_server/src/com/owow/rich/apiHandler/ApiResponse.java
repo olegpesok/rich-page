@@ -1,20 +1,25 @@
 package com.owow.rich.apiHandler;
 
+import java.io.Serializable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-public class ApiResponse {
-	public JSONObject	json;
-	public ApiView	   view;
+public class ApiResponse implements Serializable {
+	/**
+	 *
+	 */
+	private static final long	serialVersionUID	= -4369034077791508101L;
+	public JSONObject	        json;
+	public ApiView	           view;
 	// public boolean resultOk = true;
 	// private Exception mError;
-	public ApiType	   myType;
+	public ApiType	           myType;
 
-	public ApiResponse(JSONObject json, String html, ApiType at){
-		this(json, new ApiView(html) ,at);
+	public ApiResponse(JSONObject json, String html, ApiType at) {
+		this(json, new ApiView(html), at);
 	}
-	
+
 	public ApiResponse(JSONObject json, ApiView view, ApiType at)
 	{
 		this.json = json;

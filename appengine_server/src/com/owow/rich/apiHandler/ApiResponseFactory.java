@@ -55,10 +55,9 @@ public class ApiResponseFactory {
 			query = URLEncoder.encode(query, "UTF-8");
 		} catch (UnsupportedEncodingException e1) {}
 
-		Object b = Memcache.getInstance().get(MEMPREFIX + query);
-		if (b != null) return (ApiResponse) b;
+		ApiResponse fin = queryMemcache(query, Memcache.getInstance());
+		if (fin != null) return fin;
 
-		ApiResponse fin = null;
 		List<ApiType> seq = ApiTypeFactory.getApiSequence(at);
 		for (ApiType apit : seq)
 			if (apit != null)
@@ -71,8 +70,21 @@ public class ApiResponseFactory {
 					break;
 				} catch (Exception e) {}
 			}
-
-		Memcache.getInstance().set(MEMPREFIX + query, fin);
+		pushMemcache(query, fin.view.toString(), Memcache.getInstance());
 		return fin;
+	}
+
+	public static void pushMemcache(String query, String view, Memcache m)
+	{
+		m.set(MEMPREFIX + query, view);
+	}
+	public static ApiResponse queryMemcache(String query, Memcache m)
+	{
+		try {
+			query = URLEncoder.encode(query, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {}
+		String view = (String) m.get(MEMPREFIX + query);
+		if (view == null) return null;
+		return new ApiResponse(new JSONObject(), view, DEFAULT_API_TYPE);
 	}
 }

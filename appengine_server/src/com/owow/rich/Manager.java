@@ -3,6 +3,8 @@ package com.owow.rich;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiType;
@@ -37,21 +39,28 @@ public class Manager {
 
 	public ApiResponse query(WebPage webPage, String query)
 	{
-		Object b = mem.get(MEMCACHE_PREFIX + query);
-		if (b != null) return (ApiResponse) b;
+		ApiResponse ar = queryMemcache(query);
+		if (ar != null) return ar;
 
 		List<Token> tokens = tokenizer.tokenize(webPage.getText());
 		List<NGram> nGrams = tokenizer.combineToNGrams(tokens, 2);
 		java.util.Collections.reverse(nGrams);
-		ApiResponse ar = null;
 		for (NGram n : nGrams)
 		{
 			ar = storage.loadEntity(webPage, n);
 			if (ar != null) break;
 		}
-		//TODO Save somewhere if null for future notice and not repeating useless opertion.
-		if(ar != null) mem.set(MEMCACHE_PREFIX + query, query);
+		// TODO Save somewhere if null for future notice and not repeating useless
+		// opertion.
+		if (ar != null) mem.set(MEMCACHE_PREFIX + query, ar.view.toString());
 		return ar;
+	}
+
+	private ApiResponse queryMemcache(String query)
+	{
+		Object b = mem.get(MEMCACHE_PREFIX + query);
+		if (b == null) return null;
+		return new ApiResponse(new JSONObject(), (String) b, ApiType.freebase);
 	}
 	public Map<NGram, ApiResponse> processPage(WebPage webPage) throws Exception {
 
