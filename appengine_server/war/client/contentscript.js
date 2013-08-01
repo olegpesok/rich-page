@@ -30,12 +30,12 @@ function doSomethingWithSelectedText() {
   if (selectedText) {
     jQuery.get(RICH_SERVER + 'Snippet?q='+selectedText+'', function(data) {
       debugger;
-      if (data.resultOK) {
+      if (data && data.resultOK) {
         // Remove previous popup.
         jQuery('#myModal').remove();
         
         // Create and show the popup.
-        jQuery("body").append('<iframe id="myModal" frameborder="0" src="'+ RICH_SERVER +'Snippet?q='+selectedText+'&m=fr&v"></iframe>');
+        jQuery("body").append('<iframe id="myModal" frameborder="0" src="'+ RICH_SERVER +'Snippet?q='+selectedText+'&v"></iframe>');
         jQuery('#myModal').css({'top':mouseY +10, 'left':mouseX, position:'absolute'}).hide().fadeIn('slow');
 
         // When users click close the popup.

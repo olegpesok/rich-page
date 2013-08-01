@@ -1,5 +1,5 @@
 package com.owow.rich.services;
 
-public class FrequencyREtriver {
+public class FrequencyRetriver {
 
 }
