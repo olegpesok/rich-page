@@ -3,3 +3,6 @@
 # Package Files #
 *.war
 *.ear
+*.bin
+
+appengine_server/war/WEB-INF/appengine-generated/local_db.bin
