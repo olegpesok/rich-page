@@ -36,19 +36,18 @@ public class SnippetServlet extends HttpServlet {
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)
 	      throws IOException {
-		resp.setContentType("application/json");
-
+	
 		final String showView = req.getParameter("v");
 		final String method = req.getParameter("m");
 		final String query = req.getParameter("q");
 		final String url = req.getParameter("url");
 
 		if (query != null) {
-			WebPage wp = new WebPage(null, null, url);
+			WebPage webpage = new WebPage(null, null, url);
 			
 			ApiResponse apiResponse = ApiResponseFactory.queryMemcache(query, Memcache.getInstance());
 			if (apiResponse == null) {
-				apiResponse = manger.query(wp, query);
+				apiResponse = manger.query(webpage, query);
 				if (apiResponse == null) apiResponse = ApiResponseFactory.getApiResponse(query, method);
 			}
 
@@ -63,6 +62,7 @@ public class SnippetServlet extends HttpServlet {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
+				resp.setContentType("application/json");
 				resp.getWriter().write(jsonObject.toString());
 			}
 			return;

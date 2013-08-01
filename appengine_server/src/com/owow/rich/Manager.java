@@ -64,6 +64,7 @@ public class Manager {
 		if (b == null) return null;
 		return new ApiResponse(new JSONObject(), (String) b, ApiType.freebase);
 	}
+	
 	public Map<NGram, ApiResponse> processPage(WebPage webPage) throws Exception {
 
 		// Toknaize Text (split):

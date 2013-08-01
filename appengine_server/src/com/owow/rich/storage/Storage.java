@@ -56,8 +56,8 @@ public class Storage {
 
 	public ApiResponse loadEntity(WebPage context, NGram n)
 	{
-		Query q = new Query(KeyFactory.createKey(ENTITY_KIND, n.toString()));
-		List<Entity> liste = datastore.prepare(q).asList(FetchOptions.Builder.withLimit(1));
+		Query query = new Query(KeyFactory.createKey(ENTITY_KIND, n.toString()));
+		List<Entity> liste = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(1));
 
 		if (liste.size() == 0) return null;
 		return ApiResponseFactory.getApiResponseFromEntity(liste.get(0));
