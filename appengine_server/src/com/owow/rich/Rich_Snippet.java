@@ -47,6 +47,8 @@ public class Rich_Snippet extends HttpServlet {
 		this.req = req;
 		resp.setContentType("application/json");
 
+		final String showView = req.getParameter("v");
+
 		if (req.getParameter("q") != null) {
 
 			Manager m = new Manager();
@@ -62,13 +64,25 @@ public class Rich_Snippet extends HttpServlet {
 				ar = m.query(wp, query);
 				if (ar == null) ar = ApiResponseFactory.getApiResponse(query);
 			}
-			if (ar != null) printApiResposeView(ar, resp);
-			m.storage.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, url, ar != null);
+
+			if (ar != null && showView != null) {
+				printApiResposeView(ar, resp);
+				m.storage.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, url, ar != null);
+			}
+			else if (showView == null)
+			{
+				JSONObject j = new JSONObject();
+				try {
+					j.put("resultOK", ar != null);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+
+				resp.getWriter().write(j.toString());
+
+			}
 			return;
 		}
-
-		final String showView = req.getParameter("v");
-
 		final String method = req.getParameter("m");
 
 		if (method.equals("procPage"))
@@ -94,6 +108,7 @@ public class Rich_Snippet extends HttpServlet {
 			resp.getWriter().write("missing highlight");
 			return;
 		}
+		// TODO v -> show view, else - json with resultOk = true;
 
 		// if (ngram != null)
 		// {

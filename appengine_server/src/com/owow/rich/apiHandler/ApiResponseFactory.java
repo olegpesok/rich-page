@@ -70,7 +70,7 @@ public class ApiResponseFactory {
 					break;
 				} catch (Exception e) {}
 			}
-		pushMemcache(query, fin.view.toString(), Memcache.getInstance());
+		if (fin != null) pushMemcache(query, fin.view.toString(), Memcache.getInstance());
 		return fin;
 	}
 
