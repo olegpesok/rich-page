@@ -29,6 +29,7 @@ import com.owow.rich.items.SearchTerm;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.view.TemplateUtil;
 
+
 @SuppressWarnings("serial")
 public class Rich_Snippet extends HttpServlet {
 
