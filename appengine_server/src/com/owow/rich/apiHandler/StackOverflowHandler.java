@@ -2,7 +2,7 @@ package com.owow.rich.apiHandler;
 
 import org.json.JSONObject;
 
-import com.owow.rich.helper.HtmlHelper;
+import com.owow.rich.utils.HtmlUtil;
 
 public class StackOverflowHandler implements ApiHandler {
 
@@ -11,7 +11,7 @@ public class StackOverflowHandler implements ApiHandler {
 		// TODO Not Working
 
 		final String server = "https://api.stackexchange.com/2.1/similar?order=desc&sort=relevance&site=stackoverflow&title=";
-		String extra = HtmlHelper.getHttpsUrlSource(server + title);
+		String extra = HtmlUtil.getHttpsUrlSource(server + title);
 		final JSONObject ret = new JSONObject(extra);
 		if (ret.getJSONArray("items").length() == 0) throw new Exception("no items");
 		final JSONObject jo = new JSONObject();

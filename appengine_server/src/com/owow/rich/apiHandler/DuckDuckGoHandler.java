@@ -2,7 +2,7 @@ package com.owow.rich.apiHandler;
 
 import org.json.JSONObject;
 
-import com.owow.rich.helper.HtmlHelper;
+import com.owow.rich.utils.HtmlUtil;
 
 public class DuckDuckGoHandler implements ApiHandler {
 
@@ -12,7 +12,7 @@ public class DuckDuckGoHandler implements ApiHandler {
 
 		final String server = "http://api.duckduckgo.com/?format=json&t=owow&q=";
 
-		final JSONObject ret = HtmlHelper.getJSONFromServerAndTitle(server, title);
+		final JSONObject ret = HtmlUtil.getJSONFromServerAndTitle(server, title);
 
 		if (ret.getJSONArray("RelatedTopics").length() == 0
 		      && ret.getString("Answer").length() == 0

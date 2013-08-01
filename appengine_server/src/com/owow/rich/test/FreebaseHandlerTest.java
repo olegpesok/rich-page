@@ -7,7 +7,7 @@ import org.junit.Test;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.apiHandler.FreebaseHandler;
-import com.owow.rich.view.TemplateUtil;
+import com.owow.rich.utils.TemplateUtil;
 
 public class FreebaseHandlerTest {
 	FreebaseHandler	handler;

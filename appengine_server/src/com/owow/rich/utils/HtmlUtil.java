@@ -1,4 +1,4 @@
-package com.owow.rich.helper;
+package com.owow.rich.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.xml.sax.SAXException;
 
-public class HtmlHelper {
+public class HtmlUtil {
 
 	public static String getTextFromHtml(final String html) {
 		return Jsoup.parse(html).text();

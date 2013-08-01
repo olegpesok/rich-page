@@ -23,7 +23,7 @@ import com.owow.rich.apiHandler.WikipediaHandler.WikiHost.WikiHostFactory;
 import com.owow.rich.entity.SearchTermExtractor;
 import com.owow.rich.items.Highlight;
 import com.owow.rich.items.SearchTerm;
-import com.owow.rich.view.TemplateUtil;
+import com.owow.rich.utils.TemplateUtil;
 
 
 @SuppressWarnings("serial")

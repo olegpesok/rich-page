@@ -4,7 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.google.api.client.http.GenericUrl;
-import com.owow.rich.helper.HtmlHelper;
+import com.owow.rich.utils.HtmlUtil;
 
 public class FreebaseHandler implements ApiHandler {
 
@@ -16,7 +16,7 @@ public class FreebaseHandler implements ApiHandler {
 		GenericUrl searchUrl = new GenericUrl("https://www.googleapis.com/freebase/v1/search");
 		searchUrl.put("query", title);
 		searchUrl.put("key", GOOGLE_API_KEY);
-		final String searchData = HtmlHelper.getUrlSource(searchUrl.toString());
+		final String searchData = HtmlUtil.getUrlSource(searchUrl.toString());
 		JSONArray searchResponse = new JSONObject(searchData).getJSONArray("result");
 		if (searchResponse.length() == 0) throw new Exception("no result for " + title);
 		String mid = searchResponse.getJSONObject(0).getString("mid");
@@ -27,7 +27,7 @@ public class FreebaseHandler implements ApiHandler {
 		GenericUrl topicUrl = new GenericUrl("https://www.googleapis.com/freebase/v1/topic" + mid);
 		topicUrl.put("filter", "/common/topic/description");
 		topicUrl.put("key", GOOGLE_API_KEY);
-		final String topicData = HtmlHelper.getUrlSource(topicUrl.toString());
+		final String topicData = HtmlUtil.getUrlSource(topicUrl.toString());
 		JSONObject topicResponse = new JSONObject(topicData);
 		// PropertyNotFound
 		if (!topicResponse.has("property")) throw new Exception("topic not found for " + mid + "." + s + "." + title);

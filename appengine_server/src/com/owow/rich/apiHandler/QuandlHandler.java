@@ -6,7 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.owow.rich.helper.HtmlHelper;
+import com.owow.rich.utils.HtmlUtil;
 
 public class QuandlHandler implements ApiHandler {
 
@@ -14,7 +14,7 @@ public class QuandlHandler implements ApiHandler {
 	public ApiResponse getData(String title, ApiType at) throws Exception {
 		JSONObject ret;
 		final String server = "http://www.quandl.com/api/v1/datasets.json?query=";
-		ret = HtmlHelper.getJSONFromServerAndTitle(server, title);
+		ret = HtmlUtil.getJSONFromServerAndTitle(server, title);
 		final JSONArray ja = ret.getJSONArray("docs");
 		if (ja.length() == 0) throw new Exception("no results");
 
@@ -26,7 +26,7 @@ public class QuandlHandler implements ApiHandler {
 	// TODO understand what todo
 	public JSONObject scrapeQuandl(final String sourceCode, final String code) throws JSONException, IOException
 	{
-		return new JSONObject(HtmlHelper.getUrlSource("http://www.quandl.com/api/v1/datasets/" + sourceCode + "/" + code + ".json"));
+		return new JSONObject(HtmlUtil.getUrlSource("http://www.quandl.com/api/v1/datasets/" + sourceCode + "/" + code + ".json"));
 	}
 
 	@Override

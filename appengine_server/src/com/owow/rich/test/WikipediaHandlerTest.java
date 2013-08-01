@@ -11,7 +11,7 @@ import org.junit.runners.JUnit4;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.apiHandler.WikipediaHandler;
-import com.owow.rich.view.TemplateUtil;
+import com.owow.rich.utils.TemplateUtil;
 
 
 /**

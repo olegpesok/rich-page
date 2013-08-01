@@ -1,4 +1,4 @@
-package com.owow.rich.log;
+package com.owow.rich.storage;
 
 import java.io.IOException;
 import java.util.logging.Logger;

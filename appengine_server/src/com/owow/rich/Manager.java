@@ -13,23 +13,23 @@ import com.owow.rich.entity.TextExtractor;
 import com.owow.rich.items.NGram;
 import com.owow.rich.items.Token;
 import com.owow.rich.items.WebPage;
-import com.owow.rich.memcache.Memcache;
+import com.owow.rich.storage.Memcache;
 import com.owow.rich.storage.Storage;
-import com.owow.rich.tokenizing.Tokenizer;
+import com.owow.rich.utils.TokenizerUtil;
 
 public class Manager {
 
-	private Tokenizer	      tokenizer;
+	private TokenizerUtil	      tokenizer;
 	private EntityRetriever	entityRetriever;
 	private TextExtractor	textExtractor;
 	public Storage	         storage;
 	private Memcache	      mem;
 	final static String	   MEMCACHE_PREFIX	= "manager/";
 	public Manager( ) {
-		this(new Tokenizer(), new EntityRetriever(), new TextExtractor(), new Storage(), Memcache.getInstance());
+		this(new TokenizerUtil(), new EntityRetriever(), new TextExtractor(), new Storage(), Memcache.getInstance());
 	}
 
-	public Manager(Tokenizer tokenizer, EntityRetriever entityRetriever, TextExtractor textExtractor, Storage storage, Memcache mem) {
+	public Manager(TokenizerUtil tokenizer, EntityRetriever entityRetriever, TextExtractor textExtractor, Storage storage, Memcache mem) {
 		this.tokenizer = tokenizer;
 		this.entityRetriever = entityRetriever;
 		this.textExtractor = textExtractor;

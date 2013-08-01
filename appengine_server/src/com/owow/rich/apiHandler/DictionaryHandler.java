@@ -3,7 +3,7 @@ package com.owow.rich.apiHandler;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.owow.rich.helper.HtmlHelper;
+import com.owow.rich.utils.HtmlUtil;
 
 public class DictionaryHandler implements ApiHandler {
 
@@ -11,7 +11,7 @@ public class DictionaryHandler implements ApiHandler {
 	public ApiResponse getData(String title, ApiType at) throws Exception {
 		// can add &pretty=true server for checking
 		final String server = "http://glosbe.com/gapi/translate?from=eng&dest=eng&format=json&phrase=";
-		final JSONObject data = HtmlHelper.getJSONFromServerAndTitle(server, title);
+		final JSONObject data = HtmlUtil.getJSONFromServerAndTitle(server, title);
 		final JSONObject ret = new JSONObject();
 		final JSONArray texts = new JSONArray();
 		final JSONArray tuc = data.getJSONArray("tuc");

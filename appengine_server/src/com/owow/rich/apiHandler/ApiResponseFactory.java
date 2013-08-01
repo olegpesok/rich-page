@@ -10,7 +10,7 @@ import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.appengine.api.datastore.Text;
-import com.owow.rich.memcache.Memcache;
+import com.owow.rich.storage.Memcache;
 
 public class ApiResponseFactory {
 

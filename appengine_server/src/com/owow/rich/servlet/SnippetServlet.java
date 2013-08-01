@@ -16,8 +16,8 @@ import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiResponseFactory;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.items.WebPage;
-import com.owow.rich.memcache.Memcache;
-import com.owow.rich.view.TemplateUtil;
+import com.owow.rich.storage.Memcache;
+import com.owow.rich.utils.TemplateUtil;
 
 /**
  * Handle a request for an highlight.
