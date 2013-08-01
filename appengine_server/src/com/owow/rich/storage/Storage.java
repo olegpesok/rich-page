@@ -43,8 +43,8 @@ public class Storage {
 
 	public void saveLog(String user, String ip, String query, String url, boolean resultOk)
 	{
-		Key k = KeyFactory.createKey(LOG_KIND, user + "." + query + "." + new java.util.Date().getTime());
-		Entity e = new Entity(k);
+		Key key = KeyFactory.createKey(LOG_KIND, user + "." + query + "." + new java.util.Date().getTime());
+		Entity e = new Entity(key);
 		e.setProperty("user", user);
 		e.setProperty("ip", ip);
 		e.setProperty("q", query);

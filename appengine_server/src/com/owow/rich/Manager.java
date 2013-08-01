@@ -42,9 +42,9 @@ public class Manager {
 		List<Token> tokens = tokenizer.tokenize(webPage.getText());
 		List<NGram> nGrams = tokenizer.combineToNGrams(tokens, 2);
 		java.util.Collections.reverse(nGrams);
-		for (NGram n : nGrams)
+		for (NGram nGram : nGrams)
 		{
-			ar = storage.loadEntity(webPage, n);
+			ar = storage.loadEntity(webPage, nGram);
 			if (ar != null) break;
 		}
 		// TODO Save somewhere if null for future notice and not repeating useless
