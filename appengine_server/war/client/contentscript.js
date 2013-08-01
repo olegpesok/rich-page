@@ -27,7 +27,6 @@ function getSelectedText() {
 function doSomethingWithSelectedText() {
   var selectedText = getSelectedText();
   if (selectedText) {
-    debugger;
     jQuery.get('http://rich-page.appspot.com/Snippet?highlight='+selectedText+'&m=fr', function(data) {
       
       // Remove previous popup.
