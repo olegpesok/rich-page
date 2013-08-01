@@ -8,7 +8,7 @@ import com.owow.rich.items.NGram;
 public class FrequencyRetriver {
 
 	/**
-	 * 
+	 * The threshold of a given ngram 
 	 */
 	public final static Frequency FREQUNCY_THRESHOLD = new Frequency(0);
 	
