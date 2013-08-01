@@ -3,4 +3,3 @@
 # Package Files #
 *.war
 *.ear
-appengine_server/war/client/contentscript.js
