@@ -27,9 +27,7 @@ public class WikiLink {
 
 	public boolean isValid()
 	{
-		if (href.contains("Wikipedia")) return false;
 		if (href.contains("index.php?")) return false;
-		if (href.contains("wiktionary")) return false;
 		if (href.contains(":")) return false;
 		if (href.contains("Acronym")) return false;
 		return true;
@@ -37,11 +35,9 @@ public class WikiLink {
 
 	public boolean canContinue(final String currentTitle)
 	{
-		return
-		// href.contains("wiktionary") ||
-		currentTitle != searchTerm && currentTitle.toLowerCase() != "the" + searchTerm.toLowerCase() && searchTerm.toLowerCase() != "the " + currentTitle;
+		return href.contains("wiktionary") ||
+		      currentTitle != searchTerm && currentTitle.toLowerCase() != "the" + searchTerm.toLowerCase() && searchTerm.toLowerCase() != "the " + currentTitle;
 	}
-
 	@Deprecated
 	public static WikiLink createFromAElement(final String a)
 	{

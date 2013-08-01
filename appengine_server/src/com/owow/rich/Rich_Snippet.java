@@ -48,6 +48,7 @@ public class Rich_Snippet extends HttpServlet {
 		resp.setContentType("application/json");
 
 		final String showView = req.getParameter("v");
+		final String method = req.getParameter("m");
 
 		if (req.getParameter("q") != null) {
 
@@ -62,7 +63,7 @@ public class Rich_Snippet extends HttpServlet {
 			if (ar == null)
 			{
 				ar = m.query(wp, query);
-				if (ar == null) ar = ApiResponseFactory.getApiResponse(query);
+				if (ar == null) ar = ApiResponseFactory.getApiResponse(query, method);
 			}
 
 			if (ar != null && showView != null) {
@@ -83,7 +84,6 @@ public class Rich_Snippet extends HttpServlet {
 			}
 			return;
 		}
-		final String method = req.getParameter("m");
 
 		if (method.equals("procPage"))
 		{
@@ -108,7 +108,6 @@ public class Rich_Snippet extends HttpServlet {
 			resp.getWriter().write("missing highlight");
 			return;
 		}
-		// TODO v -> show view, else - json with resultOk = true;
 
 		// if (ngram != null)
 		// {
@@ -143,14 +142,15 @@ public class Rich_Snippet extends HttpServlet {
 
 		try {
 			ApiResponse ar = getApiResponseFromHighlight(req, resp, method, highlight, showView);
-			resp.getWriter().write(ar.toString());
+			// resp.getWriter().write(ar.toString());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 	private void printApiResposeView(ApiResponse ar, HttpServletResponse res) throws IOException
 	{
-		res.getWriter().write(ar.view.getView());
+		res.setContentType("text/html");
+		res.getWriter().write(TemplateUtil.getHtml("common.soy", new SoyMapData("p", ar.view.getView())));
 	}
 
 	ApiResponse getApiResponseFromHighlight(final HttpServletRequest req, final HttpServletResponse resp, final String method, String highlight, String showView)

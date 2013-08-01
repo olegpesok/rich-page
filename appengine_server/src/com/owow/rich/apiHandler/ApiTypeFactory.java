@@ -6,9 +6,9 @@ import java.util.List;
 public class ApiTypeFactory {
 
 	final static ApiType[]	prefrence	= new ApiType[]
-	                                        {
-
-	                                        };
+	                                  {
+	                                  ApiType.freebase, ApiType.dictionary, ApiType.wiki
+	                                  };
 	final static ApiType	  end	       = null;
 	public static List<ApiType> getApiSequence(ApiType at)
 	{
