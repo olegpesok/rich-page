@@ -78,4 +78,8 @@ public class SearchTermExtractor {
 			}
 		return newList;
 	}
+
+	public static List<SearchTerm> extractAllTerms(Highlight highlight) {
+		return new SearchTermExtractor(new EntityExtractor()).extractTerms(highlight);
+   }
 }
