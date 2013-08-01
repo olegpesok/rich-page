@@ -108,16 +108,20 @@ public class WikipediaHandler implements ApiHandler {
 				WikiLink myNextLink = elements.getFirst().links.getFirst();
 				// new Title
 				pageData.put("title", myNextLink.searchTerm);
-				// if (myNextLink.href.contains("wiktionary")) return
-				// getFromWikitionary(title, mHost);
-				// else
-				if (depth >= 5) throw new Exception("DEPTH OVERFLOW " + searchTerm);
-				ApiResponse ar = getData(myNextLink.searchTerm, at);
-				depth--;
-				return ar;
+				if (myNextLink.href.contains("wiktionary")) {
+					ApiType dictAt = ApiType.dictionary;
+
+					return dictAt.createHandler().getData(myNextLink.searchTerm, dictAt);
+				}
+				else
+				{
+					if (depth >= 5) throw new Exception("DEPTH OVERFLOW " + searchTerm);
+					ApiResponse ar = getData(myNextLink.searchTerm, at);
+					depth--;
+					return ar;
+				}
 			} else {
 				pageData.put("p", ps);
-				// pageData.put("revision", revision);
 				pageData.put("table", tables);
 			}
 			depth--;

@@ -47,6 +47,7 @@ public class ApiResponseFactory {
 	}
 	public static ApiResponse getApiResponse(String query, String method)
 	{
+		if (method == null) return getApiResponse(query);
 		return getApiResponse(query, ApiType.create(method));
 	}
 	public static ApiResponse getApiResponse(String query, ApiType at)

@@ -35,7 +35,7 @@ public class FreebaseHandler implements ApiHandler {
 		      .getString("value");
 		final JSONObject jo = topicResponse;
 
-		return new ApiResponse(jo, "score: " + score + ". " + html, at);
+		return new ApiResponse(jo, /* "score: " + score + ". " + */html, at);
 	}
 
 	@Override

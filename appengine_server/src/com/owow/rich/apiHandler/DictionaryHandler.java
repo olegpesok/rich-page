@@ -24,18 +24,95 @@ public class DictionaryHandler implements ApiHandler {
 					meanings2.put(meanings.getJSONObject(j).getString(
 					      "text"));
 				texts.put(meanings2);
-			} else if (tuc.getJSONObject(i).has("phrase")) texts.put(tuc.getJSONObject(i).getJSONObject("phrase")
-			      .getString("text"));
+			} else if (tuc.getJSONObject(i).has("phrase")) texts.put(tuc.getJSONObject(i).getJSONObject("phrase").getString("text"));
 		ret.put("data", texts);
-
-		return new ApiResponse(ret, at);
-
+		ret.put("query", title);
+		ApiResponse ar = new ApiResponse(ret, at);
+		ar.view = getView(ar, title);
+		return ar;
 	}
 
+	public ApiView getView(ApiResponse fromGetData, String title) throws Exception
+	{
+		String s = title + " may refer to: <br />";
+		JSONArray texts = fromGetData.json.getJSONArray("data");
+		int len = texts.length() , len2 = 0;
+		int criticalIndex = -1;
+		for (int i = 0; i < len; i++)
+		{
+			Object o = texts.get(i);
+			if (o instanceof JSONArray)
+			{
+				criticalIndex = i;
+				JSONArray textArray = (JSONArray) o;
+				len2 = textArray.length();
+				s += "<ul>";
+				for (i = 0; i < len2; i++)
+					s += "<li>" + textArray.getString(i) + "</li>";
+				s += "</ul>";
+				break;
+			}
+		}
+		if (criticalIndex == 0 && len == 1) return new ApiView(s);
+		if (criticalIndex != -1) s += title + " may also refer to: <br />";
+
+		s += "<ul>";
+		for (int i = 0; i < len; i++)
+			if (i != criticalIndex)
+			{
+				Object o = texts.get(i);
+				if (o instanceof JSONArray)
+				{
+					JSONArray textArray = (JSONArray) o;
+					len2 = textArray.length();
+					for (i = 0; i < len2; i++)
+						// s += "\t•" + textArray.getString(i) + "\n";
+						s += "<li>" + textArray.getString(i) + "</li>";
+				} else s += "<li>" + (String) o + "</li>";
+			}
+
+		s += "</ul>";
+		return new ApiView(s);
+	}
 	@Override
 	public ApiView getView(ApiResponse fromGetData) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		String s = fromGetData.json.getString("query") + " may refer to: <br />";
+		JSONArray texts = fromGetData.json.getJSONArray("data");
+		int len = texts.length() , len2 = 0;
+		int criticalIndex = -1;
+		for (int i = 0; i < len; i++)
+		{
+			Object o = texts.get(i);
+			if (o instanceof JSONArray)
+			{
+				criticalIndex = i;
+				JSONArray textArray = (JSONArray) o;
+				len2 = textArray.length();
+				s += "<ul>";
+				for (i = 0; i < len2; i++)
+					s += "<li>" + textArray.getString(i) + "</li>";
+				s += "</ul>";
+				break;
+			}
+		}
+		if (criticalIndex == 0 && len == 1) return new ApiView(s);
+		if (criticalIndex != -1) s += String.format("{0} may also refer to: <br />", fromGetData.json.getString("query"));
 
+		s += "<ul>";
+		for (int i = 0; i < len; i++)
+			if (i != criticalIndex)
+			{
+				Object o = texts.get(i);
+				if (o instanceof JSONArray)
+				{
+					JSONArray textArray = (JSONArray) o;
+					len2 = textArray.length();
+					for (i = 0; i < len2; i++)
+						s += "<li>" + textArray.getString(i) + "</li>";
+				} else s += "<li>" + (String) o + "</li>";
+			}
+
+		s += "</ul>";
+		return new ApiView(s);
+	}
 }

@@ -51,7 +51,12 @@ public class Manager {
 			if (ar != null) break;
 		}
 		// TODO Save somewhere if null for future notice and not repeating useless
-		// opertion.
+		// opertion. - no result
+		// TODO Preproccessing managment.
+		// TODO Remove unwanted phrases from getting a view
+		// TODO NLP to be usefull
+		// TODO Highlight breaker - break a phrase to NGRAM and search in the memcache and db
+		// TODO TF/IDF
 		if (ar != null) mem.set(MEMCACHE_PREFIX + query, ar.view.toString());
 		return ar;
 	}

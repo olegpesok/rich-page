@@ -9,6 +9,8 @@ $(document).mousemove(function(e) {
    mouseY = e.pageY;
 });
 
+//Deprecated
+
 //// Get selected text:
 function getSelectedText() {
   var text = "";
@@ -31,8 +33,8 @@ function doSomethingWithSelectedText() {
           $('#myModal').remove();
           
           // Create and show the popup.
-          $("body").append('<iframe id="myModal" src="http://localhost:8888/Snippet?highlight='+selectedText+'&m=fr&v"></iframe>');
-          $('#myModal').css({'top':mouseY +10, 'left':mouseX, position:'absolute'}).hide().fadeIn('slow');
+          $("body").append('<iframe id="myModal" frameBorder="0"  src="http://localhost:8888/Snippet?q='+selectedText+'&m=fr&v"></iframe>');
+          $('#myModal').css({'width':"335px",'height':'410px','top':mouseY +10, 'left':mouseX, position:'absolute'}).hide().fadeIn('slow');
 
           // When users click close the popup.
           $('body').click(function() {
