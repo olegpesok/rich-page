@@ -27,13 +27,14 @@ function getSelectedText() {
 function doSomethingWithSelectedText() {
   var selectedText = getSelectedText();
   if (selectedText) {
-    jQuery.get('http://localhost:8888/Snippet?highlight='+selectedText+'&m=fr', function(data) {
-      debugger;
+    debugger;
+    jQuery.get('http://rich-page.appspot.com/Snippet?highlight='+selectedText+'&m=fr', function(data) {
+      
       // Remove previous popup.
       jQuery('#myModal').remove();
       
       // Create and show the popup.
-      jQuery("body").append('<iframe id="myModal" frameborder="0" src="http://localhost:8888/Snippet?highlight='+selectedText+'&m=fr&v"></iframe>');
+      jQuery("body").append('<iframe id="myModal" frameborder="0" src="http://rich-page.appspot.com/Snippet?highlight='+selectedText+'&m=fr&v"></iframe>');
       jQuery('#myModal').css({'top':mouseY +10, 'left':mouseX, position:'absolute'}).hide().fadeIn('slow');
 
       // When users click close the popup.
