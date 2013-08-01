@@ -9,7 +9,6 @@ import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.entity.EntityRetriever;
-import com.owow.rich.entity.TextExtractor;
 import com.owow.rich.items.NGram;
 import com.owow.rich.items.Token;
 import com.owow.rich.items.WebPage;
@@ -21,18 +20,16 @@ public class Manager {
 
 	private TokenizerUtil	      tokenizer;
 	private EntityRetriever	entityRetriever;
-	private TextExtractor	textExtractor;
 	public Storage	         storage;
 	private Memcache	      mem;
 	final static String	   MEMCACHE_PREFIX	= "manager/";
 	public Manager( ) {
-		this(new TokenizerUtil(), new EntityRetriever(), new TextExtractor(), new Storage(), Memcache.getInstance());
+		this(new TokenizerUtil(), new EntityRetriever(), new Storage(), Memcache.getInstance());
 	}
 
-	public Manager(TokenizerUtil tokenizer, EntityRetriever entityRetriever, TextExtractor textExtractor, Storage storage, Memcache mem) {
+	public Manager(TokenizerUtil tokenizer, EntityRetriever entityRetriever, Storage storage, Memcache mem) {
 		this.tokenizer = tokenizer;
 		this.entityRetriever = entityRetriever;
-		this.textExtractor = textExtractor;
 		this.storage = storage;
 		this.mem = mem;
 	}
