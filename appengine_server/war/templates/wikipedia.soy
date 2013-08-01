@@ -1,0 +1,13 @@
+{namespace examples.simple}
+/**
+ * Says hello to the world.
+ * @param p wikipeid p.
+ */
+{template .helloWorld}
+<head>
+<link rel="stylesheet" type="text/css" href="css/common.css">
+</head>
+<body>
+ hi{$p|noAutoescape}
+ </body>
+{/template}

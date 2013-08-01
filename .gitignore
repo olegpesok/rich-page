@@ -1,21 +1,5 @@
-lib-cov
-*.seed
-*.log
-*.csv
-*.dat
-*.out
-*.pid
-*.gz
-*.swp
-*.swo
-.DS_Store
+*.class
 
-pids
-logs
-results
-dist
-
-node_modules
-npm-debug.log
-
-template/**/*.js
+# Package Files #
+*.war
+*.ear

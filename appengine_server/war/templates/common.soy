@@ -1,0 +1,18 @@
+{namespace examples.simple}
+/**
+ * Common template for the snippet
+ * @param p snippet.
+ */
+{template .helloWorld}
+<head>
+<link rel="stylesheet" type="text/css" href="css/common.css">
+</head>
+<body>
+<div id="outer">
+    
+    <div id="inner2" class="inner">{$p|truncate:140}</div>
+</div>
+ 
+ </body>
+{/template}
+
