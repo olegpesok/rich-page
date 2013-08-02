@@ -20,5 +20,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/appengine-api-labs.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/appengine-api-1.0-sdk-1.8.2.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/appengine-testing-1.4.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/crawler4j-3.5.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
