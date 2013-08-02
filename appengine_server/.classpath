@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="war/WEB-INF/lib"/>
+	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="war/WEB-INF/lib/json-20090211.jar"/>
@@ -10,13 +11,11 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/junit-4.11.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/AlchemyAPI.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/mockito-all-1.9.5.jar"/>
-	
 	<classpathentry kind="lib" path="war/WEB-INF/lib/soy-latest.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/google-http-client-appengine-1.15.0-rc.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/google-http-client-1.15.0-rc.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/json-simple-1.1.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/json-path-0.8.0.jar"/>
-	
 	<classpathentry kind="lib" path="war/WEB-INF/lib/appengine-api-stubs-1.5.2.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/appengine-api-labs.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/appengine-api-1.0-sdk-1.8.2.jar"/>
