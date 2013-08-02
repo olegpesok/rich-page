@@ -3,3 +3,4 @@ filesCopiedToWebInfLib=appengine-api-1.0-sdk-1.8.2.jar|appengine-api-labs.jar|ap
 gaeDatanucleusVersion=v2
 gaeDeployDialogSettings=
 gaeHrdEnabled=true
+validationExclusions=src/com/owow/rich/servlet/SnippetServlet.java
