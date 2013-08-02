@@ -69,7 +69,7 @@ public class Manager {
 		
 		// Do live retrieve.
 		if (apiResponse == null) {
-			apiResponse = ApiRetriver.getApiResponse(query, method);
+			apiResponse = ApiRetriver.getApiResponse(query, method, webPage);
 		}
 		
 		if (apiResponse != null) {

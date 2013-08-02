@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
+import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.Memcache;
 
 public class ApiRetriver {
@@ -12,18 +13,13 @@ public class ApiRetriver {
 	ApiRetriver( ) {}
 
 
-	public static ApiResponse getApiResponse(String highlight, String method)
+	public static ApiResponse getApiResponse(String highlight, String method, WebPage webPage)
 	{
-		if (method == null) return getApiResponse(highlight);
-		return getApiResponse(highlight, ApiType.create(method));
+		ApiType apiType = method == null ? DEFAULT_API_TYPE: ApiType.create(method);
+		return getApiResponse(highlight, apiType, webPage);
 	}
 	
-	private static ApiResponse getApiResponse(String highlight)
-	{
-		return getApiResponse(highlight, DEFAULT_API_TYPE);
-	}
-	
-	private static ApiResponse getApiResponse(String highlight, ApiType mainApiType)
+	private static ApiResponse getApiResponse(String highlight, ApiType mainApiType, WebPage webPage)
 	{
 		try {
 			highlight = URLEncoder.encode(highlight, "UTF-8");
@@ -42,8 +38,7 @@ public class ApiRetriver {
 				try {
 					List<ApiResponse> apiResponseList = handler.getAllApiResponses(highlight, mainApiType);
 					if (apiResponseList != null && apiResponseList.size() > 0) {
-						// TODO(guti): take the best one according to the content:
-						ApiResponse apiResponse = apiResponseList.get(0);
+						ApiResponse apiResponse = findBestMatchAccordingToContext(apiResponseList, webPage);
 						pushMemcache(highlight, apiResponse.view, Memcache.getInstance());
 						return apiResponse;
 					}
@@ -52,6 +47,12 @@ public class ApiRetriver {
 		}
 		return null;
 	}
+
+	public static ApiResponse findBestMatchAccordingToContext(List<ApiResponse> apiResponseList, WebPage webPage) {
+		// TODO:guti
+		return null;
+   }
+
 
 	public static void pushMemcache(String query, ApiView view, Memcache mem)
 	{
