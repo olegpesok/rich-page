@@ -6,25 +6,24 @@ import java.util.List;
 
 import com.owow.rich.storage.Memcache;
 
-/**
- * @author a
- *
- */
 public class ApiRetriver {
 	final static String	MEMPREFIX	     = "apiFactory/";
 	final static ApiType	DEFAULT_API_TYPE	= ApiType.freebase;
 	ApiRetriver( ) {}
 
-	public static ApiResponse getApiResponse(String highlight)
-	{
-		return getApiResponse(highlight, DEFAULT_API_TYPE);
-	}
+
 	public static ApiResponse getApiResponse(String highlight, String method)
 	{
 		if (method == null) return getApiResponse(highlight);
 		return getApiResponse(highlight, ApiType.create(method));
 	}
-	public static ApiResponse getApiResponse(String highlight, ApiType mainApiType)
+	
+	private static ApiResponse getApiResponse(String highlight)
+	{
+		return getApiResponse(highlight, DEFAULT_API_TYPE);
+	}
+	
+	private static ApiResponse getApiResponse(String highlight, ApiType mainApiType)
 	{
 		try {
 			highlight = URLEncoder.encode(highlight, "UTF-8");
