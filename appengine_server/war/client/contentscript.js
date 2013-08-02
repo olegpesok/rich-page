@@ -12,7 +12,7 @@ jQuery(document).ready(function(jQuery) {
   });  
 });
 
-RICH_SERVER = 'http://rich-page.appspot.com/';
+RICH_SERVER = 'http://localhost:8888/';
 
 //// Get selected text:
 function getSelectedText() {
@@ -25,7 +25,10 @@ function getSelectedText() {
   return text;
 }
 
+
 function doSomethingWithSelectedText() {
+	markSelection();
+	/*
   var selectedText = getSelectedText();
   if (selectedText) {
     jQuery.get(RICH_SERVER + 'Snippet?q='+selectedText+'', function(data) {
@@ -44,8 +47,97 @@ function doSomethingWithSelectedText() {
         });
       }
     });
-  }
+  }*/
 }
 
 document.onmouseup = doSomethingWithSelectedText;
 document.onkeyup = doSomethingWithSelectedText;
+
+
+
+var markSelection = (function() {
+	var markerTextChar = "\ufeff";
+	var markerTextCharEntity = "&#xfeff;";
+
+	var markerEl, markerId = "sel_" + new Date().getTime() + "_"
+			+ Math.random().toString().substr(2);
+
+	var selectionEl;
+
+	return function() {
+		var sel, range;
+
+		var selectedText = getSelectedText();
+		if(selectedText)
+		{
+			if (document.selection && document.selection.createRange) {
+				// Clone the TextRange and collapse
+				range = document.selection.createRange().duplicate();
+				range.collapse(false);
+
+				// Create the marker eleme	nt containing a single invisible character
+				// by creating literal HTML and insert it
+				range.pasteHTML('<span id="' + markerId + '" style="position: relative;">' + markerTextCharEntity + '</span>');
+				markerEl = document.getElementById(markerId);
+			} else if (window.getSelection) {
+				sel = window.getSelection();
+
+				if (sel.getRangeAt) {
+					range = sel.getRangeAt(0).cloneRange();
+				} else {
+					// Older WebKit doesn't have getRangeAt
+					range.setStart(sel.anchorNode, sel.anchorOffset);
+					range.setEnd(sel.focusNode, sel.focusOffset);
+
+				// Handle the case when the selection was selected backwards
+				// (from the end to the start in the
+				// document)
+					if (range.collapsed !== sel.isCollapsed) {
+						range.setStart(sel.focusNode, sel.focusOffset);
+						range.setEnd(sel.anchorNode, sel.anchorOffset);
+					}
+				}
+
+				range.collapse(false);
+
+				// Create the marker element containing a single invisible character
+				// using DOM methods and insert it
+				markerEl = document.createElement("span");
+				markerEl.id = markerId;
+				markerEl.appendChild(document.createTextNode(markerTextChar));
+				range.insertNode(markerEl);
+			}
+
+			if (markerEl) {
+
+			// Find markerEl position http://www.quirksmode.org/js/findpos.html
+				var obj = markerEl;
+				var left = 0, top = 0;
+				do {
+					left += obj.offsetLeft;
+					top += obj.offsetTop;
+				} while (obj = obj.offsetParent);
+				top+= markerEl.offsetHeight;
+				left-= 13;
+				top -= 13;
+				markerEl.parentNode.removeChild(markerEl);
+			
+					jQuery.get(RICH_SERVER + 'Snippet?q='+selectedText+'', function(data) {
+							if (data && data.resultOK) {
+								// Remove previous popup.
+				        jQuery('#myModal').remove();
+				        
+				        // Create and show the popup.
+				        jQuery("body").append('<iframe id="myModal" frameborder="0" src="'+ RICH_SERVER +'Snippet?q='+selectedText+'&v"></iframe>');
+				        jQuery('#myModal').css({'width':335,'height':410,'top':top-13, 'left':left-13, position:'absolute'}).hide().fadeIn('slow');
+
+				        // When users click close the popup.
+				        jQuery('body').click(function() {
+				          jQuery('#myModal').fadeOut('slow');
+				        });
+				      }
+				    });
+		}}
+	};
+})();
+

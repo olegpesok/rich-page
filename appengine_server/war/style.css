@@ -1,171 +1,163 @@
 body {
-  background-color: transparent;
-  color: #272727;
-  font-size: 17px;
+	background-color: transparent;
+	color: #272727;
+	font-size: 17px;
 }
-
 
 /* begin container */
 .context-box-container {
-  /* begin vertical centering */
-  position:absolute; 
-  top:0; 
-  bottom:0; 
-  left:0; 
-  right:0;
-  margin:auto; 
-  /* end vertical centering */ 
-
-  font-family:ff-tisa-web-pro, Georgia, Cambria, 'Times New Roman', Times, serif;
-  font-size: 17px;
-
-  -webkit-filter: drop-shadow(2px 2px 10px rgba(0, 0, 0, 0.6));
-     -moz-filter: drop-shadow(2px 2px 10px rgba(0, 0, 0, 0.6));
-          filter: drop-shadow(2px 2px 10px rgba(0, 0, 0, 0.6));
-  height: 400px;
-  width: 325px;
+	/* begin vertical centering */
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	/* end vertical centering */
+	font-family: ff-tisa-web-pro, Georgia, Cambria, 'Times New Roman', Times,
+		serif;
+	font-size: 17px;
+	-webkit-filter: drop-shadow(2px 2px 10px rgba(0, 0, 0, 0.6));
+	-moz-filter: drop-shadow(2px 2px 10px rgba(0, 0, 0, 0.6));
+	filter: drop-shadow(2px 2px 10px rgba(0, 0, 0, 0.6));
+	height: 400px;
+	width: 325px;
 }
 /* end container */
 
 /* begin frame */
 .context-box-frame {
-  height: 45px;
-  background-repeat: no-repeat;
+	height: 45px;
+	background-repeat: no-repeat;
 }
+
 .context-box-frame:last-of-type {
-  background-image: linear-gradient( -45deg, rgba(255, 255, 255, 0) 32px, rgba(47, 100, 237, 1)  32px);  
-  border-top: 1px solid rgb(100, 100, 255);
+	background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0) 32px,
+		rgba(47, 100, 237, 1) 32px);
+	border-top: 1px solid rgb(100, 100, 255);
 }
+
 .context-box-frame:first-of-type {
-  background-image: linear-gradient( 135deg, rgba(255, 255, 255, 0) 32px,  rgba(47, 100, 237, 1) 32px);
-  border-bottom: 1px solid rgb(100, 100, 255);
+	background-image: linear-gradient(135deg, rgba(255, 255, 255, 0) 32px,
+		rgba(47, 100, 237, 1) 32px);
+	border-bottom: 1px solid rgb(100, 100, 255);
 }
 
 /* begin icons*/
 .context-box-frame-icons {
-  text-align: right;
-  padding: 12.5px;
+	text-align: right;
+	padding: 12.5px;
 }
 
 .context-box-frame-icon {
-  cursor: pointer;
-  width: 25px;
-  height: 25px;
-  display: inline-block;
-  opacity: 0.65;
+	cursor: pointer;
+	width: 25px;
+	height: 25px;
+	display: inline-block;
+	opacity: 0.65;
 }
 
-.context-box-frame-icon:hover, 
-.context-box-frame-icon.context-box-selected {
-  color: white;
-  opacity: 1;
+.context-box-frame-icon:hover,.context-box-frame-icon.context-box-selected
+	{
+	color: white;
+	opacity: 1;
 }
 
 .icon-info {
-  background-image: url("./icons/info.png");
-  background-repeat: no-repeat;
+	background-image: url("./icons/info.png");
+	background-repeat: no-repeat;
 }
+
 .icon-link {
-  background-image: url("./icons/link.png");
+	background-image: url("./icons/link.png");
 }
 /* end icons*/
 
-
 /* end frame */
 
-
 /* begin content */
-
-.slimScrollRail, .slimScrollBar {
-  box-shadow: 0px 0px 1px rgba(128, 128, 128, 0.6);
+.slimScrollRail,.slimScrollBar {
+	box-shadow: 0px 0px 1px rgba(128, 128, 128, 0.6);
 }
 
 .context-box-content {
-  background-color: white;
-  display: none;
+	background-color: white;
+	display: none;
+	min-height: 300px;
 }
 
+#context-box-content-container-container {
+	padding-top: 10px;
+	padding-bottom: 30px;
+	background-color: white;
+}
 
 .context-box-content.context-box-open {
-  /* an open box should be at its full open size */
-  display: inherit;
+	/* an open box should be at its full open size */
+	display: inherit;
 }
 
-
-.context-box-info{
-  padding: 20px;
-  padding-right: 30px;
+.context-box-info {
+	padding: 20px;
+	padding-right: 30px;
+	padding-top: 10px;
 }
 
 /* begin content box info */
-
 strong {
-  font-weight: 700;
-  color: black;
+	font-weight: 700;
+	color: black;
 }
+
 em {
-  font-style: italic;
-  color: black;
+	font-style: italic;
+	color: black;
 }
+
 .context-box-info-title {
-  margin-bottom: 20px;
-  font-weight: 700;
-  color: rgba(47, 100, 237, 1);
+	margin-bottom: 20px;
+	font-weight: 700;
+	color: rgba(47, 100, 237, 1);
 }
 
 .context-box-info-description {
-  line-height: 1.5;
-  font-size: 16px;
+	line-height: 1.5;
+	font-size: 16px;
 }
 
 .context-box-info-description p {
-  /*padding: 10px 10px 5px 10px;*/
-  font-family:ff-tisa-web-pro, Georgia, Cambria, 'Times New Roman', Times, serif;
-  font-size: 17px;
-}
-.context-box-info-description p:first-of-type {
-  font-size: 18px;
+	font-size: 18px;
+	padding-bottom: 8px;
 }
 /* end content box info */
 
-
 /* begin general image markup */
 .context-box-full-bleed {
-  width: 300px;
-  background-position: top center;
-  background-size: cover;
+	width: 300px;
+	background-position: top center;
+	background-size: cover;
 }
 /* end general image markup */
 
 /* begin link */
 .context-box-link {
-  display: block;
-  width: 325px;
-  padding-top: 240px;
-  background-image: url("img/brewers-0.jpg");
+	display: block;
+	width: 325px;
+	padding-top: 240px;
 }
-.context-box-link:nth-child(1) {
-  background-image: url("img/brewers-3.jpg");
-}
-.context-box-link:nth-child(2) {
-  background-image: url("img/brewers-1.jpg");
-}
-.context-box-link:nth-child(3) {
-  background-image: url("img/brewers-2.jpg");
-}
+
 .context-box-link .context-box-link-caption {
-  padding: 10px;
-  font-size: 20px;
-
-  min-height: 40px;
-  background-color: rgba(0, 0, 0, 0.8);
-
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.4;
-  cursor: pointer;
+	padding: 10px;
+	font-size: 20px;
+	min-height: 40px;
+	background-color: rgba(0, 0, 0, 0.8);
+	color: rgba(255, 255, 255, 0.9);
+	line-height: 1.4;
+	cursor: pointer;
 }
+
 .context-box-link .context-box-link-caption:hover {
-  text-decoration: underline;
+	text-decoration: underline;
 }
 
 /* end link */

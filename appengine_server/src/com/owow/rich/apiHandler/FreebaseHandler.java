@@ -33,6 +33,8 @@ public class FreebaseHandler implements ApiHandler {
 		if (!topicResponse.has("property")) throw new Exception("topic not found for " + mid + "." + s + "." + title);
 		String html = topicResponse.getJSONObject("property").getJSONObject("/common/topic/description").getJSONArray("values").getJSONObject(0)
 		      .getString("value");
+		html = "<p>" + html.replace(". ", ". </p><p>") + "</p>";
+
 		final JSONObject jo = topicResponse;
 
 		return new ApiResponse(jo, /* "score: " + score + ". " + */html, at);
