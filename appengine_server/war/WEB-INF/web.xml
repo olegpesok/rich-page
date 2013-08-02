@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
-	
+
 	<servlet>
 		<servlet-name>SnippetServlet</servlet-name>
 		<servlet-class>com.owow.rich.servlet.SnippetServlet</servlet-class>
@@ -13,7 +13,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>PageProccessServlet</servlet-name>
 		<servlet-class>com.owow.rich.servlet.PageProccessServlet</servlet-class>
 	</servlet>
-	
+	<servlet>
+		<servlet-name>PageProccessServletQueuer</servlet-name>
+		<servlet-class>com.owow.rich.servlet.PageProccessServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>Crawler</servlet-name>
+		<servlet-class>com.owow.rich.servlet.CrawlerServlet</servlet-class>
+	</servlet>
+
 	<servlet-mapping>
 		<servlet-name>SnippetServlet</servlet-name>
 		<url-pattern>/Snippet</url-pattern>
@@ -22,7 +30,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>PageProccessServlet</servlet-name>
 		<url-pattern>/ProcPage</url-pattern>
 	</servlet-mapping>
-	
+	<servlet-mapping>
+		<servlet-name>Crawler</servlet-name>
+		<url-pattern>/Crawler</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>PageProccessServletQueuer</servlet-name>
+		<url-pattern>/QueueToPageProc</url-pattern>
+	</servlet-mapping>
+
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>

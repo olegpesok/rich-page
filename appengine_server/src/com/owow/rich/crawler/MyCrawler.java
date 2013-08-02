@@ -1,5 +1,10 @@
 package com.owow.rich.crawler;
 
+import java.io.DataOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.regex.Pattern;
 
 import edu.uci.ics.crawler4j.crawler.Page;
@@ -36,7 +41,11 @@ public class MyCrawler extends WebCrawler {
 	@Override
 	public void visit(Page page) {
 		String url = page.getWebURL().getURL();
-		sendToAppEngine(url);
+		try {
+	      sendToAppEngine(url);
+      } catch (UnsupportedEncodingException e) {
+	      e.printStackTrace();
+      }
 
 		/*
 		 * System.out.println("URL: " + url);
@@ -51,8 +60,45 @@ public class MyCrawler extends WebCrawler {
 		 * System.out.println("Number of outgoing links: " + links.size()); }
 		 */
 	}
-	private void sendToAppEngine(String url) {
-		// TODO Auto-generated method stub
+	private void sendToAppEngine(String url) throws UnsupportedEncodingException {
+		excutePost("http://rich-page.appspot.com/QueueToPageProc", "url=" + URLEncoder.encode(url, "UTF-8"));
+	}
+	public static void excutePost(String targetURL, String urlParameters)
+	{
+		URL url;
+		HttpURLConnection connection = null;
+		try {
+			// Create connection
+			url = new URL(targetURL);
+			connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type",
+			      "application/x-www-form-urlencoded");
 
+			connection.setRequestProperty("Content-Length", "" +
+			      Integer.toString(urlParameters.getBytes().length));
+			connection.setRequestProperty("Content-Language", "en-US");
+
+			connection.setUseCaches(false);
+			connection.setDoInput(false);
+			connection.setDoOutput(true);
+
+			// Send request
+			DataOutputStream wr = new DataOutputStream(
+			      connection.getOutputStream());
+			wr.writeBytes(urlParameters);
+			wr.flush();
+			wr.close();
+
+			return;
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			return;
+
+		} finally {
+			if (connection != null) connection.disconnect();
+		}
 	}
 }
