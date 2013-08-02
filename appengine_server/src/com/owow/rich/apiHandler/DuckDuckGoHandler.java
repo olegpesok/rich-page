@@ -4,10 +4,10 @@ import org.json.JSONObject;
 
 import com.owow.rich.utils.HtmlUtil;
 
-public class DuckDuckGoHandler implements ApiHandler {
+public class DuckDuckGoHandler extends ApiHandler {
 
 	@Override
-	public ApiResponse getData(String title, ApiType type) throws Exception {
+	public ApiResponse getFirstResponse(String title, ApiType type) throws Exception {
 		final String server = "http://api.duckduckgo.com/?format=json&t=owow&q=";
 		final JSONObject data = HtmlUtil.getJSONFromServerAndTitle(server, title);
 

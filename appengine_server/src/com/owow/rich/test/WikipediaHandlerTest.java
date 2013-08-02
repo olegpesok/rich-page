@@ -37,7 +37,7 @@ public class WikipediaHandlerTest {
 		String expectedSubString = "<p><b>Alon USA Energy Inc.</b>";
 
 		// Test:
-		ApiResponse response = handler.getData("Alon_USA", ApiType.wiki);
+		ApiResponse response = handler.getFirstResponse("Alon_USA", ApiType.wiki);
 
 		// Assert:
 		Assert.assertTrue(response.view != null);

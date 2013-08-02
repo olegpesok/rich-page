@@ -4,10 +4,10 @@ import org.json.JSONObject;
 
 import com.owow.rich.utils.HtmlUtil;
 
-public class CkanHandler implements ApiHandler {
+public class CkanHandler extends ApiHandler {
 
 	@Override
-	public ApiResponse getData(String title, ApiType type) throws Exception {
+	public ApiResponse getFirstResponse(String title, ApiType type) throws Exception {
 
 		final String server = "http://demo.ckan.org/api/3/action/package_search?q=";
 		JSONObject ret = HtmlUtil.getJSONFromServerAndTitle(server, title);

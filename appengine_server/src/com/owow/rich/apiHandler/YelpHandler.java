@@ -1,9 +1,9 @@
 package com.owow.rich.apiHandler;
 
-public class YelpHandler implements ApiHandler {
+public class YelpHandler extends ApiHandler {
 
 	@Override
-	public ApiResponse getData(String title, ApiType at) throws Exception {
+	public ApiResponse getFirstResponse(String title, ApiType at) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -24,7 +24,7 @@ public class FreebaseHandlerTest {
 		String expectedSubString = "second single from the album Shine by British R&B singer Estelle and features American rapper Kanye West";
 
 		// Test:
-		ApiResponse response = handler.getData("American Boy", ApiType.wiki);
+		ApiResponse response = handler.getFirstResponse("American Boy", ApiType.wiki);
 
 		// Assert:
 		Assert.assertTrue(response.view != null);
@@ -37,7 +37,7 @@ public class FreebaseHandlerTest {
 		String expectedSubString = "Lonely Planet is the largest travel guide book publisher in the world. The company was owned by BBC Worldwide, which bought it in 2007 and sold it in 2013 to American billionaire Brad Kelley";
 
 		// Test:
-		ApiResponse response = handler.getData("Lonely Planet", ApiType.wiki);
+		ApiResponse response = handler.getFirstResponse("Lonely Planet", ApiType.wiki);
 
 		// Assert:
 		Assert.assertTrue(response.view != null);
@@ -50,7 +50,7 @@ public class FreebaseHandlerTest {
 		String expectedSubString = "San Francisco, officially the City and County of San Francisco, is the leading financial";
 		
 		// Test:
-		ApiResponse response = handler.getData("san francisco", ApiType.wiki);
+		ApiResponse response = handler.getFirstResponse("san francisco", ApiType.wiki);
 		
 		// Assert:
 		Assert.assertTrue(response.view.getView() != null);

@@ -8,10 +8,10 @@ import org.json.JSONObject;
 
 import com.owow.rich.utils.HtmlUtil;
 
-public class QuandlHandler implements ApiHandler {
+public class QuandlHandler extends ApiHandler {
 
 	@Override
-	public ApiResponse getData(String query, ApiType type) throws Exception {
+	public ApiResponse getFirstResponse(String query, ApiType type) throws Exception {
 		JSONObject serverResponse;
 		final String server = "http://www.quandl.com/api/v1/datasets.json?query=";
 		serverResponse = HtmlUtil.getJSONFromServerAndTitle(server, query);

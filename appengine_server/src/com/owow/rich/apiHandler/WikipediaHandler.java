@@ -14,7 +14,7 @@ import com.google.appengine.labs.repackaged.com.google.common.annotations.Visibl
 import com.owow.rich.items.WikiLink;
 import com.owow.rich.utils.HtmlUtil;
 
-public class WikipediaHandler implements ApiHandler {
+public class WikipediaHandler extends ApiHandler {
 
 	public enum WikiHost {
 		AllEng("en.wikipedia.org/w"),
@@ -58,7 +58,7 @@ public class WikipediaHandler implements ApiHandler {
 	private WikiHost	mHost	= WikiHost.AllEng;
 	private int	     depth	= 0;
 	@Override
-	public ApiResponse getData(String query, ApiType type) throws Exception {
+	public ApiResponse getFirstResponse(String query, ApiType type) throws Exception {
 		final JSONArray pagesData = new JSONArray();
 		depth++;
 		// deciding whether to download all content, or just the first section
@@ -102,7 +102,7 @@ public class WikipediaHandler implements ApiHandler {
 				if (myNextLink.href.contains("wiktionary")) {
 					// Redirect to a dictionary
 					ApiType dictionaryAT = ApiType.dictionary;
-					return dictionaryAT.createHandler().getData(myNextLink.searchTerm, dictionaryAT);
+					return dictionaryAT.createHandler().getFirstResponse(myNextLink.searchTerm, dictionaryAT);
 				}
 				else
 				{
@@ -111,7 +111,7 @@ public class WikipediaHandler implements ApiHandler {
 						      .warning("Overflow searches on query" + query);
 						return null;
 					}
-					ApiResponse ar = getData(myNextLink.searchTerm, type);
+					ApiResponse ar = getFirstResponse(myNextLink.searchTerm, type);
 					depth--;
 					return ar;
 				}

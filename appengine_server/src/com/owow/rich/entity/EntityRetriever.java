@@ -11,25 +11,13 @@ public class EntityRetriever {
 	public ApiResponse getTopEntity(NGram ngram, ApiType at) {
 		try {
 			ApiHandler ah = at.createHandler();
-			return ah.getData(ngram.getSearchTerm(), at);
+			return ah.getFirstResponse(ngram.getSearchTerm(), at);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
-	public ApiResponse getTopEntity2(NGram ngram, ApiType at) {
-		try {
-			ApiHandler ah = at.createHandler();
-			return ah.getData(ngram.getSearchTerm(), at);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
 	
 	public ApiResponse getApiResponseFromStorage(NGram ngram, ApiType apitype, Storage storage, WebPage wp)
 	{

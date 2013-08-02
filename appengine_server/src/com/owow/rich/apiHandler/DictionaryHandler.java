@@ -5,10 +5,10 @@ import org.json.JSONObject;
 
 import com.owow.rich.utils.HtmlUtil;
 
-public class DictionaryHandler implements ApiHandler {
+public class DictionaryHandler extends ApiHandler {
 
 	@Override
-	public ApiResponse getData(String query, ApiType at) throws Exception {
+	public ApiResponse getFirstResponse(String query, ApiType at) throws Exception {
 		// can add &pretty=true server for checking
 		final String server = "http://glosbe.com/gapi/translate?from=eng&dest=eng&format=json&phrase=";
 		final JSONObject jsonData = HtmlUtil.getJSONFromServerAndTitle(server, query);

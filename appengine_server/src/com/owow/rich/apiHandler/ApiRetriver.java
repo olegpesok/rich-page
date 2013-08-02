@@ -34,20 +34,24 @@ public class ApiRetriver {
 
 		if (v != null) return new ApiResponse(null, v, null);
 
-		ApiResponse apiResponse = null;
 
 		List<ApiType> apiTypeList = ApiTypeManager.getApiSequence(mainApiType);
-		for (ApiType apiType : apiTypeList)
+		for (ApiType apiType : apiTypeList) {
 			if (apiType != null)
 			{
 				ApiHandler handler = apiType.createHandler();
 				try {
-					apiResponse = handler.getData(highlight, mainApiType);
-					if (apiResponse != null) break;
+					List<ApiResponse> apiResponseList = handler.getAllApiResponses(highlight, mainApiType);
+					if (apiResponseList != null && apiResponseList.size() > 0) {
+						// TODO(guti): take the best one according to the content:
+						ApiResponse apiResponse = apiResponseList.get(0);
+						pushMemcache(highlight, apiResponse.view, Memcache.getInstance());
+						return apiResponse;
+					}
 				} catch (Exception e) {}
 			}
-		if (apiResponse != null) pushMemcache(highlight, apiResponse.view, Memcache.getInstance());
-		return apiResponse;
+		}
+		return null;
 	}
 
 	public static void pushMemcache(String query, ApiView view, Memcache mem)

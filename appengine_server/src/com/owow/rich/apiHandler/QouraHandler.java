@@ -8,10 +8,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class QouraHandler implements ApiHandler {
+public class QouraHandler extends ApiHandler {
 
 	@Override
-	public ApiResponse getData(String query, ApiType type) throws Exception {
+	public ApiResponse getFirstResponse(String query, ApiType type) throws Exception {
 		final JSONObject json = new JSONObject();
 		final JSONArray data = new JSONArray();
 		final String server = "http://www.quora.com/search?q=";

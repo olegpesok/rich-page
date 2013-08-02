@@ -11,13 +11,13 @@ import com.google.api.client.http.GenericUrl;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.owow.rich.utils.HtmlUtil;
 
-public class FreebaseHandler implements ApiHandler {
+public class FreebaseHandler extends ApiHandler {
 
 	String	GOOGLE_API_KEY	= "AIzaSyBjIW5540wkFEpZE2D3fx-TrLykSJ9MAiU";
 	private int FREEBASE_SCORE_THRESHOLD = 200;
 
 	@Override
-	public ApiResponse getData(String title, ApiType apiType) throws Exception {
+	public ApiResponse getFirstResponse(String title, ApiType apiType) throws Exception {
 		JSONArray searchResponse = getFreebaseSearchResponse(title);
 		List<ApiResponse> responses = Lists.newArrayList();
 		for (int i = 0; i < searchResponse.length(); i++) {

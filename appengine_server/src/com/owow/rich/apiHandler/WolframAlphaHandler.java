@@ -11,10 +11,10 @@ import org.json.JSONObject;
 
 import com.owow.rich.utils.HtmlUtil;
 
-public class WolframAlphaHandler implements ApiHandler {
+public class WolframAlphaHandler extends ApiHandler {
 
 	@Override
-	public ApiResponse getData(String title, ApiType at) throws Exception {
+	public ApiResponse getFirstResponse(String title, ApiType at) throws Exception {
 		final String server = "http://api.wolframalpha.com/v2/query?appid=HJ6J59-3QTLP92L6P&input=";
 
 		final JSONObject ret = new JSONObject();
