@@ -45,8 +45,7 @@ public class SnippetServlet extends HttpServlet {
 			query = query.toLowerCase();
 			WebPage webpage = new WebPage(null, null, url);
 
-			ApiResponse apiResponse = manger.queryTheDBAndMemcache(webpage, query);
-			if (apiResponse == null) apiResponse = ApiRetriver.getApiResponse(query, method);
+			ApiResponse apiResponse = manger.getApiResponse(webpage, query, method);
 
 			if (apiResponse != null && showView != null) {
 				printApiResposeView(apiResponse, resp);

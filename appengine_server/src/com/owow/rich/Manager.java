@@ -38,7 +38,13 @@ public class Manager {
 		this.cache = cache;
 	}
 
-	public ApiResponse queryTheDBAndMemcache(WebPage webPage, String query)
+	/**
+	 * @param webPage - The context of the query
+	 * @param query - The highlight to which we are looking for a match
+	 * @param method - What is the method for retrieving the response. 
+	 * @return
+	 */
+	public ApiResponse getApiResponse(WebPage webPage, String query, String method)
 	{
 		// Looks for we have the full query(highlight) in the cache.
 		ApiView apiView = cache.queryMemcacheForApiView(query);
@@ -51,6 +57,7 @@ public class Manager {
 		ApiResponse apiResponse = cache.getFirstMatchingNgram(nGrams);
 
 		// db queries
+		// CR: you can also change this to something like storage.getFirstMatchingNgram(nGrams)
 		if (apiResponse == null) {
 			for (NGram nGram : nGrams) {
 				apiResponse = storage.loadEntity(webPage, nGram);
@@ -58,15 +65,15 @@ public class Manager {
 			}
 		}
 		
-		// TODO Save somewhere if null for future notice and not repeating useless
-		// opertion. - no result
-		// TODO Preproccessing managment.
-		// TODO Remove unwanted phrases from getting a view
-		// TODO NLP to be usefull
-		// TODO Highlight breaker - break a phrase to NGRAM and search in the
-		// memcache and db
-		// TODO TF/IDF
-		if (apiResponse != null) cache.save(query, apiResponse.view.toString());
+		// Do live retrieve.
+		if (apiResponse == null) {
+			apiResponse = ApiRetriver.getApiResponse(query, method);
+		}
+		
+		if (apiResponse != null) {
+			cache.save(query, apiResponse.view.toString());
+		}
+			
 		return apiResponse;
 	}
 	
