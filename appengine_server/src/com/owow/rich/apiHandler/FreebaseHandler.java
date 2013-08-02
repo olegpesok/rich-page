@@ -17,22 +17,39 @@ public class FreebaseHandler extends ApiHandler {
 	private int FREEBASE_SCORE_THRESHOLD = 200;
 
 	@Override
-	public ApiResponse getFirstResponse(String title, ApiType apiType) throws Exception {
-		JSONArray searchResponse = getFreebaseSearchResponse(title);
+	public ApiResponse getFirstResponse(String highlight, ApiType apiType) throws Exception {
+		JSONArray searchResponse = getFreebaseSearchResponse(highlight);
+		if (searchResponse.length() > 0) {
+			return getSingleResponse(searchResponse, 0, apiType);
+		} else {
+			return null;
+		}
+	}
+	
+	@Override
+	public List<ApiResponse> getAllApiResponses(String highlight, ApiType apiType) throws Exception {
+		JSONArray searchResponse = getFreebaseSearchResponse(highlight);
 		List<ApiResponse> responses = Lists.newArrayList();
 		for (int i = 0; i < searchResponse.length(); i++) {
+			ApiResponse apiResponse = getSingleResponse(searchResponse, i, apiType);
+			if (apiResponse != null) {
+				responses.add(apiResponse);
+			}
+      }
+		return responses;
+	}
+
+	private ApiResponse getSingleResponse(JSONArray searchResponse, int i, ApiType apiType) {
+		try {
 			int score = searchResponse.getJSONObject(i).getInt("score");
 			if (score >= FREEBASE_SCORE_THRESHOLD) {
 				String mid = searchResponse.getJSONObject(0).getString("mid");
 				ApiResponse apiResponse = getFreebseTopic(mid, apiType);
-				responses.add(apiResponse);
+				return apiResponse;
 			}
-      }
-		return getBestApiResponse(responses);
-	}
-
-	//TODO(guti):
-	private ApiResponse getBestApiResponse(List<ApiResponse> responses) {
+		} catch(Exception ex) {
+			return null;
+		}
 	   return null;
    }
 
