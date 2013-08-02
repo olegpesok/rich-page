@@ -17,7 +17,6 @@ import com.owow.rich.apiHandler.ApiResponseFactory;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.Memcache;
-import com.owow.rich.utils.TFIDFUtil;
 import com.owow.rich.utils.TemplateUtil;
 
 /**
@@ -26,6 +25,7 @@ import com.owow.rich.utils.TemplateUtil;
  */
 @SuppressWarnings("serial")
 public class SnippetServlet extends HttpServlet {
+
 	
 	@SuppressWarnings("unused")
 	final boolean	             debug	         = true;
@@ -36,7 +36,7 @@ public class SnippetServlet extends HttpServlet {
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)
 	      throws IOException {
-		
+	
 		final String showView = req.getParameter("v");
 		final String method = req.getParameter("m");
 		final String query = req.getParameter("q");
