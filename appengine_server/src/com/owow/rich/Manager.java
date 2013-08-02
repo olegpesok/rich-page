@@ -9,30 +9,27 @@ import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.entity.EntityRetriever;
-import com.owow.rich.entity.TextExtractor;
 import com.owow.rich.items.NGram;
 import com.owow.rich.items.Token;
 import com.owow.rich.items.WebPage;
-import com.owow.rich.memcache.Memcache;
+import com.owow.rich.storage.Memcache;
 import com.owow.rich.storage.Storage;
-import com.owow.rich.tokenizing.Tokenizer;
+import com.owow.rich.utils.TokenizerUtil;
 
 public class Manager {
 
-	private Tokenizer	      tokenizer;
+	private TokenizerUtil	      tokenizer;
 	private EntityRetriever	entityRetriever;
-	private TextExtractor	textExtractor;
 	public Storage	         storage;
 	private Memcache	      mem;
 	final static String	   MEMCACHE_PREFIX	= "manager/";
 	public Manager( ) {
-		this(new Tokenizer(), new EntityRetriever(), new TextExtractor(), new Storage(), Memcache.getInstance());
+		this(new TokenizerUtil(), new EntityRetriever(), new Storage(), Memcache.getInstance());
 	}
 
-	public Manager(Tokenizer tokenizer, EntityRetriever entityRetriever, TextExtractor textExtractor, Storage storage, Memcache mem) {
+	public Manager(TokenizerUtil tokenizer, EntityRetriever entityRetriever, Storage storage, Memcache mem) {
 		this.tokenizer = tokenizer;
 		this.entityRetriever = entityRetriever;
-		this.textExtractor = textExtractor;
 		this.storage = storage;
 		this.mem = mem;
 	}
@@ -45,9 +42,9 @@ public class Manager {
 		List<Token> tokens = tokenizer.tokenize(webPage.getText());
 		List<NGram> nGrams = tokenizer.combineToNGrams(tokens, 2);
 		java.util.Collections.reverse(nGrams);
-		for (NGram n : nGrams)
+		for (NGram nGram : nGrams)
 		{
-			ar = storage.loadEntity(webPage, n);
+			ar = storage.loadEntity(webPage, nGram);
 			if (ar != null) break;
 		}
 		// TODO Save somewhere if null for future notice and not repeating useless
@@ -67,6 +64,7 @@ public class Manager {
 		if (b == null) return null;
 		return new ApiResponse(new JSONObject(), (String) b, ApiType.freebase);
 	}
+	
 	public Map<NGram, ApiResponse> processPage(WebPage webPage) throws Exception {
 
 		// Toknaize Text (split):

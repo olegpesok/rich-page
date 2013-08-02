@@ -11,8 +11,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.google.appengine.labs.repackaged.com.google.common.annotations.VisibleForTesting;
-import com.owow.rich.helper.HtmlHelper;
 import com.owow.rich.items.WikiLink;
+import com.owow.rich.utils.HtmlUtil;
 
 public class WikipediaHandler implements ApiHandler {
 
@@ -68,7 +68,7 @@ public class WikipediaHandler implements ApiHandler {
 		else wikiServer = "http://" + mHost.getUrl()
 		      + "/api.php?format=json&action=query&prop=revisions&rvprop=content&rvparse=true&titles=";
 
-		final String data = HtmlHelper.getUrlSource(wikiServer + searchTerm);
+		final String data = HtmlUtil.getUrlSource(wikiServer + searchTerm);
 		final JSONObject pages = new JSONObject(data).getJSONObject("query")
 		      .getJSONObject("pages");
 		final String[] pagesID = JSONObject.getNames(pages);
@@ -96,7 +96,7 @@ public class WikipediaHandler implements ApiHandler {
 			boolean flag = true;
 			for (int i = 0; flag && i < ps.length(); i++) {
 				final String myp = ps.getString(i);
-				if (HtmlHelper.getTextFromHtml(myp).split(" ").length >= 9) flag = false;
+				if (HtmlUtil.getTextFromHtml(myp).split(" ").length >= 9) flag = false;
 			}
 			if (!flag) flag = searchTerm.contains("(disambiguation)");
 			if (flag) {

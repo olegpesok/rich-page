@@ -1,4 +1,4 @@
-package com.owow.rich.memcache;
+package com.owow.rich.storage;
 
 import java.util.logging.Level;
 

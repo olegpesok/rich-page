@@ -3,7 +3,7 @@ package com.owow.rich.apiHandler;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.owow.rich.helper.HtmlHelper;
+import com.owow.rich.utils.HtmlUtil;
 
 public class CrunchBaseHandler implements ApiHandler {
 
@@ -11,7 +11,7 @@ public class CrunchBaseHandler implements ApiHandler {
 	public ApiResponse getData(String title, ApiType at) throws Exception {
 
 		final String server = "http://api.crunchbase.com/v/1/search.js?api_key=5bfua4j796x3dthwr9sqcv4r&query=";
-		final String data = HtmlHelper.getUrlSource(server + title);
+		final String data = HtmlUtil.getUrlSource(server + title);
 
 		JSONArray ret = new JSONObject(data).getJSONArray("results");
 

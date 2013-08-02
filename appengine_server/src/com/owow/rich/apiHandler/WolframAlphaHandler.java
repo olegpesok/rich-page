@@ -9,7 +9,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.json.JSONObject;
 
-import com.owow.rich.helper.HtmlHelper;
+import com.owow.rich.utils.HtmlUtil;
 
 public class WolframAlphaHandler implements ApiHandler {
 
@@ -19,7 +19,7 @@ public class WolframAlphaHandler implements ApiHandler {
 
 		final JSONObject ret = new JSONObject();
 
-		final org.w3c.dom.Document d = HtmlHelper.getDocumentFromUrl(server + title);
+		final org.w3c.dom.Document d = HtmlUtil.getDocumentFromUrl(server + title);
 		if (d.getDocumentElement().getAttribute("success").contains("false") || !d.getDocumentElement().getAttribute("error").equals("false")) throw new Exception(
 		      "failed");
 		final DOMSource domSource = new DOMSource(d.getDocumentElement());

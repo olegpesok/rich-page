@@ -1,4 +1,4 @@
-package com.owow.rich.view;
+package com.owow.rich.utils;
 
 import java.io.File;
 

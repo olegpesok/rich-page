@@ -4,7 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.owow.rich.helper.HtmlHelper;
+import com.owow.rich.utils.HtmlUtil;
 
 public class GoogleHandler implements ApiHandler {
 
@@ -13,7 +13,7 @@ public class GoogleHandler implements ApiHandler {
 		final JSONArray ret = new JSONArray();
 		final String google = "https://www.googleapis.com/customsearch/v1?key=AIzaSyCR2RdAX0PFHXargEsInerEc-RiFkYTWPE&cx=005640612292887937759:1reryqwjvhi&q=";
 
-		final JSONObject j = HtmlHelper.getJSONFromServerAndTitle(google, title);
+		final JSONObject j = HtmlUtil.getJSONFromServerAndTitle(google, title);
 		final JSONObject jo = new JSONObject();
 		try {
 			final JSONArray ja = j.getJSONArray("items");

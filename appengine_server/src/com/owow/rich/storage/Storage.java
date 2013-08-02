@@ -43,8 +43,8 @@ public class Storage {
 
 	public void saveLog(String user, String ip, String query, String url, boolean resultOk)
 	{
-		Key k = KeyFactory.createKey(LOG_KIND, user + "." + query + "." + new java.util.Date().getTime());
-		Entity e = new Entity(k);
+		Key key = KeyFactory.createKey(LOG_KIND, user + "." + query + "." + new java.util.Date().getTime());
+		Entity e = new Entity(key);
 		e.setProperty("user", user);
 		e.setProperty("ip", ip);
 		e.setProperty("q", query);
@@ -56,8 +56,8 @@ public class Storage {
 
 	public ApiResponse loadEntity(WebPage context, NGram n)
 	{
-		Query q = new Query(KeyFactory.createKey(ENTITY_KIND, n.toString()));
-		List<Entity> liste = datastore.prepare(q).asList(FetchOptions.Builder.withLimit(1));
+		Query query = new Query(KeyFactory.createKey(ENTITY_KIND, n.toString()));
+		List<Entity> liste = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(1));
 
 		if (liste.size() == 0) return null;
 		return ApiResponseFactory.getApiResponseFromEntity(liste.get(0));

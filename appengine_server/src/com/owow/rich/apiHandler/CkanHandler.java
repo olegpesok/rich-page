@@ -2,7 +2,7 @@ package com.owow.rich.apiHandler;
 
 import org.json.JSONObject;
 
-import com.owow.rich.helper.HtmlHelper;
+import com.owow.rich.utils.HtmlUtil;
 
 public class CkanHandler implements ApiHandler {
 
@@ -10,7 +10,7 @@ public class CkanHandler implements ApiHandler {
 	public ApiResponse getData(String title, ApiType at) throws Exception {
 
 		final String server = "http://demo.ckan.org/api/3/action/package_search?q=";
-		JSONObject ret = HtmlHelper.getJSONFromServerAndTitle(server, title);
+		JSONObject ret = HtmlUtil.getJSONFromServerAndTitle(server, title);
 
 		if (!ret.getBoolean("success")) throw new Exception("failed to get results from ckan");
 

@@ -1,4 +1,4 @@
-package com.owow.rich.tokenizing;
+package com.owow.rich.utils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.StringTokenizer;
 import com.owow.rich.items.NGram;
 import com.owow.rich.items.Token;
 
-public class Tokenizer {
+public class TokenizerUtil {
 
 	public List<Token> tokenize(String text) {
 		// text = text.replaceAll("[/<>!@#$%^&*-_=+~`?,\";.:'(){}\\[\\]|\\\\]",
