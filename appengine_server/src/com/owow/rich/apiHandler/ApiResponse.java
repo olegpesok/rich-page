@@ -15,24 +15,33 @@ public class ApiResponse implements Serializable {
 	public final static String	JSONKEY	        = "json";
 	public final static String	VIEWKEY	        = "view";
 	public final static String	APITYPEKEY	     = "apitype";
-
 	private static final long	serialVersionUID	= -4369034077791508101L;
+	
 	public JSONObject	         json;
 	public ApiView	            view;
+	public String text;
+	public int apiInternalScore;
 	public boolean	            resultOk	        = true;
 	// private Exception mError;
 	public ApiType	            myType;
 
+	public ApiResponse(JSONObject json, String html, ApiType apiType, int score, String text) {
+		this.apiInternalScore = score;
+		this.text = text;
+		this.json = json;
+		this.view = new ApiView(html);
+		myType = apiType;
+   }
+	
 	public ApiResponse(JSONObject json, String html, ApiType apiType) {
 		this(json, new ApiView(html), apiType);
 	}
 
 	public ApiResponse(JSONObject json, ApiView view, ApiType apiType)
 	{
-		this.json = json;
-		this.view = view;
-		myType = apiType;
+		this(json, view.getView(), apiType, 0, view.getView());
 	}
+	
 	public ApiResponse(JSONObject json, ApiType type)
 	{
 		this(json, new ApiView(""), type);

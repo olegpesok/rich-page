@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.Memcache;
+import com.owow.rich.utils.TFIDFUtil;
+import com.owow.rich.utils.TFIDFUtil.Documents;
 
 public class ApiRetriver {
 	final static String	MEMPREFIX	     = "apiFactory/";
@@ -38,7 +40,7 @@ public class ApiRetriver {
 				try {
 					List<ApiResponse> apiResponseList = handler.getAllApiResponses(highlight, mainApiType);
 					if (apiResponseList != null && apiResponseList.size() > 0) {
-						ApiResponse apiResponse = findBestMatchAccordingToContext(apiResponseList, webPage);
+						ApiResponse apiResponse = findBestMatchAccordingToContext(apiResponseList, webPage, highlight);
 						pushMemcache(highlight, apiResponse.view, Memcache.getInstance());
 						return apiResponse;
 					}
@@ -48,11 +50,15 @@ public class ApiRetriver {
 		return null;
 	}
 
-	public static ApiResponse findBestMatchAccordingToContext(List<ApiResponse> apiResponseList, WebPage webPage) {
-		// TODO:guti
-		return null;
+	public static ApiResponse findBestMatchAccordingToContext(List<ApiResponse> apiResponseList, WebPage webPage, String highlight) {
+		Documents<ApiResponse> documents = new Documents<ApiResponse>();
+		for (ApiResponse apiResponse : apiResponseList) {
+			documents.add(apiResponse, apiResponse.text);
+      }
+		
+		Documents<ApiResponse> rankedDcoumets = new TFIDFUtil().getRankList(webPage.text, highlight, documents);
+		return rankedDcoumets.getBest();
    }
-
 
 	public static void pushMemcache(String query, ApiView view, Memcache mem)
 	{

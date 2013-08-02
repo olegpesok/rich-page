@@ -44,8 +44,19 @@ public class FreebaseHandler extends ApiHandler {
 			int score = searchResponse.getJSONObject(i).getInt("score");
 			if (score >= FREEBASE_SCORE_THRESHOLD) {
 				String mid = searchResponse.getJSONObject(0).getString("mid");
-				ApiResponse apiResponse = getFreebseTopic(mid, apiType);
-				return apiResponse;
+				JSONObject topicResponse = getFreebseTopic(mid, apiType);
+				
+				if (!topicResponse.has("property")){
+					//TODO: log PropertyNotFound.
+					return null;
+				}
+				
+				String description = topicResponse.getJSONObject("property").getJSONObject("/common/topic/description").getJSONArray("values").getJSONObject(0)
+				      .getString("value");
+				String html = "<p>" + description.replace(". ", ". </p><p>") + "</p>";
+		
+				return new ApiResponse(topicResponse, html, apiType, score, description);
+				
 			}
 		} catch(Exception ex) {
 			return null;
@@ -62,7 +73,7 @@ public class FreebaseHandler extends ApiHandler {
 	   return searchResponse;
    }
 	
-	private ApiResponse getFreebseTopic(String mid, ApiType apiType) {
+	private JSONObject getFreebseTopic(String mid, ApiType apiType) {
 		try{	
 			GenericUrl topicUrl = new GenericUrl("https://www.googleapis.com/freebase/v1/topic" + mid);
 			topicUrl.put("filter", "/common/topic/description");
@@ -70,17 +81,7 @@ public class FreebaseHandler extends ApiHandler {
 			String topicData;
 		      topicData = HtmlUtil.getUrlSource(topicUrl.toString());
 	      
-			JSONObject topicResponse = new JSONObject(topicData);
-			
-			if (!topicResponse.has("property")){
-				//TODO: log PropertyNotFound.
-				return null;
-			}
-			String html = topicResponse.getJSONObject("property").getJSONObject("/common/topic/description").getJSONArray("values").getJSONObject(0)
-			      .getString("value");
-			html = "<p>" + html.replace(". ", ". </p><p>") + "</p>";
-	
-			return new ApiResponse(topicResponse, /* "score: " + score + ". " + */html, apiType);
+			return new JSONObject(topicData);
       } catch (Exception e) {
 	      // TODO: log exception.
 	      return null;

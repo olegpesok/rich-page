@@ -16,13 +16,28 @@ import com.google.appengine.api.search.SearchServiceFactory;
 import com.google.appengine.api.search.SortOptions;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Iterables;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
+import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.items.Token;
+import com.owow.rich.utils.TFIDFUtil.Documents;
 
 public class TFIDFUtil {
 	private final static  String INDEX_NAME = "INDEX1";
    private Index index = SearchServiceFactory.getSearchService().getIndex(IndexSpec.newBuilder().setName(INDEX_NAME).build());
 	private TokenizerUtil tokenizeUtil = new TokenizerUtil();
    
+	public static class Documents<T> {
+
+		public void add(ApiResponse apiResponse, String text) {
+	      // TODO Auto-generated method stub
+	      
+      }
+
+		public ApiResponse getBest() {
+	      // TODO Auto-generated method stub
+	      return null;
+      }
+	}
+	
 	public class DocumentScore {
 		public String documentId;
 		public String documentText;
@@ -33,6 +48,11 @@ public class TFIDFUtil {
 			this.score = score;
 		}
 	}
+	
+	public Documents<ApiResponse> getRankList(String text, String highlight, Documents<ApiResponse> documents) {
+	   // TODO Auto-generated method stub
+	   return null;
+   }
 	
 	public List<DocumentScore> rankDocumentsSimilarityToText(String text, Map<String, String> documentIdToText, String namespace) {
 		// put all the document in index
@@ -68,5 +88,7 @@ public class TFIDFUtil {
 	   	processedResults.add(new DocumentScore(document.getId(), documentText, score));  
 	   }
 	   return processedResults;
-	}	
+	}
+
+	
 }
