@@ -13,30 +13,30 @@ import org.json.JSONObject;
 import com.google.template.soy.data.SoyMapData;
 import com.owow.rich.Manager;
 import com.owow.rich.apiHandler.ApiResponse;
-import com.owow.rich.apiHandler.ApiResponseFactory;
+import com.owow.rich.apiHandler.ApiRetriver;
 import com.owow.rich.apiHandler.ApiType;
+import com.owow.rich.apiHandler.ApiView;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.Memcache;
 import com.owow.rich.utils.TemplateUtil;
 
 /**
- * Handle a request for an highlight.
- * Returns the view, or JSON mathcing this highlight.
+ * Handle a request for an highlight. Returns the view, or JSON mathcing this
+ * highlight.
  */
 @SuppressWarnings("serial")
 public class SnippetServlet extends HttpServlet {
 
-	
 	@SuppressWarnings("unused")
 	final boolean	             debug	         = true;
 	final static ApiType	       DEFAULT_API_TYPE	= ApiType.freebase;
 	private static final Logger	log	         = Logger.getLogger("Rich");
-	private Manager manger = new Manager();
-	
+	private Manager	          manger	         = new Manager();
+
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)
 	      throws IOException {
-	
+
 		final String showView = req.getParameter("v");
 		final String method = req.getParameter("m");
 		final String query = req.getParameter("q");
@@ -44,12 +44,14 @@ public class SnippetServlet extends HttpServlet {
 
 		if (query != null) {
 			WebPage webpage = new WebPage(null, null, url);
-			
-			ApiResponse apiResponse = ApiResponseFactory.queryMemcache(query, Memcache.getInstance());
-			if (apiResponse == null) {
+
+			ApiView memView = ApiRetriver.queryMemcacheForView(query, Memcache.getInstance());
+
+			ApiResponse apiResponse = null;
+			if (memView == null) {
 				apiResponse = manger.query(webpage, query);
-				if (apiResponse == null) apiResponse = ApiResponseFactory.getApiResponse(query, method);
-			}
+				if (apiResponse == null) apiResponse = ApiRetriver.getApiResponse(query, method);
+			} else apiResponse = new ApiResponse(null, memView, null);
 
 			if (apiResponse != null && showView != null) {
 				printApiResposeView(apiResponse, resp);

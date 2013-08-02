@@ -16,23 +16,23 @@ import com.owow.rich.items.WebPage;
  */
 @SuppressWarnings("serial")
 public class PageProccessServlet extends HttpServlet {
-	
-	private Manager manger = new Manager();
+
+	private Manager manager = new Manager();
 	private static final Logger log = Logger.getLogger("Rich");
-	
+
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)
 	      throws IOException {
-		
+
 		final String url = req.getParameter("url");
 		WebPage webPage = new WebPage(null, null, url);
 		try {
 			log.info("Processing page " + url);
-			manger.processPage(webPage);
+			manager.processPage(webPage);
 		} catch (Exception e) {
 			log.warning("Could not process page " + url + ", " + e.getMessage());
 		}
 		return;
-		
+
 	}
 }

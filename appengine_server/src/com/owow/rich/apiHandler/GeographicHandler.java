@@ -7,17 +7,16 @@ import com.owow.rich.utils.HtmlUtil;
 public class GeographicHandler implements ApiHandler {
 
 	@Override
-	public ApiResponse getData(String title, ApiType at) throws Exception {
-
+	public ApiResponse getData(String query, ApiType type) throws Exception {
 		final String server = "http://api.geonames.org/searchJSON?maxRows=10&username=owowsp&q=";
 
-		final JSONObject ret = HtmlUtil.getJSONFromServerAndTitle(server, title);
+		final JSONObject serverResponse = HtmlUtil.getJSONFromServerAndTitle(server, query);
 
-		if (ret.getJSONArray("geonames").length() == 0) throw new Exception("no result");
+		if (serverResponse.getJSONArray("geonames").length() == 0) throw new Exception("no result");
 
-		final JSONObject jo = new JSONObject();
-		jo.put("data", ret.getJSONArray("geonames"));
-		return new ApiResponse(jo, at);
+		final JSONObject json = new JSONObject();
+		json.put("data", serverResponse.getJSONArray("geonames"));
+		return new ApiResponse(json, type);
 	}
 
 	@Override

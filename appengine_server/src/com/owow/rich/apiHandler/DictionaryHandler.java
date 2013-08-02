@@ -8,27 +8,27 @@ import com.owow.rich.utils.HtmlUtil;
 public class DictionaryHandler implements ApiHandler {
 
 	@Override
-	public ApiResponse getData(String title, ApiType at) throws Exception {
+	public ApiResponse getData(String query, ApiType at) throws Exception {
 		// can add &pretty=true server for checking
 		final String server = "http://glosbe.com/gapi/translate?from=eng&dest=eng&format=json&phrase=";
-		final JSONObject data = HtmlUtil.getJSONFromServerAndTitle(server, title);
+		final JSONObject jsonData = HtmlUtil.getJSONFromServerAndTitle(server, query);
 		final JSONObject ret = new JSONObject();
-		final JSONArray texts = new JSONArray();
-		final JSONArray tuc = data.getJSONArray("tuc");
+		final JSONArray textsArray = new JSONArray();
+		final JSONArray tuc = jsonData.getJSONArray("tuc");
+
 		for (int i = 0; i < tuc.length(); i++)
 			if (tuc.getJSONObject(i).has("meanings")) {
-				final JSONArray meanings = tuc.getJSONObject(i).getJSONArray(
-				      "meanings");
-				final JSONArray meanings2 = new JSONArray();
+				final JSONArray meanings = tuc.getJSONObject(i).getJSONArray("meanings");
+				// Filter unwanted data
+				final JSONArray newMeanings = new JSONArray();
 				for (int j = 0; j < meanings.length(); j++)
-					meanings2.put(meanings.getJSONObject(j).getString(
-					      "text"));
-				texts.put(meanings2);
-			} else if (tuc.getJSONObject(i).has("phrase")) texts.put(tuc.getJSONObject(i).getJSONObject("phrase").getString("text"));
-		ret.put("data", texts);
-		ret.put("query", title);
+					newMeanings.put(meanings.getJSONObject(j).getString("text"));
+				textsArray.put(newMeanings);
+			} else if (tuc.getJSONObject(i).has("phrase")) textsArray.put(tuc.getJSONObject(i).getJSONObject("phrase").getString("text"));
+		ret.put("data", textsArray);
+		ret.put("query", query);
 		ApiResponse ar = new ApiResponse(ret, at);
-		ar.view = getView(ar, title);
+		ar.view = getView(ar, query);
 		return ar;
 	}
 

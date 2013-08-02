@@ -13,7 +13,6 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 import com.owow.rich.apiHandler.ApiResponse;
-import com.owow.rich.apiHandler.ApiResponseFactory;
 import com.owow.rich.items.NGram;
 import com.owow.rich.items.WebPage;
 
@@ -35,7 +34,7 @@ public class Storage {
 			Key k = KeyFactory.createKey(ENTITY_KIND, n.toString());
 			Entity e = new Entity(k);
 			ApiResponse ar = entitesMap.get(n);
-			if (ar != null) e.setPropertiesFrom(ApiResponseFactory.getPropertyContainerFromApiResponse(ar));
+			if (ar != null) e.setPropertiesFrom(ar.getPropertyContainerFromApiResponse());
 
 			datastore.put(e);
 		}
@@ -60,7 +59,7 @@ public class Storage {
 		List<Entity> liste = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(1));
 
 		if (liste.size() == 0) return null;
-		return ApiResponseFactory.getApiResponseFromEntity(liste.get(0));
+		return ApiResponse.getApiResponseFromEntity(liste.get(0));
 	}
 
 	public boolean containsKey(NGram ngram) {

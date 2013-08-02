@@ -9,24 +9,24 @@ import com.owow.rich.utils.HtmlUtil;
 public class GoogleHandler implements ApiHandler {
 
 	@Override
-	public ApiResponse getData(String title, ApiType at) throws Exception {
-		final JSONArray ret = new JSONArray();
+	public ApiResponse getData(String query, ApiType type) throws Exception {
+		final JSONArray data = new JSONArray();
 		final String google = "https://www.googleapis.com/customsearch/v1?key=AIzaSyCR2RdAX0PFHXargEsInerEc-RiFkYTWPE&cx=005640612292887937759:1reryqwjvhi&q=";
 
-		final JSONObject j = HtmlUtil.getJSONFromServerAndTitle(google, title);
-		final JSONObject jo = new JSONObject();
+		final JSONObject serverData = HtmlUtil.getJSONFromServerAndTitle(google, query);
+		final JSONObject ret = new JSONObject();
 		try {
-			final JSONArray ja = j.getJSONArray("items");
-			for (int i = 0; i < ja.length(); i++) {
-				final JSONObject jTemp = ja.getJSONObject(i);
-				ret.put(jTemp.getString("htmlSnippet"));
+			final JSONArray items = serverData.getJSONArray("items");
+			for (int i = 0; i < items.length(); i++) {
+				final JSONObject anItem = items.getJSONObject(i);
+				data.put(anItem.getString("htmlSnippet"));
 			}
 		} catch (final JSONException jsone) {
 			throw new Exception("no results");
 		}
-		jo.put("data", ret);
+		ret.put("data", data);
 
-		return new ApiResponse(jo, at);
+		return new ApiResponse(ret, type);
 	}
 
 	@Override

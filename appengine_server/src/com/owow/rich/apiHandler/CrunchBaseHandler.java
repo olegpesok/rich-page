@@ -8,19 +8,19 @@ import com.owow.rich.utils.HtmlUtil;
 public class CrunchBaseHandler implements ApiHandler {
 
 	@Override
-	public ApiResponse getData(String title, ApiType at) throws Exception {
+	public ApiResponse getData(String title, ApiType type) throws Exception {
 
 		final String server = "http://api.crunchbase.com/v/1/search.js?api_key=5bfua4j796x3dthwr9sqcv4r&query=";
-		final String data = HtmlUtil.getUrlSource(server + title);
+		final String serverDataResponse = HtmlUtil.getUrlSource(server + title);
 
-		JSONArray ret = new JSONObject(data).getJSONArray("results");
+		JSONArray jsonData = new JSONObject(serverDataResponse).getJSONArray("results");
 
-		if (ret.length() == 0) throw new Exception("no crunch");
+		if (jsonData.length() == 0) throw new Exception("no crunch");
 
-		final JSONObject jo = new JSONObject();
-		jo.put("data", ret);
+		final JSONObject ret = new JSONObject();
+		ret.put("data", jsonData);
 
-		return new ApiResponse(jo, at);
+		return new ApiResponse(ret, type);
 	}
 
 	@Override

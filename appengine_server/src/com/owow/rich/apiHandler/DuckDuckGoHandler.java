@@ -7,22 +7,19 @@ import com.owow.rich.utils.HtmlUtil;
 public class DuckDuckGoHandler implements ApiHandler {
 
 	@Override
-	public ApiResponse getData(String title, ApiType at) throws Exception {
-
-
+	public ApiResponse getData(String title, ApiType type) throws Exception {
 		final String server = "http://api.duckduckgo.com/?format=json&t=owow&q=";
+		final JSONObject data = HtmlUtil.getJSONFromServerAndTitle(server, title);
 
-		final JSONObject ret = HtmlUtil.getJSONFromServerAndTitle(server, title);
+		if (data.getJSONArray("RelatedTopics").length() == 0
+		      && data.getString("Answer").length() == 0
+		      && data.getJSONArray("Results").length() == 0) throw new Exception("no results");
 
-		if (ret.getJSONArray("RelatedTopics").length() == 0
-		      && ret.getString("Answer").length() == 0
-		      && ret.getJSONArray("Results").length() == 0) throw new Exception("no results");
-
-		final JSONObject jo = new JSONObject();
-		jo.put("data", ret);
+		final JSONObject ret = new JSONObject();
+		ret.put("data", data);
 
 
-		return new ApiResponse(jo, at);
+		return new ApiResponse(ret, type);
 	}
 
 	@Override
