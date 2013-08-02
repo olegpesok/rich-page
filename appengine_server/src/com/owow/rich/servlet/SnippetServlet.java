@@ -15,9 +15,7 @@ import com.owow.rich.Manager;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiRetriver;
 import com.owow.rich.apiHandler.ApiType;
-import com.owow.rich.apiHandler.ApiView;
 import com.owow.rich.items.WebPage;
-import com.owow.rich.storage.Memcache;
 import com.owow.rich.utils.TemplateUtil;
 
 /**
@@ -39,19 +37,16 @@ public class SnippetServlet extends HttpServlet {
 
 		final String showView = req.getParameter("v");
 		final String method = req.getParameter("m");
-		final String query = req.getParameter("q");
+		String query = req.getParameter("q");
 		final String url = req.getParameter("url");
 
 		if (query != null) {
+			//TODO get rid of that
+			query = query.toLowerCase();
 			WebPage webpage = new WebPage(null, null, url);
 
-			ApiView memView = ApiRetriver.queryMemcacheForView(query, Memcache.getInstance());
-
-			ApiResponse apiResponse = null;
-			if (memView == null) {
-				apiResponse = manger.query(webpage, query);
-				if (apiResponse == null) apiResponse = ApiRetriver.getApiResponse(query, method);
-			} else apiResponse = new ApiResponse(null, memView, null);
+			ApiResponse apiResponse = manger.queryTheDBAndMemcache(webpage, query);
+			if (apiResponse == null) apiResponse = ApiRetriver.getApiResponse(query, method);
 
 			if (apiResponse != null && showView != null) {
 				printApiResposeView(apiResponse, resp);
@@ -62,7 +57,7 @@ public class SnippetServlet extends HttpServlet {
 				try {
 					jsonObject.put("resultOK", apiResponse != null);
 				} catch (JSONException e) {
-					e.printStackTrace();
+					log.warning("json problem in simple resultOK");
 				}
 				resp.setContentType("application/json");
 				resp.getWriter().write(jsonObject.toString());

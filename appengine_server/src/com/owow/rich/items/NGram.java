@@ -1,7 +1,5 @@
 package com.owow.rich.items;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,11 +27,7 @@ public class NGram {
 		StringBuilder sb = new StringBuilder();
 		for (Token t : tokens)
 			sb.append(t + " ");
-		try {
-			return searchTerm = URLEncoder.encode(sb.toString().trim(), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			return searchTerm = sb.toString().trim();
-		}
+		return searchTerm = sb.toString().trim();
 	}
 	@Override
 	public String toString() {

@@ -11,14 +11,14 @@ import com.owow.rich.Manager;
 import com.owow.rich.items.WebPage;
 
 /**
- * Get request for the pre-processing of a page.
- * Get a page URL and pre-process the page.
+ * Get request for the pre-processing of a page. Get a page URL and pre-process
+ * the page.
  */
 @SuppressWarnings("serial")
 public class PageProccessServlet extends HttpServlet {
 
-	private Manager manager = new Manager();
-	private static final Logger log = Logger.getLogger("Rich");
+	private Manager	          manager	  = new Manager();
+	private static final Logger	log	  = Logger.getLogger("Rich");
 
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)

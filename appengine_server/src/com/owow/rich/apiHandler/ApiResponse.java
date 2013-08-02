@@ -19,7 +19,7 @@ public class ApiResponse implements Serializable {
 	private static final long	serialVersionUID	= -4369034077791508101L;
 	public JSONObject	         json;
 	public ApiView	            view;
-	// public boolean resultOk = true;
+	public boolean	            resultOk	        = true;
 	// private Exception mError;
 	public ApiType	            myType;
 
@@ -32,11 +32,6 @@ public class ApiResponse implements Serializable {
 		this.json = json;
 		this.view = view;
 		myType = apiType;
-		try {
-			json.put("type", apiType.toString());
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
 	}
 	public ApiResponse(JSONObject json, ApiType type)
 	{
@@ -73,8 +68,13 @@ public class ApiResponse implements Serializable {
 	public static ApiResponse getApiResponseFromEntity(Entity ent)
 	{
 		if (!ent.hasProperty(APITYPEKEY)) return null;
-		JSONObject json = new JSONObject(ent.getProperty(JSONKEY));
-		ApiView apiView = new ApiView((String) ent.getProperty(VIEWKEY));
+		JSONObject json;
+		try {
+			json = new JSONObject(((Text) ent.getProperty(VIEWKEY)).getValue());
+		} catch (JSONException e) {
+			json = null;
+		}
+		ApiView apiView = new ApiView(((Text) ent.getProperty(VIEWKEY)).getValue());
 		ApiType apiType = ApiType.create((String) ent.getProperty(APITYPEKEY));
 		return new ApiResponse(json, apiView, apiType);
 	}
