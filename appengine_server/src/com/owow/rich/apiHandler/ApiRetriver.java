@@ -24,7 +24,7 @@ public class ApiRetriver {
 		if (method == null) return getApiResponse(highlight);
 		return getApiResponse(highlight, ApiType.create(method));
 	}
-	public static ApiResponse getApiResponse(String highlight, ApiType at)
+	public static ApiResponse getApiResponse(String highlight, ApiType mainApiType)
 	{
 		try {
 			highlight = URLEncoder.encode(highlight, "UTF-8");
@@ -34,20 +34,20 @@ public class ApiRetriver {
 
 		if (v != null) return new ApiResponse(null, v, null);
 
-		ApiResponse ret = null;
+		ApiResponse apiResponse = null;
 
-		List<ApiType> seq = ApiTypeManager.getApiSequence(at);
-		for (ApiType apit : seq)
-			if (apit != null)
+		List<ApiType> apiTypeList = ApiTypeManager.getApiSequence(mainApiType);
+		for (ApiType apiType : apiTypeList)
+			if (apiType != null)
 			{
-				ApiHandler handler = apit.createHandler();
+				ApiHandler handler = apiType.createHandler();
 				try {
-					ret = handler.getData(highlight, at);
-					if (ret != null) break;
+					apiResponse = handler.getData(highlight, mainApiType);
+					if (apiResponse != null) break;
 				} catch (Exception e) {}
 			}
-		if (ret != null) pushMemcache(highlight, ret.view, Memcache.getInstance());
-		return ret;
+		if (apiResponse != null) pushMemcache(highlight, apiResponse.view, Memcache.getInstance());
+		return apiResponse;
 	}
 
 	public static void pushMemcache(String query, ApiView view, Memcache mem)
