@@ -75,7 +75,7 @@ public class SnippetServlet2 extends HttpServlet {
 						myWikiHandler.setHost(wh);
 						ApiResponse ar;
 						try {
-							ar = myWikiHandler.getData(title, ApiType.wiki);
+							ar = myWikiHandler.getFirstResponse(title, ApiType.wiki);
 							ja.put(ar.json);
 							break;
 						} catch (Exception e) {

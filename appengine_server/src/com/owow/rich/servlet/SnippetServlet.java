@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import com.google.template.soy.data.SoyMapData;
 import com.owow.rich.Manager;
 import com.owow.rich.apiHandler.ApiResponse;
-import com.owow.rich.apiHandler.ApiRetriver;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.utils.TemplateUtil;
@@ -41,28 +40,30 @@ public class SnippetServlet extends HttpServlet {
 		final String url = req.getParameter("url");
 
 		if (query != null) {
-			//TODO get rid of that
+			//TODO get rid of that.
 			query = query.toLowerCase();
 			WebPage webpage = new WebPage(null, null, url);
 
-			ApiResponse apiResponse = manger.queryTheDBAndMemcache(webpage, query);
-			if (apiResponse == null) apiResponse = ApiRetriver.getApiResponse(query, method);
+			ApiResponse apiResponse = manger.getApiResponse(webpage, query, method);
 
-			if (apiResponse != null && showView != null) {
-				printApiResposeView(apiResponse, resp);
-				manger.storage.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, url, apiResponse != null);
-			}
-			else if (showView == null) {
-				JSONObject jsonObject = new JSONObject();
-				try {
-					jsonObject.put("resultOK", apiResponse != null);
-				} catch (JSONException e) {
-					log.warning("json problem in simple resultOK");
+			// Send the response in json/html format: 
+			if (apiResponse != null){
+				// Send html:
+				if (showView != null) {
+					printApiResposeView(apiResponse, resp);
+					manger.storage.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, url, apiResponse != null);
+				// Send Json format:
+				} else  {
+					JSONObject jsonObject = new JSONObject();
+					try {
+						jsonObject.put("resultOK", apiResponse != null);
+					} catch (JSONException e) {
+						log.warning("json problem in simple resultOK");
+					}
+					resp.setContentType("application/json");
+					resp.getWriter().write(jsonObject.toString());
 				}
-				resp.setContentType("application/json");
-				resp.getWriter().write(jsonObject.toString());
 			}
-			return;
 		}
 	}
 	private void printApiResposeView(ApiResponse ar, HttpServletResponse res) throws IOException

@@ -5,10 +5,10 @@ import org.json.JSONObject;
 
 import com.owow.rich.utils.HtmlUtil;
 
-public class CrunchBaseHandler implements ApiHandler {
+public class CrunchBaseHandler extends ApiHandler {
 
 	@Override
-	public ApiResponse getData(String title, ApiType type) throws Exception {
+	public ApiResponse getFirstResponse(String title, ApiType type) throws Exception {
 
 		final String server = "http://api.crunchbase.com/v/1/search.js?api_key=5bfua4j796x3dthwr9sqcv4r&query=";
 		final String serverDataResponse = HtmlUtil.getUrlSource(server + title);

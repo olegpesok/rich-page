@@ -6,10 +6,10 @@ import org.json.JSONObject;
 
 import com.owow.rich.utils.HtmlUtil;
 
-public class GoogleHandler implements ApiHandler {
+public class GoogleHandler extends ApiHandler {
 
 	@Override
-	public ApiResponse getData(String query, ApiType type) throws Exception {
+	public ApiResponse getFirstResponse(String query, ApiType type) throws Exception {
 		final JSONArray data = new JSONArray();
 		final String google = "https://www.googleapis.com/customsearch/v1?key=AIzaSyCR2RdAX0PFHXargEsInerEc-RiFkYTWPE&cx=005640612292887937759:1reryqwjvhi&q=";
 

@@ -27,12 +27,12 @@ public class GeographicHandlrTest {
 
 	@Test
 	public void test() throws Exception {
-		geographicalHandler.getData("israel", ApiType.geo);
+		geographicalHandler.getFirstResponse("israel", ApiType.geo);
 	}
 
 	@Test
 	public void test2() throws Exception {
-		wh.getData("TEA", ApiType.wiki);
+		wh.getFirstResponse("TEA", ApiType.wiki);
 	}
 
 }

@@ -4,10 +4,10 @@ import org.json.JSONObject;
 
 import com.owow.rich.utils.HtmlUtil;
 
-public class GeographicHandler implements ApiHandler {
+public class GeographicHandler extends ApiHandler {
 
 	@Override
-	public ApiResponse getData(String query, ApiType type) throws Exception {
+	public ApiResponse getFirstResponse(String query, ApiType type) throws Exception {
 		final String server = "http://api.geonames.org/searchJSON?maxRows=10&username=owowsp&q=";
 
 		final JSONObject serverResponse = HtmlUtil.getJSONFromServerAndTitle(server, query);

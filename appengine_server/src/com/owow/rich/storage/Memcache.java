@@ -14,6 +14,7 @@ public class Memcache {
 		syncCache = MemcacheServiceFactory.getMemcacheService();
 		syncCache.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
 	}
+	
 
 	public static Memcache getInstance()
 	{

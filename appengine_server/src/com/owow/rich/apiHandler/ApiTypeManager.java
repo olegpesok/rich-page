@@ -1,7 +1,8 @@
 package com.owow.rich.apiHandler;
 
-import java.util.LinkedList;
 import java.util.List;
+
+import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 
 public class ApiTypeManager {
 
@@ -16,17 +17,17 @@ public class ApiTypeManager {
 	 * @param start ApiType
 	 * @return Ordered preference list of ApiTypes
 	 */
-	public static List<ApiType> getApiSequence(ApiType at)
+	public static List<ApiType> getApiSequence(ApiType apiType)
 	{
-		LinkedList<ApiType> ret = new LinkedList<ApiType>();
+		List<ApiType> apiTypeList = Lists.newLinkedList();
 		int i;
-		for (i = 0; i < prefrence.length && prefrence[i] != at; i++)
+		for (i = 0; i < prefrence.length && prefrence[i] != apiType; i++)
 		{}
-		ret.add(at);
+		apiTypeList.add(apiType);
 		i++;
 		for (; i < prefrence.length && prefrence[i] != end; i++)
-			ret.add(prefrence[i]);
+			apiTypeList.add(prefrence[i]);
 
-		return ret;
+		return apiTypeList;
 	}
 }

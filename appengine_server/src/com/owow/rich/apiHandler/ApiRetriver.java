@@ -24,7 +24,7 @@ public class ApiRetriver {
 		if (method == null) return getApiResponse(highlight);
 		return getApiResponse(highlight, ApiType.create(method));
 	}
-	public static ApiResponse getApiResponse(String highlight, ApiType at)
+	public static ApiResponse getApiResponse(String highlight, ApiType mainApiType)
 	{
 		try {
 			highlight = URLEncoder.encode(highlight, "UTF-8");
@@ -34,20 +34,24 @@ public class ApiRetriver {
 
 		if (v != null) return new ApiResponse(null, v, null);
 
-		ApiResponse ret = null;
 
-		List<ApiType> seq = ApiTypeManager.getApiSequence(at);
-		for (ApiType apit : seq)
-			if (apit != null)
+		List<ApiType> apiTypeList = ApiTypeManager.getApiSequence(mainApiType);
+		for (ApiType apiType : apiTypeList) {
+			if (apiType != null)
 			{
-				ApiHandler handler = apit.createHandler();
+				ApiHandler handler = apiType.createHandler();
 				try {
-					ret = handler.getData(highlight, at);
-					if (ret != null) break;
+					List<ApiResponse> apiResponseList = handler.getAllApiResponses(highlight, mainApiType);
+					if (apiResponseList != null && apiResponseList.size() > 0) {
+						// TODO(guti): take the best one according to the content:
+						ApiResponse apiResponse = apiResponseList.get(0);
+						pushMemcache(highlight, apiResponse.view, Memcache.getInstance());
+						return apiResponse;
+					}
 				} catch (Exception e) {}
 			}
-		if (ret != null) pushMemcache(highlight, ret.view, Memcache.getInstance());
-		return ret;
+		}
+		return null;
 	}
 
 	public static void pushMemcache(String query, ApiView view, Memcache mem)
@@ -57,10 +61,6 @@ public class ApiRetriver {
 	/**
 	 * Query memcache for previous entries for the queries. Returns an
 	 * ApiResponse object with only view
-	 *
-	 * @param query
-	 * @param mem
-	 * @return
 	 */
 	public static ApiView queryMemcacheForView(String query, Memcache mem)
 	{
