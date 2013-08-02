@@ -57,10 +57,6 @@ public class ApiRetriver {
 	/**
 	 * Query memcache for previous entries for the queries. Returns an
 	 * ApiResponse object with only view
-	 *
-	 * @param query
-	 * @param mem
-	 * @return
 	 */
 	public static ApiView queryMemcacheForView(String query, Memcache mem)
 	{
