@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import com.google.template.soy.data.SoyMapData;
 import com.owow.rich.Manager;
 import com.owow.rich.apiHandler.ApiResponse;
-import com.owow.rich.apiHandler.ApiRetriver;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.utils.TemplateUtil;

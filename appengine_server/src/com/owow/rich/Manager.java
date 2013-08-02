@@ -39,10 +39,12 @@ public class Manager {
 	}
 
 	/**
+	 * Try to find a matching result to the query, look in the cache, and previous results in the db before
+	 * sending request to external services (e.g Free-base) in order to save time and money.
+	 * 
 	 * @param webPage - The context of the query
 	 * @param query - The highlight to which we are looking for a match
 	 * @param method - What is the method for retrieving the response. 
-	 * @return
 	 */
 	public ApiResponse getApiResponse(WebPage webPage, String query, String method)
 	{
