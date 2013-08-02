@@ -13,6 +13,7 @@ import com.owow.rich.items.NGram;
 import com.owow.rich.items.Token;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.Memcache;
+import com.owow.rich.storage.PreviousResultsCache;
 import com.owow.rich.storage.Storage;
 import com.owow.rich.utils.TokenizerUtil;
 
@@ -21,53 +22,42 @@ public class Manager {
 	private TokenizerUtil	tokenizer;
 	private EntityRetriever	entityRetriever;
 	public Storage	         storage;
-	private Memcache	      memcache;
-	final static String	   MEMCACHE_PREFIX	= "manager/";
+	
 	public final static int	NGRAM_LEN	    = 2;
+	private PreviousResultsCache cache;
+	
+	
 	public Manager( ) {
-		this(new TokenizerUtil(), new EntityRetriever(), new Storage(), Memcache.getInstance());
+		this(new TokenizerUtil(), new EntityRetriever(), new Storage(), new PreviousResultsCache());
 	}
 
-	public Manager(TokenizerUtil tokenizer, EntityRetriever entityRetriever, Storage storage, Memcache memcache) {
+	public Manager(TokenizerUtil tokenizer, EntityRetriever entityRetriever, Storage storage, PreviousResultsCache cache) {
 		this.tokenizer = tokenizer;
 		this.entityRetriever = entityRetriever;
 		this.storage = storage;
-		this.memcache = memcache;
+		this.cache = cache;
 	}
 
 	public ApiResponse queryTheDBAndMemcache(WebPage webPage, String query)
 	{
-
-		ApiView av = queryMemcacheForApiView(query);
-		if (av != null) return new ApiResponse(null, av, null);
-
-		ApiResponse apiResponse = null;
-		List<Token> tokens = tokenizer.tokenize(query);
-		List<NGram> nGrams = tokenizer.combineToNGrams(tokens, NGRAM_LEN);
-		java.util.Collections.reverse(nGrams);
-		String qNgram;
-		// Memcache queries
-		for (NGram nGram : nGrams)
-		{
-			qNgram = nGram.toString();
-			av = queryMemcacheForApiView(qNgram);
-			if (av == null) av = ApiRetriver.queryMemcacheForView(qNgram, memcache);
-
-			if (av != null) {
-				apiResponse = new ApiResponse(null, av, null);
-				break;
-			}
+		// Looks for we have the full query(highlight) in the cache.
+		ApiView apiView = cache.queryMemcacheForApiView(query);
+		if (apiView != null) {
+			return new ApiResponse(null, apiView, null);
 		}
-		boolean getIntoMem = av == null;
+		
+		// Looks if we have any of the ngrams of the query in the cache.
+		List<NGram> nGrams = tokenizer.getAllNgram(query, NGRAM_LEN);
+		ApiResponse apiResponse = cache.getFirstMatchingNgram(nGrams);
 
 		// db queries
-		if (av == null) for (NGram nGram : nGrams)
-		{
-			qNgram = nGram.toString();
-			apiResponse = storage.loadEntity(webPage, nGram);
-
-			if (apiResponse != null) break;
+		if (apiResponse == null) {
+			for (NGram nGram : nGrams) {
+				apiResponse = storage.loadEntity(webPage, nGram);
+				if (apiResponse != null) break;
+			}
 		}
+		
 		// TODO Save somewhere if null for future notice and not repeating useless
 		// opertion. - no result
 		// TODO Preproccessing managment.
@@ -76,15 +66,10 @@ public class Manager {
 		// TODO Highlight breaker - break a phrase to NGRAM and search in the
 		// memcache and db
 		// TODO TF/IDF
-		if (apiResponse != null && getIntoMem) memcache.set(MEMCACHE_PREFIX + query, apiResponse.view.toString());
+		if (apiResponse != null) cache.save(query, apiResponse.view.toString());
 		return apiResponse;
 	}
-	private ApiView queryMemcacheForApiView(String query)
-	{
-		Object viewString = memcache.get(MEMCACHE_PREFIX + query);
-		if (viewString == null) return null;
-		return new ApiView((String) viewString);
-	}
+	
 
 	public Map<NGram, ApiResponse> processPage(WebPage webPage) throws Exception {
 

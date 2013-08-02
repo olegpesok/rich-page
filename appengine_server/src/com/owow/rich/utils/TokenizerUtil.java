@@ -1,5 +1,6 @@
 package com.owow.rich.utils;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -49,4 +50,11 @@ public class TokenizerUtil {
 
 		return null;
 	}
+	
+	public List<NGram> getAllNgram(String query, int ngramLen) {
+		List<Token> tokens = this.tokenize(query);
+		List<NGram> nGrams = this.combineToNGrams(tokens, ngramLen);
+		Collections.reverse(nGrams);
+		return nGrams;
+   }
 }
