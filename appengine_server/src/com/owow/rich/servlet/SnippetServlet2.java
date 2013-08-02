@@ -15,7 +15,7 @@ import org.json.JSONObject;
 
 import com.google.template.soy.data.SoyMapData;
 import com.owow.rich.apiHandler.ApiResponse;
-import com.owow.rich.apiHandler.ApiResponseFactory;
+import com.owow.rich.apiHandler.ApiRetriver;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.apiHandler.WikipediaHandler;
 import com.owow.rich.apiHandler.WikipediaHandler.WikiHost;
@@ -25,33 +25,32 @@ import com.owow.rich.items.Highlight;
 import com.owow.rich.items.SearchTerm;
 import com.owow.rich.utils.TemplateUtil;
 
-
 @SuppressWarnings("serial")
 public class SnippetServlet2 extends HttpServlet {
 
-	
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)
 	      throws IOException {
 		resp.setContentType("application/json");
-		
+
 		final String method = req.getParameter("m");
 		final String showView = req.getParameter("v");
-		
+
 		String highlight = req.getParameter("highlight");
 		if (highlight == null) {
 			resp.getWriter().write("missing highlight");
 			return;
 		}
-	
+
 		try {
 			ApiResponse ar = getApiResponseFromHighlight(req, resp, method, highlight, showView);
-			 resp.getWriter().write(ar.toString());
+			resp.getWriter().write(ar.toString());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+	// unused
 	ApiResponse getApiResponseFromHighlight(final HttpServletRequest req, final HttpServletResponse resp, final String method, String highlight, String showView)
 	      throws UnsupportedEncodingException, IOException, JSONException {
 		if (method.equals("allw"))
@@ -90,7 +89,7 @@ public class SnippetServlet2 extends HttpServlet {
 		}
 		else
 		{
-			ApiResponse fin = ApiResponseFactory.getApiResponse(highlight, method);
+			ApiResponse fin = ApiRetriver.getApiResponse(highlight, method);
 			if (fin != null) if (showView == null) resp.getWriter().write(fin.toString());
 			else {
 				resp.setContentType("text/html");

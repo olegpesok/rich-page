@@ -19,6 +19,7 @@ import org.xml.sax.SAXException;
 
 public class HtmlUtil {
 
+	HtmlUtil( ) {}
 	public static String getTextFromHtml(final String html) {
 		return Jsoup.parse(html).text();
 	}

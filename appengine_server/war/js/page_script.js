@@ -67,6 +67,7 @@ $(document).ready(function() {
 	var $scroller = $('#context-box-content-container').slimScroll({
 		alwaysVisible : false,
 		railVisible : true,
+		allowPageScroll:true,
 		height : '260px',
 		color : "rgb(40, 100, 237)"
 	});

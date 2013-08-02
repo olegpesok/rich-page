@@ -41,8 +41,8 @@ public class WikiLink {
 	@Deprecated
 	public static WikiLink createFromAElement(final String a)
 	{
-		final Element e = Jsoup.parse(a).getElementsByTag("a").first();
-		return new WikiLink(e.attr("href"), e.text());
+		final Element elem = Jsoup.parse(a).getElementsByTag("a").first();
+		return new WikiLink(elem.attr("href"), elem.text());
 	}
 
 	public static WikiLink createFromliElement(Element li)

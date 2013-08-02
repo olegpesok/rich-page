@@ -22,13 +22,16 @@ public class WolframAlphaHandler implements ApiHandler {
 		final org.w3c.dom.Document d = HtmlUtil.getDocumentFromUrl(server + title);
 		if (d.getDocumentElement().getAttribute("success").contains("false") || !d.getDocumentElement().getAttribute("error").equals("false")) throw new Exception(
 		      "failed");
+
+		// parsing document to string
 		final DOMSource domSource = new DOMSource(d.getDocumentElement());
-		final StringWriter writer = new StringWriter();
-		final StreamResult result = new StreamResult(writer);
+		final StringWriter dataWriter = new StringWriter();
+		final StreamResult result = new StreamResult(dataWriter);
 		final TransformerFactory tf = TransformerFactory.newInstance();
 		final Transformer transformer = tf.newTransformer();
 		transformer.transform(domSource, result);
-		ret.put("data", writer.toString());
+
+		ret.put("data", dataWriter.toString());
 
 	   return new ApiResponse(ret, at);
 	}

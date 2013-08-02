@@ -3,11 +3,11 @@ package com.owow.rich;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONObject;
-
 import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
 import com.owow.rich.apiHandler.ApiResponse;
+import com.owow.rich.apiHandler.ApiRetriver;
 import com.owow.rich.apiHandler.ApiType;
+import com.owow.rich.apiHandler.ApiView;
 import com.owow.rich.entity.EntityRetriever;
 import com.owow.rich.items.NGram;
 import com.owow.rich.items.Token;
@@ -18,58 +18,79 @@ import com.owow.rich.utils.TokenizerUtil;
 
 public class Manager {
 
-	private TokenizerUtil	      tokenizer;
+	private TokenizerUtil	tokenizer;
 	private EntityRetriever	entityRetriever;
 	public Storage	         storage;
-	private Memcache	      mem;
+	private Memcache	      memcache;
 	final static String	   MEMCACHE_PREFIX	= "manager/";
+	public final static int	NGRAM_LEN	    = 2;
 	public Manager( ) {
 		this(new TokenizerUtil(), new EntityRetriever(), new Storage(), Memcache.getInstance());
 	}
 
-	public Manager(TokenizerUtil tokenizer, EntityRetriever entityRetriever, Storage storage, Memcache mem) {
+	public Manager(TokenizerUtil tokenizer, EntityRetriever entityRetriever, Storage storage, Memcache memcache) {
 		this.tokenizer = tokenizer;
 		this.entityRetriever = entityRetriever;
 		this.storage = storage;
-		this.mem = mem;
+		this.memcache = memcache;
 	}
 
-	public ApiResponse query(WebPage webPage, String query)
+	public ApiResponse queryTheDBAndMemcache(WebPage webPage, String query)
 	{
-		ApiResponse ar = queryMemcache(query);
-		if (ar != null) return ar;
 
-		List<Token> tokens = tokenizer.tokenize(webPage.getText());
-		List<NGram> nGrams = tokenizer.combineToNGrams(tokens, 2);
+		ApiView av = queryMemcacheForApiView(query);
+		if (av != null) return new ApiResponse(null, av, null);
+
+		ApiResponse apiResponse = null;
+		List<Token> tokens = tokenizer.tokenize(query);
+		List<NGram> nGrams = tokenizer.combineToNGrams(tokens, NGRAM_LEN);
 		java.util.Collections.reverse(nGrams);
+		String qNgram;
+		// Memcache queries
 		for (NGram nGram : nGrams)
 		{
-			ar = storage.loadEntity(webPage, nGram);
-			if (ar != null) break;
+			qNgram = nGram.toString();
+			av = queryMemcacheForApiView(qNgram);
+			if (av == null) av = ApiRetriver.queryMemcacheForView(qNgram, memcache);
+
+			if (av != null) {
+				apiResponse = new ApiResponse(null, av, null);
+				break;
+			}
+		}
+		boolean getIntoMem = av == null;
+
+		// db queries
+		if (av == null) for (NGram nGram : nGrams)
+		{
+			qNgram = nGram.toString();
+			apiResponse = storage.loadEntity(webPage, nGram);
+
+			if (apiResponse != null) break;
 		}
 		// TODO Save somewhere if null for future notice and not repeating useless
 		// opertion. - no result
 		// TODO Preproccessing managment.
 		// TODO Remove unwanted phrases from getting a view
 		// TODO NLP to be usefull
-		// TODO Highlight breaker - break a phrase to NGRAM and search in the memcache and db
+		// TODO Highlight breaker - break a phrase to NGRAM and search in the
+		// memcache and db
 		// TODO TF/IDF
-		if (ar != null) mem.set(MEMCACHE_PREFIX + query, ar.view.toString());
-		return ar;
+		if (apiResponse != null && getIntoMem) memcache.set(MEMCACHE_PREFIX + query, apiResponse.view.toString());
+		return apiResponse;
+	}
+	private ApiView queryMemcacheForApiView(String query)
+	{
+		Object viewString = memcache.get(MEMCACHE_PREFIX + query);
+		if (viewString == null) return null;
+		return new ApiView((String) viewString);
 	}
 
-	private ApiResponse queryMemcache(String query)
-	{
-		Object b = mem.get(MEMCACHE_PREFIX + query);
-		if (b == null) return null;
-		return new ApiResponse(new JSONObject(), (String) b, ApiType.freebase);
-	}
-	
 	public Map<NGram, ApiResponse> processPage(WebPage webPage) throws Exception {
 
 		// Toknaize Text (split):
 		List<Token> tokens = tokenizer.tokenize(webPage.getText());
-		List<NGram> nGrams = tokenizer.combineToNGrams(tokens, 2);
+		List<NGram> nGrams = tokenizer.combineToNGrams(tokens, NGRAM_LEN);
 
 		Map<NGram, ApiResponse> entitesMap = Maps.newHashMap();
 		for (NGram ngram : nGrams) {

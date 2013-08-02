@@ -11,50 +11,41 @@ import org.jsoup.select.Elements;
 public class QouraHandler implements ApiHandler {
 
 	@Override
-	public ApiResponse getData(String title, ApiType at) throws Exception {
-		final JSONObject jo = new JSONObject();
-		final JSONArray ret = new JSONArray();
+	public ApiResponse getData(String query, ApiType type) throws Exception {
+		final JSONObject json = new JSONObject();
+		final JSONArray data = new JSONArray();
 		final String server = "http://www.quora.com/search?q=";
-		final String url = server + title;
-		final Connection.Response res = Jsoup.connect(url).timeout(5000)
-		      .ignoreHttpErrors(true).followRedirects(true).execute();
+		final String url = server + query;
+		final Connection.Response res = Jsoup.connect(url).timeout(5000).ignoreHttpErrors(true).followRedirects(true).execute();
 
-		final Document d = res.parse();
-		Elements divs = d.getElementsByAttributeValueContaining(
-		      "class", "question_link");
-		jo.put("nums", divs.size());
+		final Document document = res.parse();
+		Elements divs = document.getElementsByAttributeValueContaining("class", "question_link");
+		json.put("nums", divs.size());
 		for (int i = 0; i < divs.size(); i++) {
 			Element div = divs.get(i);
 			final JSONObject question = new JSONObject();
 			question.put("questionHTML", div.html());
 			question.put("questionText", div.text());
-			question.put("link",
-			      "http://www.quora.com" + div.attr("href"));
-			div = div
-			      .parent()
-			      .parent()
-			      .parent()
-			      .getElementsByAttributeValueContaining("class",
-			            "row").first();
+			question.put("link", "http://www.quora.com" + div.attr("href"));
+			div = div.parent().parent().parent().getElementsByAttributeValueContaining("class", "row").first();
 			question.put("snippetText", div.text());
 			question.put("snippetHTML", div.html());
-			ret.put(question);
+			data.put(question);
 		}
 
-		divs = d.getElementsByAttributeValue("class",
-		      "search_result_snippet");
+		divs = document.getElementsByAttributeValue("class", "search_result_snippet");
 		if (divs.size() != 0) {
-			jo.put("snippet", divs.first().text());
-			jo.put("snippetHTML", divs.first().html());
+			json.put("snippet", divs.first().text());
+			json.put("snippetHTML", divs.first().html());
 		}
-		jo.put("data", ret);
-		return new ApiResponse(jo, at);
+		json.put("data", data);
+		return new ApiResponse(json, type);
 	}
 
 	@Override
-   public ApiView getView(ApiResponse fromGetData) throws Exception {
-	   // TODO Auto-generated method stub
-	   return null;
-   }
+	public ApiView getView(ApiResponse fromGetData) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

@@ -7,7 +7,7 @@ import com.owow.rich.utils.HtmlUtil;
 public class CkanHandler implements ApiHandler {
 
 	@Override
-	public ApiResponse getData(String title, ApiType at) throws Exception {
+	public ApiResponse getData(String title, ApiType type) throws Exception {
 
 		final String server = "http://demo.ckan.org/api/3/action/package_search?q=";
 		JSONObject ret = HtmlUtil.getJSONFromServerAndTitle(server, title);
@@ -20,7 +20,7 @@ public class CkanHandler implements ApiHandler {
 		final JSONObject jo = new JSONObject();
 		jo.put("data", ret);
 
-		return new ApiResponse(jo, at);
+		return new ApiResponse(jo, type);
 	}
 
 	@Override

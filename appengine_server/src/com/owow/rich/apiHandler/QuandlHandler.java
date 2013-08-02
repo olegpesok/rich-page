@@ -11,16 +11,16 @@ import com.owow.rich.utils.HtmlUtil;
 public class QuandlHandler implements ApiHandler {
 
 	@Override
-	public ApiResponse getData(String title, ApiType at) throws Exception {
-		JSONObject ret;
+	public ApiResponse getData(String query, ApiType type) throws Exception {
+		JSONObject serverResponse;
 		final String server = "http://www.quandl.com/api/v1/datasets.json?query=";
-		ret = HtmlUtil.getJSONFromServerAndTitle(server, title);
-		final JSONArray ja = ret.getJSONArray("docs");
-		if (ja.length() == 0) throw new Exception("no results");
+		serverResponse = HtmlUtil.getJSONFromServerAndTitle(server, query);
+		final JSONArray data = serverResponse.getJSONArray("docs");
+		if (data.length() == 0) throw new Exception("no results");
 
-		final JSONObject jo = new JSONObject();
-		jo.put("data", ja);
-		return new ApiResponse(jo, at);
+		final JSONObject json = new JSONObject();
+		json.put("data", data);
+		return new ApiResponse(json, type);
 	}
 
 	// TODO understand what todo
