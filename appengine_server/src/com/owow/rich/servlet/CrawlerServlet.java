@@ -12,7 +12,5 @@ public class CrawlerServlet extends HttpServlet {
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)
 	      throws IOException {
-
-
 	}
 }

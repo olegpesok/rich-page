@@ -52,7 +52,16 @@ public class Storage {
 
 		datastore.put(e);
 	}
+	public ApiResponse getFirstMatchingNgram(WebPage context, List<NGram> ngrams)
+	{
+		ApiResponse apiResponse = null;
+		for (NGram nGram : ngrams) {
+			apiResponse = loadEntity(context, nGram);
+			if (apiResponse != null) break;
+		}
+		return apiResponse;
 
+	}
 	public ApiResponse loadEntity(WebPage context, NGram n)
 	{
 		Query query = new Query(KeyFactory.createKey(ENTITY_KIND, n.toString()));

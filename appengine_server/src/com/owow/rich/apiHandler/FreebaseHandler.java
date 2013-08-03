@@ -13,8 +13,8 @@ import com.owow.rich.utils.HtmlUtil;
 
 public class FreebaseHandler extends ApiHandler {
 
-	String	GOOGLE_API_KEY	= "AIzaSyBjIW5540wkFEpZE2D3fx-TrLykSJ9MAiU";
-	private int FREEBASE_SCORE_THRESHOLD = 200;
+	String	   GOOGLE_API_KEY	          = "AIzaSyBjIW5540wkFEpZE2D3fx-TrLykSJ9MAiU";
+	private int	FREEBASE_SCORE_THRESHOLD	= 200;
 
 	@Override
 	public ApiResponse getFirstResponse(String title, ApiType apiType) throws Exception {
@@ -27,50 +27,46 @@ public class FreebaseHandler extends ApiHandler {
 				ApiResponse apiResponse = getFreebseTopic(mid, apiType);
 				responses.add(apiResponse);
 			}
-      }
+		}
 		return getBestApiResponse(responses);
 	}
 
-	//TODO(guti):
+	// TODO(guti):
 	private ApiResponse getBestApiResponse(List<ApiResponse> responses) {
-	   return null;
-   }
+		return null;
+	}
 
 	private JSONArray getFreebaseSearchResponse(String title) throws IOException, JSONException {
-	   GenericUrl searchUrl = new GenericUrl("https://www.googleapis.com/freebase/v1/search");
+		GenericUrl searchUrl = new GenericUrl("https://www.googleapis.com/freebase/v1/search");
 		searchUrl.put("query", title);
 		searchUrl.put("key", GOOGLE_API_KEY);
 		final String searchData = HtmlUtil.getUrlSource(searchUrl.toString());
 		JSONArray searchResponse = new JSONObject(searchData).getJSONArray("result");
-	   return searchResponse;
-   }
-	
+		return searchResponse;
+	}
+
 	private ApiResponse getFreebseTopic(String mid, ApiType apiType) {
-		try{	
+		try {
 			GenericUrl topicUrl = new GenericUrl("https://www.googleapis.com/freebase/v1/topic" + mid);
 			topicUrl.put("filter", "/common/topic/description");
 			topicUrl.put("key", GOOGLE_API_KEY);
 			String topicData;
-		      topicData = HtmlUtil.getUrlSource(topicUrl.toString());
-	      
+			topicData = HtmlUtil.getUrlSource(topicUrl.toString());
+
 			JSONObject topicResponse = new JSONObject(topicData);
-			
-			if (!topicResponse.has("property")){
-				//TODO: log PropertyNotFound.
-				return null;
-			}
+
+			if (!topicResponse.has("property")) // TODO: log PropertyNotFound.
+			return null;
 			String html = topicResponse.getJSONObject("property").getJSONObject("/common/topic/description").getJSONArray("values").getJSONObject(0)
 			      .getString("value");
 			html = "<p>" + html.replace(". ", ". </p><p>") + "</p>";
-	
+
 			return new ApiResponse(topicResponse, /* "score: " + score + ". " + */html, apiType);
-      } catch (Exception e) {
-	      // TODO: log exception.
-	      return null;
-      }
+		} catch (Exception e) {
+			// TODO: log exception.
+			return null;
+		}
 	}
-	
-	
 
 	@Override
 	public ApiView getView(ApiResponse fromGetData) throws Exception {

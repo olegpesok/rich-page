@@ -127,8 +127,10 @@ public class WikipediaHandler extends ApiHandler {
 		json.put("query", query);
 		json.put("host_nickname", mHost.toString());
 		json.put("host_url", mHost.getUrl());
-		//json.put("score", 100);
-		return new ApiResponse(json, type);
+		// json.put("score", 100);
+		ApiResponse ret = new ApiResponse(json, type);
+		ret.view = getView(ret);
+		return ret;
 	}
 	public WikiHost getHost()
 	{
@@ -140,10 +142,16 @@ public class WikipediaHandler extends ApiHandler {
 	}
 	@Override
 	public ApiView getView(ApiResponse fromGetData) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		String view = "";
+		JSONArray pelems = fromGetData.json.getJSONArray("data").getJSONObject(0).getJSONArray("p");
+		for (int i = 0; i < pelems.length(); i++)
+			view += pelems.getString(i);
+		String bad = "<br /><strong class=\"error mw-ext-cite-error\">Cite error: There are <code>&lt;ref&gt;</code> tags on this page, but the references will not show without a <code>{{reflist}}</code> template (see the <a href=\"/wiki/Help:Cite_errors/Cite_error_refs_without_references\" title=\"Help:Cite errors/Cite error refs without references\">help page</a>).</strong>";
 
+		String shalti = "<sup [ a-zA-Z0-9=\"_-]{0,40}><a [# a-zA-Z0-9=\"_-]{0,30}><span>\\[</span>[0-9]{1,3}<span>\\]</span></a></sup>";
+		view = view.replace(bad, "").replaceAll(shalti, "");
+		return new ApiView(view);
+	}
 	public class DisambugitionElement
 	{
 		public DisambugitionElement(String msubject) {

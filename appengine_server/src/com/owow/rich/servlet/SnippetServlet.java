@@ -40,29 +40,27 @@ public class SnippetServlet extends HttpServlet {
 		final String url = req.getParameter("url");
 
 		if (query != null) {
-			//TODO get rid of that.
+			// TODO get rid of that.
 			query = query.toLowerCase();
 			WebPage webpage = new WebPage(null, null, url);
 
 			ApiResponse apiResponse = manger.getApiResponse(webpage, query, method);
 
-			// Send the response in json/html format: 
-			if (apiResponse != null){
-				// Send html:
-				if (showView != null) {
-					printApiResposeView(apiResponse, resp);
-					manger.storage.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, url, apiResponse != null);
+			// Send the response in json/html format:
+			if (apiResponse != null) // Send html:
+			if (showView != null) {
+				printApiResposeView(apiResponse, resp);
+				manger.storage.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, url, apiResponse != null);
 				// Send Json format:
-				} else  {
-					JSONObject jsonObject = new JSONObject();
-					try {
-						jsonObject.put("resultOK", apiResponse != null);
-					} catch (JSONException e) {
-						log.warning("json problem in simple resultOK");
-					}
-					resp.setContentType("application/json");
-					resp.getWriter().write(jsonObject.toString());
+			} else {
+				JSONObject jsonObject = new JSONObject();
+				try {
+					jsonObject.put("resultOK", apiResponse != null && !apiResponse.view.getView().isEmpty());
+				} catch (JSONException e) {
+					log.warning("json problem in simple resultOK");
 				}
+				resp.setContentType("application/json");
+				resp.getWriter().write(jsonObject.toString());
 			}
 		}
 	}

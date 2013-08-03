@@ -12,21 +12,19 @@ import com.owow.rich.entity.EntityRetriever;
 import com.owow.rich.items.NGram;
 import com.owow.rich.items.Token;
 import com.owow.rich.items.WebPage;
-import com.owow.rich.storage.Memcache;
 import com.owow.rich.storage.PreviousResultsCache;
 import com.owow.rich.storage.Storage;
 import com.owow.rich.utils.TokenizerUtil;
 
 public class Manager {
 
-	private TokenizerUtil	tokenizer;
-	private EntityRetriever	entityRetriever;
-	public Storage	         storage;
-	
-	public final static int	NGRAM_LEN	    = 2;
-	private PreviousResultsCache cache;
-	
-	
+	private TokenizerUtil	     tokenizer;
+	private EntityRetriever	     entityRetriever;
+	public Storage	              storage;
+
+	public final static int	     NGRAM_LEN	= 2;
+	private PreviousResultsCache	cache;
+
 	public Manager( ) {
 		this(new TokenizerUtil(), new EntityRetriever(), new Storage(), new PreviousResultsCache());
 	}
@@ -39,46 +37,37 @@ public class Manager {
 	}
 
 	/**
-	 * Try to find a matching result to the query, look in the cache, and previous results in the db before
-	 * sending request to external services (e.g Free-base) in order to save time and money.
-	 * 
-	 * @param webPage - The context of the query
-	 * @param query - The highlight to which we are looking for a match
-	 * @param method - What is the method for retrieving the response. 
+	 * Try to find a matching result to the query, look in the cache, and
+	 * previous results in the db before sending request to external services
+	 * (e.g Free-base) in order to save time and money.
+	 *
+	 * @param webPage
+	 *           - The context of the query
+	 * @param query
+	 *           - The highlight to which we are looking for a match
+	 * @param method
+	 *           - What is the method for retrieving the response.
 	 */
 	public ApiResponse getApiResponse(WebPage webPage, String query, String method)
 	{
 		// Looks for we have the full query(highlight) in the cache.
 		ApiView apiView = cache.queryMemcacheForApiView(query);
-		if (apiView != null) {
-			return new ApiResponse(null, apiView, null);
-		}
-		
+		if (apiView != null) return new ApiResponse(null, apiView, null);
+
 		// Looks if we have any of the ngrams of the query in the cache.
 		List<NGram> nGrams = tokenizer.getAllNgram(query, NGRAM_LEN);
 		ApiResponse apiResponse = cache.getFirstMatchingNgram(nGrams);
 
 		// db queries
-		// CR: you can also change this to something like storage.getFirstMatchingNgram(nGrams)
-		if (apiResponse == null) {
-			for (NGram nGram : nGrams) {
-				apiResponse = storage.loadEntity(webPage, nGram);
-				if (apiResponse != null) break;
-			}
-		}
-		
+		if (apiResponse == null) apiResponse = storage.getFirstMatchingNgram(webPage, nGrams);
+
 		// Do live retrieve.
-		if (apiResponse == null) {
-			apiResponse = ApiRetriver.getApiResponse(query, method);
-		}
-		
-		if (apiResponse != null) {
-			cache.save(query, apiResponse.view.toString());
-		}
-			
+		if (apiResponse == null) apiResponse = ApiRetriver.getApiResponse(query, method);
+
+		if (apiResponse != null) cache.save(query, apiResponse.view.toString());
+
 		return apiResponse;
 	}
-	
 
 	public Map<NGram, ApiResponse> processPage(WebPage webPage) throws Exception {
 
