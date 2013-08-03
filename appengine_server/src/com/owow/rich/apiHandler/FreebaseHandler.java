@@ -16,34 +16,60 @@ public class FreebaseHandler extends ApiHandler {
 	String	GOOGLE_API_KEY	= "AIzaSyBjIW5540wkFEpZE2D3fx-TrLykSJ9MAiU";
 	private int FREEBASE_SCORE_THRESHOLD = 200;
 
+	/** 
+	 * Return the first result from freebase.
+	 */
 	@Override
 	public ApiResponse getFirstResponse(String highlight, ApiType apiType) throws Exception {
 		JSONArray searchResponse = getFreebaseSearchResponse(highlight);
+		// if		
 		if (searchResponse.length() > 0) {
-			return getSingleResponse(searchResponse, 0, apiType);
+			return getSingleResponse(searchResponse.getJSONObject(0), apiType);
 		} else {
 			return null;
 		}
 	}
 	
+	/**
+	 * Return all the results for this highlight.
+	 */
 	@Override
 	public List<ApiResponse> getAllApiResponses(String highlight, ApiType apiType) throws Exception {
 		JSONArray searchResponse = getFreebaseSearchResponse(highlight);
+		
 		List<ApiResponse> responses = Lists.newArrayList();
 		for (int i = 0; i < searchResponse.length(); i++) {
-			ApiResponse apiResponse = getSingleResponse(searchResponse, i, apiType);
+			ApiResponse apiResponse = getSingleResponse(searchResponse.getJSONObject(i), apiType);
 			if (apiResponse != null) {
 				responses.add(apiResponse);
 			}
       }
 		return responses;
 	}
-
-	private ApiResponse getSingleResponse(JSONArray searchResponse, int i, ApiType apiType) {
+	
+	/**
+	 * Give a query we return all the results for this query.
+	 */
+	private JSONArray getFreebaseSearchResponse(String title) throws IOException, JSONException {
+	   GenericUrl searchUrl = new GenericUrl("https://www.googleapis.com/freebase/v1/search");
+		searchUrl.put("query", title);
+		searchUrl.put("key", GOOGLE_API_KEY);
+		final String searchData = HtmlUtil.getUrlSource(searchUrl.toString());
+		JSONArray searchResponse = new JSONObject(searchData).getJSONArray("result");
+	   return searchResponse;
+   }
+	
+	
+	/**
+	 * Retrieve the result and create the ApiResponse from it.
+	 * 
+	 * Return null if exception is thrown or if Freebase's score is below the FREEBASE_SCORE_THRESHOLD.
+	 */
+	private ApiResponse getSingleResponse(JSONObject searchResult, ApiType apiType) {
 		try {
-			int score = searchResponse.getJSONObject(i).getInt("score");
+			int score = searchResult.getInt("score");
 			if (score >= FREEBASE_SCORE_THRESHOLD) {
-				String mid = searchResponse.getJSONObject(0).getString("mid");
+				String mid = searchResult.getString("mid");
 				JSONObject topicResponse = getFreebseTopic(mid, apiType);
 				
 				if (!topicResponse.has("property")){
@@ -63,16 +89,10 @@ public class FreebaseHandler extends ApiHandler {
 		}
 	   return null;
    }
-
-	private JSONArray getFreebaseSearchResponse(String title) throws IOException, JSONException {
-	   GenericUrl searchUrl = new GenericUrl("https://www.googleapis.com/freebase/v1/search");
-		searchUrl.put("query", title);
-		searchUrl.put("key", GOOGLE_API_KEY);
-		final String searchData = HtmlUtil.getUrlSource(searchUrl.toString());
-		JSONArray searchResponse = new JSONObject(searchData).getJSONArray("result");
-	   return searchResponse;
-   }
 	
+	/**
+	 * Reterive the result from free base according to the mid.
+	 */
 	private JSONObject getFreebseTopic(String mid, ApiType apiType) {
 		try{	
 			GenericUrl topicUrl = new GenericUrl("https://www.googleapis.com/freebase/v1/topic" + mid);
@@ -87,8 +107,6 @@ public class FreebaseHandler extends ApiHandler {
 	      return null;
       }
 	}
-	
-	
 
 	@Override
 	public ApiView getView(ApiResponse fromGetData) throws Exception {

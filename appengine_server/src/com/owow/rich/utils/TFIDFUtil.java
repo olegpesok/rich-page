@@ -14,6 +14,7 @@ import com.google.appengine.api.search.Results;
 import com.google.appengine.api.search.ScoredDocument;
 import com.google.appengine.api.search.SearchServiceFactory;
 import com.google.appengine.api.search.SortOptions;
+import com.google.appengine.datanucleus.Utils.Function;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Iterables;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.owow.rich.apiHandler.ApiResponse;
@@ -49,10 +50,11 @@ public class TFIDFUtil {
 		}
 	}
 	
-	public Documents<ApiResponse> getRankList(String text, String highlight, Documents<ApiResponse> documents) {
-	   // TODO Auto-generated method stub
-	   return null;
+	public Documents<ApiResponse> getRankList(String text, String highlight, List<ApiResponse> apiResponseList, Function<ApiResponse, String> getTextFunction) {
+	   
+		return null;
    }
+	
 	
 	public List<DocumentScore> rankDocumentsSimilarityToText(String text, Map<String, String> documentIdToText, String namespace) {
 		// put all the document in index
@@ -89,6 +91,5 @@ public class TFIDFUtil {
 	   }
 	   return processedResults;
 	}
-
 	
 }
