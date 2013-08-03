@@ -41,7 +41,7 @@ public class FreebaseHandlerTest {
 
 		// Assert:
 		Assert.assertTrue(response.view != null);
-		Assert.assertTrue(response.view.toString().contains(expectedSubString));
+		Assert.assertTrue(response.view.toString(), response.text.contains(expectedSubString));
 	}
 	
 	@Test
@@ -55,6 +55,31 @@ public class FreebaseHandlerTest {
 		// Assert:
 		Assert.assertTrue(response.view.getView() != null);
 		Assert.assertTrue(response.view.getView().contains(expectedSubString));
+	}
+	
+	@Test
+	public void testGetData4() throws Exception {
+		// Prepare		
+		String expectedSubString = "Google AdSense is a program run by Google Inc.";
+		
+		// Test:
+		ApiResponse response = handler.getFirstResponse("google ads", ApiType.wiki);
+		
+		// Assert:
+		Assert.assertTrue(response.view.getView() != null);
+		Assert.assertTrue(response.text.contains(expectedSubString));
+	}
+	
+	@Test
+	public void testGetDataWithLowFirebaseScore() throws Exception {
+		// Prepare		
+		String expectedSubString = "Freddie Wong is an American filmmaker";
+		
+		// Test:
+		ApiResponse response = handler.getFirstResponse("freddiew", ApiType.wiki);
+		
+		// Assert:
+		Assert.assertTrue(response == null);
 	}
 
 }

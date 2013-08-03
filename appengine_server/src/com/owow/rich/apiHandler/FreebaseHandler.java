@@ -16,17 +16,33 @@ public class FreebaseHandler extends ApiHandler {
 	String	   GOOGLE_API_KEY	          = "AIzaSyBjIW5540wkFEpZE2D3fx-TrLykSJ9MAiU";
 	private int	FREEBASE_SCORE_THRESHOLD	= 200;
 
+	/** 
+	 * Return the first result from freebase.
+	 */
 	@Override
-	public ApiResponse getFirstResponse(String title, ApiType apiType) throws Exception {
-		JSONArray searchResponse = getFreebaseSearchResponse(title);
+	public ApiResponse getFirstResponse(String highlight, ApiType apiType) throws Exception {
+		JSONArray searchResponse = getFreebaseSearchResponse(highlight);	
+		if (searchResponse.length() > 0) {
+			return getSingleResponse(searchResponse.getJSONObject(0), apiType);
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Return all the results for this highlight.
+	 */
+	@Override
+	public List<ApiResponse> getAllApiResponses(String highlight, ApiType apiType) throws Exception {
+		JSONArray searchResponse = getFreebaseSearchResponse(highlight);
+		
 		List<ApiResponse> responses = Lists.newArrayList();
 		for (int i = 0; i < searchResponse.length(); i++) {
-			int score = searchResponse.getJSONObject(i).getInt("score");
-			if (score >= FREEBASE_SCORE_THRESHOLD) {
-				String mid = searchResponse.getJSONObject(0).getString("mid");
-				ApiResponse apiResponse = getFreebseTopic(mid, apiType);
+			ApiResponse apiResponse = getSingleResponse(searchResponse.getJSONObject(i), apiType);
+			if (apiResponse != null) {
 				responses.add(apiResponse);
 			}
+<<<<<<< HEAD
 		}
 		return getBestApiResponse(responses);
 	}
@@ -36,21 +52,73 @@ public class FreebaseHandler extends ApiHandler {
 		return null;
 	}
 
+=======
+      }
+		return responses;
+	}
+	
+	/**
+	 * Give a query we return all the results for this query.
+	 */
+>>>>>>> ee892119b63efb0a86c63d8b23d0abdfeb8cb718
 	private JSONArray getFreebaseSearchResponse(String title) throws IOException, JSONException {
 		GenericUrl searchUrl = new GenericUrl("https://www.googleapis.com/freebase/v1/search");
 		searchUrl.put("query", title);
 		searchUrl.put("key", GOOGLE_API_KEY);
 		final String searchData = HtmlUtil.getUrlSource(searchUrl.toString());
 		JSONArray searchResponse = new JSONObject(searchData).getJSONArray("result");
+<<<<<<< HEAD
 		return searchResponse;
 	}
 
 	private ApiResponse getFreebseTopic(String mid, ApiType apiType) {
 		try {
+=======
+	   return searchResponse;
+   }
+	
+	
+	/**
+	 * Retrieve the result and create the ApiResponse from it.
+	 * 
+	 * Return null if exception is thrown or if Freebase's score is below the FREEBASE_SCORE_THRESHOLD.
+	 */
+	private ApiResponse getSingleResponse(JSONObject searchResult, ApiType apiType) {
+		try {
+			int score = searchResult.getInt("score");
+			if (score >= FREEBASE_SCORE_THRESHOLD) {
+				String mid = searchResult.getString("mid");
+				JSONObject topicResponse = getFreebseTopic(mid, apiType);
+				
+				if (!topicResponse.has("property")){
+					//TODO: log PropertyNotFound.
+					return null;
+				}
+				
+				String description = topicResponse.getJSONObject("property").getJSONObject("/common/topic/description").getJSONArray("values").getJSONObject(0)
+				      .getString("value");
+				String html = "<p>" + description.replace(". ", ". </p><p>") + "</p>";
+		
+				return new ApiResponse(topicResponse, html, apiType, score, description);
+				
+			}
+		} catch(Exception ex) {
+			return null;
+		}
+	   return null;
+   }
+	
+	/**
+	 * Reterive the result from free base according to the mid.
+	 */
+	private JSONObject getFreebseTopic(String mid, ApiType apiType) {
+		try{	
+>>>>>>> ee892119b63efb0a86c63d8b23d0abdfeb8cb718
 			GenericUrl topicUrl = new GenericUrl("https://www.googleapis.com/freebase/v1/topic" + mid);
 			topicUrl.put("filter", "/common/topic/description");
 			topicUrl.put("key", GOOGLE_API_KEY);
 			String topicData;
+<<<<<<< HEAD
 			topicData = HtmlUtil.getUrlSource(topicUrl.toString());
 
 			JSONObject topicResponse = new JSONObject(topicData);
@@ -66,6 +134,15 @@ public class FreebaseHandler extends ApiHandler {
 			// TODO: log exception.
 			return null;
 		}
+=======
+		      topicData = HtmlUtil.getUrlSource(topicUrl.toString());
+	      
+			return new JSONObject(topicData);
+      } catch (Exception e) {
+	      // TODO: log exception.
+	      return null;
+      }
+>>>>>>> ee892119b63efb0a86c63d8b23d0abdfeb8cb718
 	}
 
 	@Override

@@ -18,8 +18,8 @@ public abstract class ApiHandler {
 	 * 
 	 * Default implementation just returns one result. can be overriden by classes that return more then one response.  
 	 */
-	public List<ApiResponse> getAllApiResponses(String highlight, ApiType mainApiType) throws Exception {
-		return Lists.newArrayList(getFirstResponse(highlight, mainApiType));
+	public List<ApiResponse> getAllApiResponses(String highlight, ApiType apiType) throws Exception {
+		return Lists.newArrayList(getFirstResponse(highlight, apiType));
 	}
 	
 	/**

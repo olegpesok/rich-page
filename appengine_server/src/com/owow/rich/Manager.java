@@ -62,10 +62,13 @@ public class Manager {
 		if (apiResponse == null) apiResponse = storage.getFirstMatchingNgram(webPage, nGrams);
 
 		// Do live retrieve.
-		if (apiResponse == null) apiResponse = ApiRetriver.getApiResponse(query, method);
-
-		if (apiResponse != null) cache.save(query, apiResponse.view.toString());
-
+		if (apiResponse == null) {
+			apiResponse = ApiRetriver.getApiResponse(query, method, webPage);
+		}
+		
+		if (apiResponse != null) {
+			cache.save(query, apiResponse.view.toString());
+		}
 		return apiResponse;
 	}
 

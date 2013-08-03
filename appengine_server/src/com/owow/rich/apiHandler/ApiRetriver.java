@@ -4,27 +4,26 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
+import com.google.appengine.datanucleus.Utils.Function;
+import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.Memcache;
+import com.owow.rich.utils.TFIDFUtil;
+import com.owow.rich.utils.TFIDFUtil.Documents;
 
-/**
- * @author a
- *
- */
 public class ApiRetriver {
 	final static String	MEMPREFIX	     = "apiFactory/";
 	final static ApiType	DEFAULT_API_TYPE	= ApiType.freebase;
+	private static TFIDFUtil tfIdfUtil = new TFIDFUtil();
 	ApiRetriver( ) {}
 
-	public static ApiResponse getApiResponse(String highlight)
+
+	public static ApiResponse getApiResponse(String highlight, String method, WebPage webPage)
 	{
-		return getApiResponse(highlight, DEFAULT_API_TYPE);
+		ApiType apiType = method == null ? DEFAULT_API_TYPE: ApiType.create(method);
+		return getApiResponse(highlight, apiType, webPage);
 	}
-	public static ApiResponse getApiResponse(String highlight, String method)
-	{
-		if (method == null) return getApiResponse(highlight);
-		return getApiResponse(highlight, ApiType.create(method));
-	}
-	public static ApiResponse getApiResponse(String highlight, ApiType mainApiType)
+	
+	private static ApiResponse getApiResponse(String highlight, ApiType mainApiType, WebPage webPage)
 	{
 		try {
 			highlight = URLEncoder.encode(highlight, "UTF-8");
@@ -43,8 +42,7 @@ public class ApiRetriver {
 				try {
 					List<ApiResponse> apiResponseList = handler.getAllApiResponses(highlight, mainApiType);
 					if (apiResponseList != null && apiResponseList.size() > 0) {
-						// TODO(guti): take the best one according to the content:
-						ApiResponse apiResponse = apiResponseList.get(0);
+						ApiResponse apiResponse = findBestMatchAccordingToContext(apiResponseList, webPage, highlight);
 						pushMemcache(highlight, apiResponse.view, Memcache.getInstance());
 						return apiResponse;
 					}
@@ -53,6 +51,14 @@ public class ApiRetriver {
 		}
 		return null;
 	}
+
+	public static ApiResponse findBestMatchAccordingToContext(List<ApiResponse> apiResponseList, WebPage webPage, String highlight) {
+		Function<ApiResponse, String> getTextFunction = new Function<ApiResponse, String>() {
+			@Override public String apply(ApiResponse response) {return response.text;}};
+			
+		Documents<ApiResponse> rankedDcoumets = tfIdfUtil.getRankList(webPage.text, highlight, apiResponseList, getTextFunction);
+		return rankedDcoumets.getBest();
+   }
 
 	public static void pushMemcache(String query, ApiView view, Memcache mem)
 	{
