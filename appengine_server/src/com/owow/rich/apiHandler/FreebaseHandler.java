@@ -21,8 +21,7 @@ public class FreebaseHandler extends ApiHandler {
 	 */
 	@Override
 	public ApiResponse getFirstResponse(String highlight, ApiType apiType) throws Exception {
-		JSONArray searchResponse = getFreebaseSearchResponse(highlight);
-		// if		
+		JSONArray searchResponse = getFreebaseSearchResponse(highlight);	
 		if (searchResponse.length() > 0) {
 			return getSingleResponse(searchResponse.getJSONObject(0), apiType);
 		} else {
