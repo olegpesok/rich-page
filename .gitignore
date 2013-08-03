@@ -15,3 +15,21 @@ appengine_server/war/WEB-INF/classes/*.jar
 appengine_server/war/WEB-INF/appengine-generated/local_db.bin
 
 appengine_server/war/WEB-INF/appengine-generated/datastore-indexes-auto.xml
+
+appengine_server/war/WEB-INF/appengine-generated/indexes/*
+appengine_server/war/WEB-INF/appengine-generated/indexes/*/*/*
+
+
+*.fdt
+
+*.fdx
+
+*.fnm
+
+*.frq
+
+*.prx
+
+appengine_server/war/WEB-INF/appengine-generated/datastore-indexes-auto.xml
+
+appengine_server/war/WEB-INF/appengine-generated/indexes/cmljaC1wYWdl/SU5ERVgx..P/segments.gen
