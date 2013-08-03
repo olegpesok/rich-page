@@ -14,7 +14,7 @@ import com.owow.rich.utils.HtmlUtil;
 public class FreebaseHandler extends ApiHandler {
 
 	String	   GOOGLE_API_KEY	          = "AIzaSyBjIW5540wkFEpZE2D3fx-TrLykSJ9MAiU";
-	private int	FREEBASE_SCORE_THRESHOLD	= 200;
+	private int	FREEBASE_SCORE_THRESHOLD	= 0;
 
 	/**
 	 * Return the first result from freebase.
@@ -104,7 +104,7 @@ public class FreebaseHandler extends ApiHandler {
 
 	@Override
 	public ApiView getView(ApiResponse fromGetData) throws Exception {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 }

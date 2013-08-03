@@ -56,15 +56,15 @@ public class TFIDFUtil {
 		Map<String, ScoredObject<T>> map = Maps.newHashMap();
 		
 		for (T object : objectsList) {
-			String randomId = ""+Math.round(Math.random());
+			String randomId = ""+Math.round(Math.random()*1000000);
 			map.put(randomId, new ScoredObject<T>(object, randomId, getTextFunction.apply(object)));
       }
-		String namespace = ""+Math.round(Math.random());
+		String namespace = ""+Math.round(Math.random()*1000000);
 		return rankDocumentsSimilarityToText(text, map, namespace);
    }
 	
 	public <T> ScoredObjectList<T> rankDocumentsSimilarityToText(String text, Map<String, ScoredObject<T>> documentIdObject, String namespace) {
-		
+		try {
 		// put all the document in index
 		for (String documentId : documentIdObject.keySet()) {
 			Document document = Document.newBuilder().setId(documentId)
@@ -76,13 +76,14 @@ public class TFIDFUtil {
 	
 		// Convert Query string to App Engine Text Search format
 		List<Token> tokens = tokenizeUtil.tokenize(text);
-		String queryString = "";
+		String queryString = "namespcae:"+namespace + " AND (";
 		for (int i = 0; i < tokens.size(); i++) {
 			queryString += "content:" + tokens.get(i);
 		    if(i < tokens.size() -1) {
 		   	 queryString += " OR ";
 		    }
 	   }
+		queryString += ")";
 		
 		// Creates the query, in the option force to show sort score.
 		Query queryObject = Query.newBuilder()
@@ -99,6 +100,10 @@ public class TFIDFUtil {
 	   	processedResults.add(scoredObject);  
 	   }
 	   return new ScoredObjectList<T>(processedResults);
+		} catch(Exception e) {
+			e = e;
+			return null;
+		}
 	}
 	
 }

@@ -47,22 +47,28 @@ public class ApiRetriver {
 						pushMemcache(highlight, apiResponse.view, Memcache.getInstance());
 						return apiResponse;
 					}
-				} catch (Exception e) {}
+				} catch (Exception e) {
+					e = e;
+				}
 			}
 		}
 		return null;
 	}
 
 	public static ApiResponse findBestMatchAccordingToContext(List<ApiResponse> apiResponseList, WebPage webPage, String highlight) {
-		// Function to get the text out of the ApiResponse.
-		return Iterables.getFirst(apiResponseList, null);
-		
-//		TODO(guti): finish this
-//		Function<ApiResponse, String> getTextFunction = new Function<ApiResponse, String>() {
-//			@Override public String apply(ApiResponse response) {return response.text;}};
-//			
-//		ScoredObjectList<ApiResponse> rankedDcoumets = tfIdfUtil.getRankList(webPage.text, highlight, apiResponseList, getTextFunction);
-//		return rankedDcoumets.getBest();
+		// If there not more then one result just returns the first result:
+		if (apiResponseList.size() <= 1) {
+				return Iterables.getFirst(apiResponseList, null);
+		} else {
+			Function<ApiResponse, String> getTextFunction = new Function<ApiResponse, String>() {
+				@Override public String apply(ApiResponse response) {
+					return response.text;
+				}};
+				
+			// TODO(guti): highlight. with webpage.text
+			ScoredObjectList<ApiResponse> rankedDcoumets = tfIdfUtil.getRankList(highlight, highlight, apiResponseList, getTextFunction);
+			return rankedDcoumets.getBest();
+		}	
    }
 
 	public static void pushMemcache(String query, ApiView view, Memcache mem)
