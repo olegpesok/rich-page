@@ -86,7 +86,7 @@ public class TFIDFUtil {
 		
 			// Convert Query string to App Engine Text Search format
 			List<Token> tokens = tokenizeUtil.tokenize(text);
-			String queryString = "namespcae:"+namespace + " AND (";
+			String queryString = "namespcae:" + namespace + " AND (";
 			for (int i = 0; i < tokens.size(); i++) {
 				queryString += "content:" + tokens.get(i);
 			    if(i < tokens.size() -1) {

@@ -16,6 +16,7 @@ public class ApiResponse implements Serializable {
 	public final static String	VIEWKEY	        = "view";
 	public final static String	APITYPEKEY	     = "apitype";
 	private static final long	serialVersionUID	= -4369034077791508101L;
+	public static boolean goodEnough = false;
 	
 	public JSONObject	         json;
 	public ApiView	            view;

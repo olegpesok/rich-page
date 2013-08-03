@@ -16,7 +16,8 @@ import com.owow.rich.utils.HtmlUtil;
 public class FreebaseHandler extends ApiHandler {
 
 	String	   GOOGLE_API_KEY	          = "AIzaSyBjIW5540wkFEpZE2D3fx-TrLykSJ9MAiU";
-	private int	FREEBASE_SCORE_THRESHOLD	= 0;
+	private int	FREEBASE_SCORE_LOW_THRESHOLD	= 0;
+	private int	FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD	= 500;
 
 	/**
 	 * Return the first result from freebase.
@@ -72,7 +73,7 @@ public class FreebaseHandler extends ApiHandler {
 	private ApiResponse getSingleResponse(JSONObject searchResult, ApiType apiType) {
 		try {
 			int score = searchResult.getInt("score");
-			if (score >= FREEBASE_SCORE_THRESHOLD) {
+			if (score >= FREEBASE_SCORE_LOW_THRESHOLD) {
 				String mid = searchResult.getString("mid");
 				JSONObject topicResponse = getFreebseTopic(mid, apiType);
 
@@ -83,7 +84,11 @@ public class FreebaseHandler extends ApiHandler {
 				      .getString("value");
 				String html = "<p>" + description.replace(". ", ". </p><p>") + "</p>";
 
-				return new ApiResponse(topicResponse, html, apiType, score, description);
+				ApiResponse apiResponse = new ApiResponse(topicResponse, html, apiType, score, description);
+				if(apiResponse.apiInternalScore >= FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD) {
+					apiResponse.goodEnough = true;
+				}
+				return apiResponse;
 
 			}
 		} catch (Exception ex) {

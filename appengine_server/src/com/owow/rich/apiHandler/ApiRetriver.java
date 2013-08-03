@@ -45,6 +45,10 @@ public class ApiRetriver {
 				try {
 					List<ApiResponse> apiResponseList = handler.getAllApiResponses(highlight, mainApiType);
 					if (apiResponseList != null && apiResponseList.size() > 0) {
+						if (apiResponseList.get(0).goodEnough == true) {
+							return apiResponseList.get(0);
+						}
+						
 						ApiResponse apiResponse = findBestMatchAccordingToContext(apiResponseList, webPage, highlight);
 						pushMemcache(highlight, apiResponse.view, Memcache.getInstance());
 						return apiResponse;
