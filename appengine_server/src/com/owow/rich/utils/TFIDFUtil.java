@@ -37,6 +37,9 @@ public class TFIDFUtil {
 				return null;
 			}
       }
+		public boolean isEmpty() {
+	      return scoredObjectList.size() == 0;
+      }
 	}
 	
 	public static class ScoredObject<T> {

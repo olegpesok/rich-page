@@ -20,16 +20,16 @@ public enum ApiType {
 	stackoverflaw(StackOverflowHandler.class, "st");
 
 	public Class<? extends ApiHandler>	myClass;
-	public String	                    nichname;
+	public String	                    nickname;
 	ApiType(Class<? extends ApiHandler> mClass, String nick)
 	{
 		myClass = mClass;
-		nichname = nick;
+		nickname = nick;
 	}
 
 	public String getIdentifyer()
 	{
-		return nichname;
+		return nickname;
 	}
 	public ApiHandler createHandler()
 	{

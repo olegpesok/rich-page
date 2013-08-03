@@ -3,9 +3,11 @@ package com.owow.rich.apiHandler;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.logging.Level;
 
 import com.google.appengine.datanucleus.Utils.Function;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Iterables;
+import com.owow.rich.RichLogger;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.Memcache;
 import com.owow.rich.utils.TFIDFUtil;
@@ -27,7 +29,9 @@ public class ApiRetriver {
 	{
 		try {
 			highlight = URLEncoder.encode(highlight, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {}
+		} catch (UnsupportedEncodingException e) {
+			RichLogger.log.log(Level.SEVERE, "Can't encode highlight: " + highlight, e);
+		}
 
 		ApiView v = queryMemcacheForView(highlight, Memcache.getInstance());
 
@@ -46,7 +50,7 @@ public class ApiRetriver {
 						return apiResponse;
 					}
 				} catch (Exception e) {
-					// TODO: log
+					RichLogger.log.log(Level.SEVERE, "Fail to process handler: " + apiType.nickname +" for query: " + highlight, e);
 				}
 			}
 		return null;
@@ -62,9 +66,12 @@ public class ApiRetriver {
 					return response.text;
 				}};
 				
-			// TODO(guti): highlight. with webpage.text
 			ScoredObjectList<ApiResponse> rankedDcoumets = tfIdfUtil.getRankList(highlight, highlight, apiResponseList, getTextFunction);
-			return rankedDcoumets.getBest();
+			if(rankedDcoumets.isEmpty()) {
+				return Iterables.getFirst(apiResponseList, null);
+			} else {
+				return rankedDcoumets.getBest();
+			}	
 		}	
    }
 
