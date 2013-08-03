@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.util.List;
 
 import com.google.appengine.datanucleus.Utils.Function;
+import com.google.appengine.labs.repackaged.com.google.common.collect.Iterables;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.Memcache;
 import com.owow.rich.utils.TFIDFUtil;
@@ -45,18 +46,13 @@ public class ApiRetriver {
 						return apiResponse;
 					}
 				} catch (Exception e) {
-<<<<<<< HEAD
-					e = e;
-=======
-
->>>>>>> c18f6c001a6e29b41b634c92aa8a917698d88489
+					// TODO: log
 				}
 			}
 		return null;
 	}
 
 	public static ApiResponse findBestMatchAccordingToContext(List<ApiResponse> apiResponseList, WebPage webPage, String highlight) {
-<<<<<<< HEAD
 		// If there not more then one result just returns the first result:
 		if (apiResponseList.size() <= 1) {
 				return Iterables.getFirst(apiResponseList, null);
@@ -71,18 +67,6 @@ public class ApiRetriver {
 			return rankedDcoumets.getBest();
 		}	
    }
-=======
-		Function<ApiResponse, String> getTextFunction = new Function<ApiResponse, String>(){
-			@Override
-			public String apply(ApiResponse response) {
-				return response.text;
-			}
-		};
-
-		ScoredObjectList<ApiResponse> rankedDcoumets = tfIdfUtil.getRankList(webPage.text, highlight, apiResponseList, getTextFunction);
-		return rankedDcoumets.getBest();
-	}
->>>>>>> c18f6c001a6e29b41b634c92aa8a917698d88489
 
 	public static void pushMemcache(String query, ApiView view, Memcache mem)
 	{
