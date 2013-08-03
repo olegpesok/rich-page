@@ -8,7 +8,7 @@ import com.google.appengine.datanucleus.Utils.Function;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.Memcache;
 import com.owow.rich.utils.TFIDFUtil;
-import com.owow.rich.utils.TFIDFUtil.Documents;
+import com.owow.rich.utils.TFIDFUtil.ScoredObjectList;
 
 public class ApiRetriver {
 	final static String	MEMPREFIX	     = "apiFactory/";
@@ -53,10 +53,11 @@ public class ApiRetriver {
 	}
 
 	public static ApiResponse findBestMatchAccordingToContext(List<ApiResponse> apiResponseList, WebPage webPage, String highlight) {
+		// Function to get the text out of the ApiResponse.
 		Function<ApiResponse, String> getTextFunction = new Function<ApiResponse, String>() {
 			@Override public String apply(ApiResponse response) {return response.text;}};
 			
-		Documents<ApiResponse> rankedDcoumets = tfIdfUtil.getRankList(webPage.text, highlight, apiResponseList, getTextFunction);
+		ScoredObjectList<ApiResponse> rankedDcoumets = tfIdfUtil.getRankList(webPage.text, highlight, apiResponseList, getTextFunction);
 		return rankedDcoumets.getBest();
    }
 

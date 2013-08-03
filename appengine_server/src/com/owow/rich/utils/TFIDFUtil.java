@@ -17,50 +17,58 @@ import com.google.appengine.api.search.SortOptions;
 import com.google.appengine.datanucleus.Utils.Function;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Iterables;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
-import com.owow.rich.apiHandler.ApiResponse;
+import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
 import com.owow.rich.items.Token;
-import com.owow.rich.utils.TFIDFUtil.Documents;
 
 public class TFIDFUtil {
 	private final static  String INDEX_NAME = "INDEX1";
    private Index index = SearchServiceFactory.getSearchService().getIndex(IndexSpec.newBuilder().setName(INDEX_NAME).build());
 	private TokenizerUtil tokenizeUtil = new TokenizerUtil();
    
-	public static class Documents<T> {
-
-		public void add(ApiResponse apiResponse, String text) {
-	      // TODO Auto-generated method stub
-	      
-      }
-
-		public ApiResponse getBest() {
-	      // TODO Auto-generated method stub
-	      return null;
+	public static class ScoredObjectList<T> {
+		List<ScoredObject<T>> scoredObjectList = Lists.newArrayList();
+		public ScoredObjectList(List<ScoredObject<T>> scoredObjectList) {
+			this.scoredObjectList = scoredObjectList;
+		}
+		public T getBest() {
+			if (this.scoredObjectList.size() > 0) {
+				return this.scoredObjectList.get(0).object;
+			} else {
+				return null;
+			}
       }
 	}
 	
-	public class DocumentScore {
+	public static class ScoredObject<T> {
+		public T object;
 		public String documentId;
 		public String documentText;
 		public double score;
-		public DocumentScore(String documentId, String documentText, double score) {
+		public ScoredObject(T object, String documentId, String documentText) {
+			this.object = object;
 			this.documentId = documentId;
 			this.documentText = documentText;
-			this.score = score;
+			this.score = 0.0;
 		}
 	}
 	
-	public Documents<ApiResponse> getRankList(String text, String highlight, List<ApiResponse> apiResponseList, Function<ApiResponse, String> getTextFunction) {
-	   
-		return null;
+	public <T> ScoredObjectList<T> getRankList(String text, String highlight, List<T> objectsList, Function<T, String> getTextFunction) {
+		Map<String, ScoredObject<T>> map = Maps.newHashMap();
+		
+		for (T object : objectsList) {
+			String randomId = ""+Math.round(Math.random());
+			map.put(randomId, new ScoredObject<T>(object, randomId, getTextFunction.apply(object)));
+      }
+		String namespace = ""+Math.round(Math.random());
+		return rankDocumentsSimilarityToText(text, map, namespace);
    }
 	
-	
-	public List<DocumentScore> rankDocumentsSimilarityToText(String text, Map<String, String> documentIdToText, String namespace) {
+	public <T> ScoredObjectList<T> rankDocumentsSimilarityToText(String text, Map<String, ScoredObject<T>> documentIdObject, String namespace) {
+		
 		// put all the document in index
-		for (String documentId : documentIdToText.keySet()) {
+		for (String documentId : documentIdObject.keySet()) {
 			Document document = Document.newBuilder().setId(documentId)
-					.addField(Field.newBuilder().setName("content").setText(documentIdToText.get(documentId)))
+					.addField(Field.newBuilder().setName("content").setText(documentIdObject.get(documentId).documentText))
 					.addField(Field.newBuilder().setName("namespcae").setText(namespace))
 					.build();
 			index.put(document);
@@ -74,7 +82,7 @@ public class TFIDFUtil {
 		    if(i < tokens.size() -1) {
 		   	 queryString += " OR ";
 		    }
-	      }
+	   }
 		
 		// Creates the query, in the option force to show sort score.
 		Query queryObject = Query.newBuilder()
@@ -83,13 +91,14 @@ public class TFIDFUtil {
 						(MatchScorer.newBuilder().build()))).build(queryString);
 	   Results<ScoredDocument> searchResults = index.search(queryObject);
 	   
-	   List<DocumentScore> processedResults = Lists.newArrayList();
+	   // Convert ScoredDocument to ScoredObject.
+	   List<ScoredObject<T>> processedResults = Lists.newArrayList();
 	   for (ScoredDocument document : searchResults) {
-	   	String documentText = documentIdToText.get(document.getId());
-	   	Double score = Iterables.getFirst(document.getSortScores(), 0.0);
-	   	processedResults.add(new DocumentScore(document.getId(), documentText, score));  
+	   	ScoredObject<T> scoredObject = documentIdObject.get(document.getId());
+	   	scoredObject.score = Iterables.getFirst(document.getSortScores(), 0.0);
+	   	processedResults.add(scoredObject);  
 	   }
-	   return processedResults;
+	   return new ScoredObjectList<T>(processedResults);
 	}
 	
 }
