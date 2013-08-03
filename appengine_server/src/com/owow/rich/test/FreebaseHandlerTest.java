@@ -4,17 +4,18 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.owow.rich.apiHandler.ApiHandler;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiType;
-import com.owow.rich.apiHandler.FreebaseHandler;
+import com.owow.rich.apiHandler.WikipediaHandler;
 import com.owow.rich.utils.TemplateUtil;
 
 public class FreebaseHandlerTest {
-	FreebaseHandler	handler;
+	ApiHandler	handler;
 
 	@Before
 	public void setUp() {
-		handler = new FreebaseHandler();
+		handler = new WikipediaHandler();
 		TemplateUtil.BASEPATH = "war/templates/";
 	}
 
@@ -43,41 +44,41 @@ public class FreebaseHandlerTest {
 		Assert.assertTrue(response.view != null);
 		Assert.assertTrue(response.view.toString(), response.text.contains(expectedSubString));
 	}
-	
+
 	@Test
 	public void testGetData3() throws Exception {
-		// Prepare		
+		// Prepare
 		String expectedSubString = "San Francisco, officially the City and County of San Francisco, is the leading financial";
-		
+
 		// Test:
 		ApiResponse response = handler.getFirstResponse("san francisco", ApiType.wiki);
-		
+
 		// Assert:
 		Assert.assertTrue(response.view.getView() != null);
 		Assert.assertTrue(response.view.getView().contains(expectedSubString));
 	}
-	
+
 	@Test
 	public void testGetData4() throws Exception {
-		// Prepare		
+		// Prepare
 		String expectedSubString = "Google AdSense is a program run by Google Inc.";
-		
+
 		// Test:
 		ApiResponse response = handler.getFirstResponse("google ads", ApiType.wiki);
-		
+
 		// Assert:
 		Assert.assertTrue(response.view.getView() != null);
 		Assert.assertTrue(response.text.contains(expectedSubString));
 	}
-	
+
 	@Test
 	public void testGetDataWithLowFirebaseScore() throws Exception {
-		// Prepare		
+		// Prepare
 		String expectedSubString = "Freddie Wong is an American filmmaker";
-		
+
 		// Test:
 		ApiResponse response = handler.getFirstResponse("freddiew", ApiType.wiki);
-		
+
 		// Assert:
 		Assert.assertTrue(response == null);
 	}
