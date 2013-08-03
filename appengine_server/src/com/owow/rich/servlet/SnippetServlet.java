@@ -39,7 +39,7 @@ public class SnippetServlet extends HttpServlet {
 		String query = req.getParameter("q");
 		final String url = req.getParameter("url");
 
-		if (query != null) {
+		if (query != null &&  query != "") {
 			// TODO get rid of that.
 			query = query.toLowerCase();
 			WebPage webpage = new WebPage(null, null, url);

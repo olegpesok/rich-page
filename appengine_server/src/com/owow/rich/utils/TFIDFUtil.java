@@ -59,6 +59,8 @@ public class TFIDFUtil {
 	}
 	
 	public <T> ScoredObjectList<T> getRankList(String text, String highlight, List<T> objectsList, Function<T, String> getTextFunction) {
+		RichLogger.log.log(Level.INFO, "------------ " + highlight + " --------------------------------");
+		
 		Map<String, ScoredObject<T>> map = Maps.newHashMap();
 		
 		for (T object : objectsList) {
@@ -71,6 +73,8 @@ public class TFIDFUtil {
 	
 	public <T> ScoredObjectList<T> rankDocumentsSimilarityToText(String text, Map<String, ScoredObject<T>> documentIdObject, String namespace) {
 		try {
+			
+			
 			// put all the document in index
 			for (String documentId : documentIdObject.keySet()) {
 				Document document = Document.newBuilder().setId(documentId)
@@ -103,11 +107,13 @@ public class TFIDFUtil {
 		   for (ScoredDocument document : searchResults) {
 		   	ScoredObject<T> scoredObject = documentIdObject.get(document.getId());
 		   	scoredObject.score = Iterables.getFirst(document.getSortScores(), 0.0);
-		   	RichLogger.log.log(Level.INFO, "Score: [" + scoredObject.score + "] object: " + document.getFields("content"));
+		   	RichLogger.log.log(Level.INFO, "-------------------------");
+		   	RichLogger.log.log(Level.INFO, "Score: [ " + scoredObject.score + " ] object: " + document.getFields("content"));
 		   	processedResults.add(scoredObject);  
 		   }
 		   return new ScoredObjectList<T>(processedResults);
 		} catch(Exception e) {
+			
 			RichLogger.log.log(Level.SEVERE, "fail scoring: " +  text);
 			return new ScoredObjectList<T>(new ArrayList<ScoredObject<T>>());
 		}
