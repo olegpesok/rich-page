@@ -11,3 +11,7 @@ appengine_server/war/WEB-INF/classes/log4j.properties
 
 appengine_server/war/WEB-INF/classes/*
 appengine_server/war/WEB-INF/classes/*.jar
+
+appengine_server/war/WEB-INF/appengine-generated/local_db.bin
+
+appengine_server/war/WEB-INF/appengine-generated/datastore-indexes-auto.xml
