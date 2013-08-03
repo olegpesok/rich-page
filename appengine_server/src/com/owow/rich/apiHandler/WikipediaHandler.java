@@ -1,5 +1,6 @@
 package com.owow.rich.apiHandler;
 
+import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -60,6 +61,7 @@ public class WikipediaHandler extends ApiHandler {
 	@Override
 	public ApiResponse getFirstResponse(String query, ApiType type) throws Exception {
 		final JSONArray pagesData = new JSONArray();
+		query = URLEncoder.encode(query, "UTF-8");
 		depth++;
 		// deciding whether to download all content, or just the first section
 		String wikiServer;

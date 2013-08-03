@@ -5,25 +5,23 @@ import java.net.URLEncoder;
 import java.util.List;
 
 import com.google.appengine.datanucleus.Utils.Function;
-import com.google.appengine.labs.repackaged.com.google.common.collect.Iterables;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.Memcache;
 import com.owow.rich.utils.TFIDFUtil;
 import com.owow.rich.utils.TFIDFUtil.ScoredObjectList;
 
 public class ApiRetriver {
-	final static String	MEMPREFIX	     = "apiFactory/";
-	final static ApiType	DEFAULT_API_TYPE	= ApiType.freebase;
-	private static TFIDFUtil tfIdfUtil = new TFIDFUtil();
+	final static String	    MEMPREFIX	      = "apiFactory/";
+	final static ApiType	    DEFAULT_API_TYPE	= ApiType.freebase;
+	private static TFIDFUtil	tfIdfUtil	   = new TFIDFUtil();
 	ApiRetriver( ) {}
-
 
 	public static ApiResponse getApiResponse(String highlight, String method, WebPage webPage)
 	{
-		ApiType apiType = method == null ? DEFAULT_API_TYPE: ApiType.create(method);
+		ApiType apiType = method == null ? DEFAULT_API_TYPE : ApiType.create(method);
 		return getApiResponse(highlight, apiType, webPage);
 	}
-	
+
 	private static ApiResponse getApiResponse(String highlight, ApiType mainApiType, WebPage webPage)
 	{
 		try {
@@ -34,9 +32,8 @@ public class ApiRetriver {
 
 		if (v != null) return new ApiResponse(null, v, null);
 
-
 		List<ApiType> apiTypeList = ApiTypeManager.getApiSequence(mainApiType);
-		for (ApiType apiType : apiTypeList) {
+		for (ApiType apiType : apiTypeList)
 			if (apiType != null)
 			{
 				ApiHandler handler = apiType.createHandler();
@@ -47,23 +44,24 @@ public class ApiRetriver {
 						pushMemcache(highlight, apiResponse.view, Memcache.getInstance());
 						return apiResponse;
 					}
-				} catch (Exception e) {}
+				} catch (Exception e) {
+
+				}
 			}
-		}
 		return null;
 	}
 
 	public static ApiResponse findBestMatchAccordingToContext(List<ApiResponse> apiResponseList, WebPage webPage, String highlight) {
-		// Function to get the text out of the ApiResponse.
-		return Iterables.getFirst(apiResponseList, null);
-		
-//		TODO(guti): finish this
-//		Function<ApiResponse, String> getTextFunction = new Function<ApiResponse, String>() {
-//			@Override public String apply(ApiResponse response) {return response.text;}};
-//			
-//		ScoredObjectList<ApiResponse> rankedDcoumets = tfIdfUtil.getRankList(webPage.text, highlight, apiResponseList, getTextFunction);
-//		return rankedDcoumets.getBest();
-   }
+		Function<ApiResponse, String> getTextFunction = new Function<ApiResponse, String>(){
+			@Override
+			public String apply(ApiResponse response) {
+				return response.text;
+			}
+		};
+
+		ScoredObjectList<ApiResponse> rankedDcoumets = tfIdfUtil.getRankList(webPage.text, highlight, apiResponseList, getTextFunction);
+		return rankedDcoumets.getBest();
+	}
 
 	public static void pushMemcache(String query, ApiView view, Memcache mem)
 	{
