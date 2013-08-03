@@ -59,7 +59,7 @@ public class ApiRetriver {
 	public static ApiResponse findBestMatchAccordingToContext(List<ApiResponse> apiResponseList, WebPage webPage, String highlight) {
 		// If there not more then one result just returns the first result:
 		if (apiResponseList.size() <= 1) {
-				return Iterables.getFirst(apiResponseList, null);
+		  return Iterables.getFirst(apiResponseList, null);
 		} else {
 			Function<ApiResponse, String> getTextFunction = new Function<ApiResponse, String>() {
 				@Override public String apply(ApiResponse response) {
@@ -71,8 +71,8 @@ public class ApiRetriver {
 				return Iterables.getFirst(apiResponseList, null);
 			} else {
 				return rankedDcoumets.getBest();
-			}	
-		}	
+			}
+		}
    }
 
 	public static void pushMemcache(String query, ApiView view, Memcache mem)

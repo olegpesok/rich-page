@@ -1,7 +1,9 @@
 package com.owow.rich.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import com.google.appengine.api.search.Document;
 import com.google.appengine.api.search.Field;
@@ -18,6 +20,7 @@ import com.google.appengine.datanucleus.Utils.Function;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Iterables;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
+import com.owow.rich.RichLogger;
 import com.owow.rich.items.Token;
 
 public class TFIDFUtil {
@@ -68,44 +71,45 @@ public class TFIDFUtil {
 	
 	public <T> ScoredObjectList<T> rankDocumentsSimilarityToText(String text, Map<String, ScoredObject<T>> documentIdObject, String namespace) {
 		try {
-		// put all the document in index
-		for (String documentId : documentIdObject.keySet()) {
-			Document document = Document.newBuilder().setId(documentId)
-					.addField(Field.newBuilder().setName("content").setText(documentIdObject.get(documentId).documentText))
-					.addField(Field.newBuilder().setName("namespcae").setText(namespace))
-					.build();
-			index.put(document);
-      }
-	
-		// Convert Query string to App Engine Text Search format
-		List<Token> tokens = tokenizeUtil.tokenize(text);
-		String queryString = "namespcae:"+namespace + " AND (";
-		for (int i = 0; i < tokens.size(); i++) {
-			queryString += "content:" + tokens.get(i);
-		    if(i < tokens.size() -1) {
-		   	 queryString += " OR ";
-		    }
-	   }
-		queryString += ")";
+			// put all the document in index
+			for (String documentId : documentIdObject.keySet()) {
+				Document document = Document.newBuilder().setId(documentId)
+						.addField(Field.newBuilder().setName("content").setText(documentIdObject.get(documentId).documentText))
+						.addField(Field.newBuilder().setName("namespcae").setText(namespace))
+						.build();
+				index.put(document);
+	      }
 		
-		// Creates the query, in the option force to show sort score.
-		Query queryObject = Query.newBuilder()
-				.setOptions(QueryOptions.newBuilder().setSortOptions(
-						SortOptions.newBuilder().setMatchScorer
-						(MatchScorer.newBuilder().build()))).build(queryString);
-	   Results<ScoredDocument> searchResults = index.search(queryObject);
-	   
-	   // Convert ScoredDocument to ScoredObject.
-	   List<ScoredObject<T>> processedResults = Lists.newArrayList();
-	   for (ScoredDocument document : searchResults) {
-	   	ScoredObject<T> scoredObject = documentIdObject.get(document.getId());
-	   	scoredObject.score = Iterables.getFirst(document.getSortScores(), 0.0);
-	   	processedResults.add(scoredObject);  
-	   }
-	   return new ScoredObjectList<T>(processedResults);
+			// Convert Query string to App Engine Text Search format
+			List<Token> tokens = tokenizeUtil.tokenize(text);
+			String queryString = "namespcae:"+namespace + " AND (";
+			for (int i = 0; i < tokens.size(); i++) {
+				queryString += "content:" + tokens.get(i);
+			    if(i < tokens.size() -1) {
+			   	 queryString += " OR ";
+			    }
+		   }
+			queryString += ")";
+			
+			// Creates the query, in the option force to show sort score.
+			Query queryObject = Query.newBuilder()
+					.setOptions(QueryOptions.newBuilder().setSortOptions(
+							SortOptions.newBuilder().setMatchScorer
+							(MatchScorer.newBuilder().build()))).build(queryString);
+		   Results<ScoredDocument> searchResults = index.search(queryObject);
+		   
+		   // Convert ScoredDocument to ScoredObject.
+		   List<ScoredObject<T>> processedResults = Lists.newArrayList();
+		   for (ScoredDocument document : searchResults) {
+		   	ScoredObject<T> scoredObject = documentIdObject.get(document.getId());
+		   	scoredObject.score = Iterables.getFirst(document.getSortScores(), 0.0);
+		   	RichLogger.log.log(Level.INFO, "Score: [" + scoredObject.score + "] object: " + document.getFields("content"));
+		   	processedResults.add(scoredObject);  
+		   }
+		   return new ScoredObjectList<T>(processedResults);
 		} catch(Exception e) {
-			e = e;
-			return null;
+			RichLogger.log.log(Level.SEVERE, "fail scoring: " +  text);
+			return new ScoredObjectList<T>(new ArrayList<ScoredObject<T>>());
 		}
 	}
 	
