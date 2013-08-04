@@ -16,35 +16,38 @@ public class ApiResponse implements Serializable {
 	public final static String	VIEWKEY	        = "view";
 	public final static String	APITYPEKEY	     = "apitype";
 	private static final long	serialVersionUID	= -4369034077791508101L;
-	
+
+	public static boolean goodEnough = false;
 	public JSONObject	         json;
 	public ApiView	            view;
-	public String text;
-	public int apiInternalScore;
+	public String	            title;
+	public String	            text;
+	public int	               apiInternalScore;
 	public boolean	            resultOk	        = true;
 	// private Exception mError;
 	public ApiType	            myType;
 
-	public ApiResponse(JSONObject json, String html, ApiType apiType, int score, String text) {
-		this.apiInternalScore = score;
+	public ApiResponse(String title, JSONObject json, String html, ApiType apiType, int score, String text) {
+		this.title = title;
+		apiInternalScore = score;
 		this.text = text;
 		this.json = json;
-		this.view = new ApiView(html);
+		view = new ApiView(html);
 		myType = apiType;
-   }
-	
-	public ApiResponse(JSONObject json, String html, ApiType apiType) {
-		this(json, new ApiView(html), apiType);
 	}
 
-	public ApiResponse(JSONObject json, ApiView view, ApiType apiType)
-	{
-		this(json, view.getView(), apiType, 0, view.getView());
+	public ApiResponse(String title, JSONObject json, String html, ApiType apiType) {
+		this(title, json, new ApiView(html), apiType);
 	}
-	
-	public ApiResponse(JSONObject json, ApiType type)
+
+	public ApiResponse(String title, JSONObject json, ApiView view, ApiType apiType)
 	{
-		this(json, new ApiView(""), type);
+		this(title, json, view.getView(), apiType, 0, view.getView());
+	}
+
+	public ApiResponse(String title, JSONObject json, ApiType type)
+	{
+		this(title, json, new ApiView(""), type);
 	}
 
 	@Override
@@ -74,7 +77,7 @@ public class ApiResponse implements Serializable {
 		return propertyContainer;
 	}
 
-	public static ApiResponse getApiResponseFromEntity(Entity ent)
+	public static ApiResponse getApiResponseFromEntity(String title, Entity ent)
 	{
 		if (!ent.hasProperty(APITYPEKEY)) return null;
 		JSONObject json;
@@ -85,7 +88,7 @@ public class ApiResponse implements Serializable {
 		}
 		ApiView apiView = new ApiView(((Text) ent.getProperty(VIEWKEY)).getValue());
 		ApiType apiType = ApiType.create((String) ent.getProperty(APITYPEKEY));
-		return new ApiResponse(json, apiView, apiType);
+		return new ApiResponse(title, json, apiView, apiType);
 	}
 	// public boolean isOK()
 	// {

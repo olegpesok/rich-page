@@ -39,7 +39,7 @@ public class QouraHandler extends ApiHandler {
 			json.put("snippetHTML", divs.first().html());
 		}
 		json.put("data", data);
-		return new ApiResponse(json, type);
+		return new ApiResponse(query, json, type);
 	}
 
 	@Override

@@ -128,7 +128,7 @@ public class WikipediaHandler extends ApiHandler {
 		json.put("host_nickname", mHost.toString());
 		json.put("host_url", mHost.getUrl());
 		// json.put("score", 100);
-		ApiResponse ret = new ApiResponse(json, type);
+		ApiResponse ret = new ApiResponse(query, json, type);
 		ret.view = getView(ret);
 		return ret;
 	}

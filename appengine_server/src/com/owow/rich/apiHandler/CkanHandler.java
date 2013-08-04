@@ -20,7 +20,7 @@ public class CkanHandler extends ApiHandler {
 		final JSONObject jo = new JSONObject();
 		jo.put("data", ret);
 
-		return new ApiResponse(jo, type);
+		return new ApiResponse(title, jo, type);
 	}
 
 	@Override

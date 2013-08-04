@@ -3,9 +3,9 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
-import com.owow.rich.utils.TFIDFUtil;
-import com.owow.rich.utils.TFIDFUtil.ScoredObject;
-import com.owow.rich.utils.TFIDFUtil.ScoredObjectList;
+import com.owow.rich.utils.ComparisonUtils;
+import com.owow.rich.utils.ComparisonUtils.ScoredObject;
+import com.owow.rich.utils.ComparisonUtils.ScoredObjectList;
 
 
 public class TfIDfUtilTest {
@@ -19,6 +19,6 @@ public class TfIDfUtilTest {
 		map.put("3", new ScoredObject<String>("alon","3","alon"));
 		map.put("4", new ScoredObject<String>("alon","4","alon"));
 		
-	   ScoredObjectList<String> res = new TFIDFUtil().rankDocumentsSimilarityToText("alon balon", map, "alon balon");
+	   ScoredObjectList<String> res = new ComparisonUtils().rankDocumentsSimilarityToText("alon balon", map, "alon balon");
 	}
 }

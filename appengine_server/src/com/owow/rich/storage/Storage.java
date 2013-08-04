@@ -14,6 +14,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.items.NGram;
+import com.owow.rich.items.NGramDatastoreEntity;
 import com.owow.rich.items.WebPage;
 
 public class Storage {
@@ -22,6 +23,7 @@ public class Storage {
 
 	final static String	   ENTITY_KIND	= "Entity";
 	final static String	   LOG_KIND	   = "logy";
+	final static String	   AG_KIND	   = "its0215AMdamnitCantThinkOfName";
 	public Storage( )
 	{
 		datastore = DatastoreServiceFactory.getDatastoreService();
@@ -49,9 +51,9 @@ public class Storage {
 		e.setProperty("q", query);
 		e.setProperty("ok", resultOk);
 		e.setProperty("url", url);
-
 		datastore.put(e);
 	}
+
 	public ApiResponse getFirstMatchingNgram(WebPage context, List<NGram> ngrams)
 	{
 		ApiResponse apiResponse = null;
@@ -68,7 +70,7 @@ public class Storage {
 		List<Entity> liste = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(1));
 
 		if (liste.size() == 0) return null;
-		return ApiResponse.getApiResponseFromEntity(liste.get(0));
+		return ApiResponse.getApiResponseFromEntity(n.toString(), liste.get(0));
 	}
 
 	public boolean containsKey(NGram ngram) {
@@ -81,4 +83,14 @@ public class Storage {
 		}
 		return true;
 	}
+
+	public void saveNGramDatastoreEntity(NGramDatastoreEntity entity)
+	{
+		Key key = KeyFactory.createKey(AG_KIND, entity.ngram + "." + entity.domain);
+		Entity e = new Entity(key);
+		// e.setProperty("entity", entity);
+		datastore.put(e);
+
+	}
+
 }

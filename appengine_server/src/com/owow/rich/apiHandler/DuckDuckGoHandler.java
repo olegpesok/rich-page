@@ -18,14 +18,13 @@ public class DuckDuckGoHandler extends ApiHandler {
 		final JSONObject ret = new JSONObject();
 		ret.put("data", data);
 
-
-		return new ApiResponse(ret, type);
+		return new ApiResponse(title, ret, type);
 	}
 
 	@Override
-   public ApiView getView(ApiResponse fromGetData) throws Exception {
-	   // TODO Auto-generated method stub
-	   return null;
-   }
+	public ApiView getView(ApiResponse fromGetData) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

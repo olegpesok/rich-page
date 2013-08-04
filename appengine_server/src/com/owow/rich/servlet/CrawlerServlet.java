@@ -31,7 +31,7 @@ public class CrawlerServlet extends HttpServlet {
 	                                            + "|wav|avi|mov|mpeg|ram|m4v|pdf"
 	                                            + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 	String	                    mHost;
-	HashSet<URL>	              usedUrls	= new HashSet<URL>();
+	HashSet<String>	           usedUrls	= new HashSet<String>();
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)
 	      throws IOException {
@@ -39,15 +39,19 @@ public class CrawlerServlet extends HttpServlet {
 
 		mHost = startingUrl.getHost();
 		crawlInto(startingUrl, 0, 1);
+		usedUrls.add(startingUrl.toString());
 		int damn = fs.size();
-		while (!fs.isEmpty())
+		List<Future<?>> deleted = new LinkedList<Future<?>>();
+		while (!fs.isEmpty()) {
 			for (Future<?> f : fs)
-				if (f.isDone()) fs.remove(f);
+				if (f.isDone()) deleted.add(f);
+			for (Future<?> f : deleted)
+				fs.remove(f);
+		}
 		resp.getWriter().write("OK - " + damn);
 	}
 	public void crawlInto(URL url, int depth, int maxDepth) throws IOException
 	{
-		usedUrls.add(url);
 		Document document = Jsoup.parse(HtmlUtil.getUrlSource(url.toString()));
 		Elements a = document.getElementsByTag("a");
 		for (Element a2 : a)
@@ -56,7 +60,8 @@ public class CrawlerServlet extends HttpServlet {
 				URL newUrl = new URL(url, s);
 				if (shouldVisit(newUrl))
 				{
-					sendToAppEngine(url);
+					usedUrls.add(newUrl.toString());
+					sendToAppEngine(newUrl);
 					if (depth < maxDepth) crawlInto(newUrl, depth + 1, maxDepth);
 				}
 			} catch (Exception e) {}
@@ -72,7 +77,7 @@ public class CrawlerServlet extends HttpServlet {
 	public boolean shouldVisit(URL u)
 	{
 		String href = u.toString().toLowerCase();
-		return !usedUrls.contains(u) && !FILTERS.matcher(href).matches() && u.getHost().contains(mHost);
+		return !usedUrls.contains(u.toString()) && !FILTERS.matcher(href).matches() && u.getHost().contains(mHost);
 	}
 
 	List<Future<?>>	fs	= new LinkedList<Future<?>>();

@@ -26,13 +26,13 @@ public class GoogleHandler extends ApiHandler {
 		}
 		ret.put("data", data);
 
-		return new ApiResponse(ret, type);
+		return new ApiResponse(query, ret, type);
 	}
 
 	@Override
-   public ApiView getView(ApiResponse fromGetData) throws Exception {
-	   // TODO Auto-generated method stub
-	   return null;
-   }
+	public ApiView getView(ApiResponse fromGetData) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

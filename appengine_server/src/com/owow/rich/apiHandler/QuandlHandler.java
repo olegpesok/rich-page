@@ -20,7 +20,7 @@ public class QuandlHandler extends ApiHandler {
 
 		final JSONObject json = new JSONObject();
 		json.put("data", data);
-		return new ApiResponse(json, type);
+		return new ApiResponse(query, json, type);
 	}
 
 	// TODO understand what todo
@@ -30,9 +30,9 @@ public class QuandlHandler extends ApiHandler {
 	}
 
 	@Override
-   public ApiView getView(ApiResponse fromGetData) throws Exception {
-	   // TODO Auto-generated method stub
-	   return null;
-   }
+	public ApiView getView(ApiResponse fromGetData) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

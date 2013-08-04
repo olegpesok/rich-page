@@ -16,13 +16,13 @@ public class GeographicHandler extends ApiHandler {
 
 		final JSONObject json = new JSONObject();
 		json.put("data", serverResponse.getJSONArray("geonames"));
-		return new ApiResponse(json, type);
+		return new ApiResponse(query, json, type);
 	}
 
 	@Override
-   public ApiView getView(ApiResponse fromGetData) throws Exception {
-	   // TODO Auto-generated method stub
-	   return null;
-   }
+	public ApiView getView(ApiResponse fromGetData) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

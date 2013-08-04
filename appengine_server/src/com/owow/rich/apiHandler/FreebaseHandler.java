@@ -2,6 +2,7 @@ package com.owow.rich.apiHandler;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,12 +10,14 @@ import org.json.JSONObject;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
+import com.owow.rich.RichLogger;
 import com.owow.rich.utils.HtmlUtil;
 
 public class FreebaseHandler extends ApiHandler {
 
 	String	   GOOGLE_API_KEY	          = "AIzaSyBjIW5540wkFEpZE2D3fx-TrLykSJ9MAiU";
-	private int	FREEBASE_SCORE_THRESHOLD	= 200;
+	private int	FREEBASE_SCORE_LOW_THRESHOLD	= 0;
+	private int	FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD	= 500;
 
 	/**
 	 * Return the first result from freebase.
@@ -23,7 +26,7 @@ public class FreebaseHandler extends ApiHandler {
 	public ApiResponse getFirstResponse(String highlight, ApiType apiType) throws Exception {
 		JSONArray searchResponse = getFreebaseSearchResponse(highlight);
 		if (searchResponse.length() > 0) return getSingleResponse(searchResponse.getJSONObject(0), apiType);
-      else return null;
+		else return null;
 	}
 
 	/**
@@ -35,8 +38,15 @@ public class FreebaseHandler extends ApiHandler {
 
 		List<ApiResponse> responses = Lists.newArrayList();
 		for (int i = 0; i < searchResponse.length(); i++) {
+			
 			ApiResponse apiResponse = getSingleResponse(searchResponse.getJSONObject(i), apiType);
-			if (apiResponse != null) responses.add(apiResponse);
+			
+			if (apiResponse != null) {
+				RichLogger.log.log(Level.INFO, "----------FB------------");
+		   	RichLogger.log.log(Level.INFO, "Score: [ " + apiResponse.apiInternalScore + " ] object: " + apiResponse.text);
+		   	
+				responses.add(apiResponse);
+			}
 		}
 		return responses;
 	}
@@ -63,6 +73,7 @@ public class FreebaseHandler extends ApiHandler {
 	private ApiResponse getSingleResponse(JSONObject searchResult, ApiType apiType) {
 		try {
 			int score = searchResult.getInt("score");
+			String title = searchResult.getString("name");
 			if (score >= FREEBASE_SCORE_THRESHOLD) {
 				String mid = searchResult.getString("mid");
 				JSONObject topicResponse = getFreebseTopic(mid, apiType);
@@ -74,7 +85,11 @@ public class FreebaseHandler extends ApiHandler {
 				      .getString("value");
 				String html = "<p>" + description.replace(". ", ". </p><p>") + "</p>";
 
-				return new ApiResponse(topicResponse, html, apiType, score, description);
+				ApiResponse apiResponse = new ApiResponse(topicResponse, html, apiType, score, description);
+				if(apiResponse.apiInternalScore >= FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD) {
+					apiResponse.goodEnough = true;
+				}
+				return apiResponse;
 
 			}
 		} catch (Exception ex) {
@@ -104,7 +119,7 @@ public class FreebaseHandler extends ApiHandler {
 
 	@Override
 	public ApiView getView(ApiResponse fromGetData) throws Exception {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 }

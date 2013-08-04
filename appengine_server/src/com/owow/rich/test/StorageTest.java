@@ -37,7 +37,7 @@ public class StorageTest {
 		List<Token> t = new LinkedList<Token>();
 		t.add(new Token("shalti", 1));
 		t.add(new Token("USA", 0));
-		apiResponse = new ApiResponse(new JSONObject(), ApiType.freebase);
+		apiResponse = new ApiResponse("shalti", new JSONObject(), ApiType.freebase);
 		Assert.assertNotNull(apiResponse.myType);
 		testNGram = new NGram(t);
 		smap.put(testNGram, apiResponse);

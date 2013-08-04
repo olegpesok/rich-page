@@ -33,13 +33,13 @@ public class WolframAlphaHandler extends ApiHandler {
 
 		ret.put("data", dataWriter.toString());
 
-	   return new ApiResponse(ret, at);
+		return new ApiResponse(title, ret, at);
 	}
 
 	@Override
-   public ApiView getView(ApiResponse fromGetData) throws Exception {
-	   // TODO Auto-generated method stub
-	   return null;
-   }
+	public ApiView getView(ApiResponse fromGetData) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

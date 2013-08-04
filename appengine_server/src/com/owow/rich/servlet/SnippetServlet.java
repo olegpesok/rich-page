@@ -14,6 +14,7 @@ import com.google.template.soy.data.SoyMapData;
 import com.owow.rich.Manager;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiType;
+import com.owow.rich.image.ImageRetriver;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.utils.TemplateUtil;
 
@@ -39,7 +40,20 @@ public class SnippetServlet extends HttpServlet {
 		String query = req.getParameter("q");
 		final String url = req.getParameter("url");
 
-		if (query != null) {
+		// delete this {
+		JSONObject s = null;
+		try {
+			s = ImageRetriver.getImages(query);
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		resp.setContentType("application/json");
+		resp.getWriter().write(s.toString());
+		if (true) return;
+		// }
+
+		if (query != null &&  query != "") {
 			// TODO get rid of that.
 			query = query.toLowerCase();
 			WebPage webpage = new WebPage(null, null, url);

@@ -20,7 +20,7 @@ public class CrunchBaseHandler extends ApiHandler {
 		final JSONObject ret = new JSONObject();
 		ret.put("data", jsonData);
 
-		return new ApiResponse(ret, type);
+		return new ApiResponse(title, ret, type);
 	}
 
 	@Override
