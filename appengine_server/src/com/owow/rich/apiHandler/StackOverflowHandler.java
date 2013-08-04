@@ -1,9 +1,12 @@
 package com.owow.rich.apiHandler;
 
+import java.util.logging.Logger;
+
 import org.json.JSONObject;
 
 import com.owow.rich.utils.HtmlUtil;
 
+@Deprecated
 public class StackOverflowHandler extends ApiHandler {
 
 	@Override
@@ -13,12 +16,15 @@ public class StackOverflowHandler extends ApiHandler {
 		final String server = "https://api.stackexchange.com/2.1/similar?order=desc&sort=relevance&site=stackoverflow&title=";
 		String serverResponse = HtmlUtil.getHttpsUrlSource(server + query);
 		final JSONObject data = new JSONObject(serverResponse);
-		if (data.getJSONArray("items").length() == 0) throw new Exception("no items");
+		if (data.getJSONArray("items").length() == 0) {
+			Logger.getLogger("StackOverFlow").warning("no items. title = " + query);
+			return null;
+		}
 		final JSONObject json = new JSONObject();
 		json.put("data", data.getJSONArray("items"));
 
 		throw new UnsupportedOperationException();
-		//return new ApiResponse(jo, at);
+		// return new ApiResponse(jo, at);
 	}
 
 	@Override

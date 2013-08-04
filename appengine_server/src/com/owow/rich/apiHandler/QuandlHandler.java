@@ -1,6 +1,7 @@
 package com.owow.rich.apiHandler;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,7 +17,10 @@ public class QuandlHandler extends ApiHandler {
 		final String server = "http://www.quandl.com/api/v1/datasets.json?query=";
 		serverResponse = HtmlUtil.getJSONFromServerAndTitle(server, query);
 		final JSONArray data = serverResponse.getJSONArray("docs");
-		if (data.length() == 0) throw new Exception("no results");
+		if (data.length() == 0) {
+			Logger.getLogger("Quandl").warning("no results. title = " + query);
+			return null;
+		}
 
 		final JSONObject json = new JSONObject();
 		json.put("data", data);

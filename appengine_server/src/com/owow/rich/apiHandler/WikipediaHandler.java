@@ -2,6 +2,7 @@ package com.owow.rich.apiHandler;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -72,7 +73,10 @@ public class WikipediaHandler extends ApiHandler {
 		final JSONObject pages = new JSONObject(data).getJSONObject("query")
 		      .getJSONObject("pages");
 		final String[] pagesID = JSONObject.getNames(pages);
-		if (pagesID[0].equals("-1")) throw new Exception("pageID = -1 on " + query);
+		if (pagesID[0].equals("-1")) {
+			Logger.getLogger("Wiki").info("no page for " + query);;
+			return null;
+		}
 		for (final String s : pagesID) {
 			final JSONObject pageData = new JSONObject();
 			final JSONObject currentPage = pages.getJSONObject(s);

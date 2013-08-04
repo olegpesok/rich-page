@@ -15,8 +15,8 @@ import com.owow.rich.utils.HtmlUtil;
 
 public class FreebaseHandler extends ApiHandler {
 
-	String	   GOOGLE_API_KEY	          = "AIzaSyBjIW5540wkFEpZE2D3fx-TrLykSJ9MAiU";
-	private int	FREEBASE_SCORE_LOW_THRESHOLD	= 0;
+	String	   GOOGLE_API_KEY	                                 = "AIzaSyBjIW5540wkFEpZE2D3fx-TrLykSJ9MAiU";
+	private int	FREEBASE_SCORE_LOW_THRESHOLD	                  = 0;
 	private int	FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD	= 500;
 
 	/**
@@ -38,13 +38,13 @@ public class FreebaseHandler extends ApiHandler {
 
 		List<ApiResponse> responses = Lists.newArrayList();
 		for (int i = 0; i < searchResponse.length(); i++) {
-			
+
 			ApiResponse apiResponse = getSingleResponse(searchResponse.getJSONObject(i), apiType);
-			
+
 			if (apiResponse != null) {
 				RichLogger.log.log(Level.INFO, "----------FB------------");
-		   	RichLogger.log.log(Level.INFO, "Score: [ " + apiResponse.apiInternalScore + " ] object: " + apiResponse.text);
-		   	
+				RichLogger.log.log(Level.INFO, "Score: [ " + apiResponse.apiInternalScore + " ] object: " + apiResponse.text);
+
 				responses.add(apiResponse);
 			}
 		}
@@ -74,7 +74,7 @@ public class FreebaseHandler extends ApiHandler {
 		try {
 			int score = searchResult.getInt("score");
 			String title = searchResult.getString("name");
-			if (score >= FREEBASE_SCORE_THRESHOLD) {
+			if (score >= FREEBASE_SCORE_LOW_THRESHOLD) {
 				String mid = searchResult.getString("mid");
 				JSONObject topicResponse = getFreebseTopic(mid, apiType);
 
@@ -85,10 +85,8 @@ public class FreebaseHandler extends ApiHandler {
 				      .getString("value");
 				String html = "<p>" + description.replace(". ", ". </p><p>") + "</p>";
 
-				ApiResponse apiResponse = new ApiResponse(topicResponse, html, apiType, score, description);
-				if(apiResponse.apiInternalScore >= FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD) {
-					apiResponse.goodEnough = true;
-				}
+				ApiResponse apiResponse = new ApiResponse(title, topicResponse, html, apiType, score, description);
+				if (apiResponse.apiInternalScore >= FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD) apiResponse.goodEnough = true;
 				return apiResponse;
 
 			}
@@ -119,7 +117,7 @@ public class FreebaseHandler extends ApiHandler {
 
 	@Override
 	public ApiView getView(ApiResponse fromGetData) throws Exception {
-		
+
 		return null;
 	}
 }

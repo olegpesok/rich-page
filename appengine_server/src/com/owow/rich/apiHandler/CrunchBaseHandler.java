@@ -1,5 +1,7 @@
 package com.owow.rich.apiHandler;
 
+import java.util.logging.Logger;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -15,7 +17,10 @@ public class CrunchBaseHandler extends ApiHandler {
 
 		JSONArray jsonData = new JSONObject(serverDataResponse).getJSONArray("results");
 
-		if (jsonData.length() == 0) throw new Exception("no crunch");
+		if (jsonData.length() == 0) {
+			Logger.getLogger(CrunchBaseHandler.class.toString()).info("no results. title = " + title);
+			return null;
+		}
 
 		final JSONObject ret = new JSONObject();
 		ret.put("data", jsonData);

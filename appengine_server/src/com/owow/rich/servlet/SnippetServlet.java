@@ -40,7 +40,6 @@ public class SnippetServlet extends HttpServlet {
 		String query = req.getParameter("q");
 		final String url = req.getParameter("url");
 
-<<<<<<< HEAD
 		// delete this {
 		JSONObject s = null;
 		try {
@@ -54,9 +53,7 @@ public class SnippetServlet extends HttpServlet {
 		if (true) return;
 		// }
 
-=======
->>>>>>> c3f18e85158fb399daa2f33a23576bdc2f2da156
-		if (query != null &&  query != "") {
+		if (query != null && query != "") {
 			// TODO get rid of that.
 			query = query.toLowerCase();
 			WebPage webpage = new WebPage(null, null, url);

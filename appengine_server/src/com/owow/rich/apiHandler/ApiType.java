@@ -5,8 +5,8 @@ import java.util.Map;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
 
 public enum ApiType {
-	qoura(QouraHandler.class, "qo"),
-	google(GoogleHandler.class, "go"),
+	//qoura(QouraHandler.class, "qo"),
+	//google(GoogleHandler.class, "go"),
 	crunch(CrunchBaseHandler.class, "cr"),
 	wiki(WikipediaHandler.class, "wi"),
 	dictionary(DictionaryHandler.class, "di"),
