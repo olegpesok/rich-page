@@ -17,6 +17,7 @@ import com.owow.rich.utils.ComparisonUtils;
 import com.owow.rich.utils.ComparisonUtils.ScoredObject;
 import com.owow.rich.utils.ComparisonUtils.ScoredObjectList;
 import com.owow.rich.utils.NlpUtils;
+import com.owow.rich.utils.NlpUtils.Tag;
 
 @SuppressWarnings("serial")
 public class DebugServlet  extends HttpServlet {
@@ -44,9 +45,9 @@ public class DebugServlet  extends HttpServlet {
 					break;
 				}
 				
-				List<String> concepts = nlpUtils.extractConcepts(scoredObject.text);
-				List<String> entites = nlpUtils.extractEntities(scoredObject.text);
-				List<String> keyWords = nlpUtils.extractKeyWords(scoredObject.text);
+				List<Tag> concepts = nlpUtils.extractConcepts(scoredObject.text);
+				List<Tag> entites = nlpUtils.extractEntities(scoredObject.text);
+				List<Tag> keyWords = nlpUtils.extractKeyWords(scoredObject.text);
 				String category = nlpUtils.categorizeText(scoredObject.text);
 				
 				resp.getWriter().write(scoredObject.apiInternalScore + " " + scoredObject.text +" \r\n");
