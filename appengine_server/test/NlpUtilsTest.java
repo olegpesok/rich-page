@@ -5,10 +5,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.appengine.labs.repackaged.com.google.common.base.Function;
-import com.google.appengine.labs.repackaged.com.google.common.collect.Iterables;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.owow.rich.utils.NlpUtils;
 import com.owow.rich.utils.NlpUtils.Tag;
+import com.owow.rich.utils.NlpUtils.scoredResult;
 
 
 public class NlpUtilsTest {
@@ -17,6 +17,19 @@ public class NlpUtilsTest {
 	@Before
 	public void setUp() {
 		nlpUtils = new NlpUtils();
+	}
+	
+	@Test
+	public void testRankResults() {
+		List<scoredResult> res = nlpUtils.rankResults("Stripe is one of the most successful startups", Lists.newArrayList("Stripe is a company that provides a way for individuals and businesses", "alon balon Google"));
+		res = res;
+	}
+	
+	@Test
+	public void testCompare() {
+		double res = nlpUtils.compare("Stripe is one of the most successful startups we've funded, and the problem they solved was an urgent one. If anyone could have sat back and waited for users, it was Stripe. But in fact they're famous within YC for aggressive early user acquisition.",
+				"Stripe is a company that provides a way for individuals and businesses to accept payments over the internet. Co-founded by brothers");
+		res = res;
 	}
 	
 	@Test

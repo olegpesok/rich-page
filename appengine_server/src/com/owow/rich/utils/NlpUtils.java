@@ -1,6 +1,8 @@
 package com.owow.rich.utils;
 
 import java.io.StringWriter;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.xml.transform.OutputKeys;
@@ -26,30 +28,77 @@ public class NlpUtils {
 	public class Tag {
 		public String text;
 		public double score;
-		
-		public Tag(String text, double score) {
+		public String type;
+		public Tag(String text, double score, String type) {
 			this.text = text;
 			this.score = score;
-			
+			this.type = type;
 		}
+		
+		@Override
+		public String toString(){
+			return text + " s:" + score + " t:" + type;
+		}
+		@Override
+		public int hashCode() {
+		   return text.hashCode();
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if(obj instanceof Tag) {
+				return text.equals(((Tag)obj).text);
+			}
+		   return false;
+		} 
+	}
+	
+	public class scoredResult implements Comparable<scoredResult>{
+		public String text;
+		public double score;
+		public scoredResult(String text, double score) {
+			this.text = text;
+			this.score = score;
+		}
+
+		@Override
+      public int compareTo(scoredResult o) {
+	      return (int)((score - o.score)*10000);
+      }
 	}
 
-	public void findBestMatch(String text1, List<String> textList) {
+	public List<scoredResult> rankResults(String text, List<String> textList) {
+		List<scoredResult> scoredResults = Lists.newArrayList();
+		List<Tag> tagList = extractAllTags(text);
+		for (String otherText : textList) {
+			List<Tag> otherTagList = extractAllTags(otherText);
+			double score = compare(tagList, otherTagList);
+			scoredResults.add(new scoredResult(otherText, score));
+      }
+		Collections.sort(scoredResults);
+		return scoredResults;
 	}
 	
 	public double compare(String text1, String text2) {
 		List<Tag> tagsList1 = extractAllTags(text1);
 		List<Tag> tagsList2 = extractAllTags(text2);
+		return compare(tagsList1, tagsList2);
+	}
+
+	private double compare(List<Tag> tagsList1, List<Tag> tagsList2) {
+		HashSet<Tag> tagSet1 = new HashSet<Tag>(tagsList1);
+		HashSet<Tag> tagSet2 = new HashSet<Tag>(tagsList2);
 		
 		double score = 0;
-		for (Tag tag : tagsList2) {
-	      if(tagsList1.contains(tag)) {
+		for (Tag tag : tagSet2) {
+	      if(tagSet1.contains(tag)) {
 	      	score += tag.score;
 	      }
       }
-		score /= (tagsList1.size() + tagsList2.size());
+		score /= Math.log(1 + tagsList1.size() + tagsList2.size());
 		return score;
-	}
+   }
+	
 	
 	public List<Tag> extractAllTags(String text) {
 		List<Tag> results = Lists.newArrayList(); 
@@ -91,20 +140,23 @@ public class NlpUtils {
 		List<Tag> results = Lists.newArrayList();
 		try{	
 			// Fucking API, if less then one results return object and not array. so handle both cases.
-			Object itemOrItemList = response.getJSONObject("results").getJSONObject(groupString).get(itemString);
-			if(itemOrItemList instanceof JSONArray)
-			{
-				JSONArray itemList = (JSONArray) itemOrItemList;
-				for (int i = 0; i < itemList.length(); i++) {
-					String item = itemList.getJSONObject(i).getString("text");
-					double relevance = Double.parseDouble(itemList.getJSONObject(i).getString("relevance"));
-					results.add(new Tag(item, relevance));
+			Object groupObject = response.getJSONObject("results").get(groupString);
+			if (groupObject instanceof JSONObject) {
+				Object itemOrItemList = ((JSONObject)groupObject).get(itemString);
+				if(itemOrItemList instanceof JSONArray)
+				{
+					JSONArray itemList = (JSONArray) itemOrItemList;
+					for (int i = 0; i < itemList.length(); i++) {
+						String item = itemList.getJSONObject(i).getString("text");
+						double relevance = Double.parseDouble(itemList.getJSONObject(i).getString("relevance"));
+						results.add(new Tag(item, relevance, itemString));
+					}
+				} else if (itemOrItemList instanceof JSONObject) {
+					JSONObject itemObject = (JSONObject) itemOrItemList;
+					String item = itemObject.getString("text");
+					double relevance = Double.parseDouble(itemObject.getString("relevance"));
+					results.add(new Tag(item, relevance, itemString));
 				}
-			} else if (itemOrItemList instanceof JSONObject) {
-				JSONObject itemObject = (JSONObject) itemOrItemList;
-				String item = itemObject.getString("text");
-				double relevance = Double.parseDouble(itemObject.getString("relevance"));
-				results.add(new Tag(item, relevance));
 			}
 		} catch (Exception e) {
 			RichLogger.log.severe("alchemy api extract rentities");
