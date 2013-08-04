@@ -10,13 +10,13 @@ import com.google.appengine.labs.repackaged.com.google.common.collect.Iterables;
 import com.owow.rich.RichLogger;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.Memcache;
-import com.owow.rich.utils.TFIDFUtil;
-import com.owow.rich.utils.TFIDFUtil.ScoredObjectList;
+import com.owow.rich.utils.ComparisonUtils;
+import com.owow.rich.utils.ComparisonUtils.ScoredObjectList;
 
 public class ApiRetriver {
 	final static String	    MEMPREFIX	      = "apiFactory/";
 	final static ApiType	    DEFAULT_API_TYPE	= ApiType.freebase;
-	private static TFIDFUtil	tfIdfUtil	   = new TFIDFUtil();
+	private static ComparisonUtils	tfIdfUtil	   = new ComparisonUtils();
 	ApiRetriver( ) {}
 
 	public static ApiResponse getApiResponse(String highlight, String method, WebPage webPage)

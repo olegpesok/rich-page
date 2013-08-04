@@ -8,7 +8,7 @@ import com.owow.rich.utils.ComparisonUtils.ScoredObject;
 import com.owow.rich.utils.ComparisonUtils.ScoredObjectList;
 
 
-public class TfIDfUtilTest {
+public class NlpUtilsTest {
 
 	//TODO(guti): check how to mock the service:
 	@Test

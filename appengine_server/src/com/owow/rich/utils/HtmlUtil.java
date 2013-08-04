@@ -81,7 +81,11 @@ public class HtmlUtil {
 
 	public static JSONObject getJSONFromServerAndTitle(final String server, final String title)
 	      throws JSONException, IOException {
-		return new JSONObject(getUrlSource(server + title));
+		return getJSON(server + title);
+	}
+	public static JSONObject getJSON(final String url) 
+	      throws JSONException, IOException {
+		return new JSONObject(getUrlSource(url));
 	}
 
 }
