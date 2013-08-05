@@ -21,6 +21,7 @@ public class ApiResponsePicker {
 				return bestApiResponse;
 			}
 			
+			
 			for (ApiResponse apiResponse : apiResponseList) {
 				try {
 					highlight = URLDecoder.decode(highlight, "UTF-8");
@@ -68,6 +69,8 @@ public class ApiResponsePicker {
    }
 	
    private ApiResponse isAnyOneBetterByFar(List<ApiResponse> apiResponseList, WebPage webPage, String highlight) {
+   	webPage.getText();
+   	
    	ApiResponse chosenResponse = null;
    	double bestScore = 0.0;
    	double secondBestScore = 0.0;

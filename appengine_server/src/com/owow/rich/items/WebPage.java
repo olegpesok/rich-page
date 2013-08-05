@@ -2,6 +2,7 @@ package com.owow.rich.items;
 
 import java.util.logging.Level;
 
+import org.jsoup.Jsoup;
 import org.w3c.dom.Document;
 
 import com.alchemyapi.api.AlchemyAPI;
@@ -23,14 +24,17 @@ public class WebPage {
 		try {
 			if (text == null)
 			{
-				AlchemyAPI a = AlchemyAPI
-				      .GetInstanceFromString("dc86318ce4f5cf5ae2872376afe43940938d7edf");
-				Document d = a.URLGetText(url);
-				if (d.getDocumentElement().getElementsByTagName("status").item(0).getTextContent().equals("ERROR")) { 
-					RichLogger.log.log(Level.SEVERE,"Error, API alchemy failed at retriving the text");
-				} else {
-					text = d.getDocumentElement().getElementsByTagName("text").item(0).getTextContent();
-				}
+				org.jsoup.nodes.Document doc = Jsoup.connect(url).get();
+				text = doc.body().text();
+//				
+//				AlchemyAPI a = AlchemyAPI
+//				      .GetInstanceFromString("dc86318ce4f5cf5ae2872376afe43940938d7edf");
+//				Document d = a.URLGetText(url);
+//				if (d.getDocumentElement().getElementsByTagName("status").item(0).getTextContent().equals("ERROR")) { 
+//					RichLogger.log.log(Level.SEVERE,"Error, API alchemy failed at retriving the text");
+//				} else {
+//					text = d.getDocumentElement().getElementsByTagName("text").item(0).getTextContent();
+//				}
 			}
 			return text;
 

@@ -78,7 +78,11 @@ public class ServletTest {
 //		singleTest("Central Italy", ApiType.freebase.getIdentifyer(), "http://wikitravel.org/en/Central_Italy", true, "Central Italy is one of the five official");
 //		singleTest("Angry Birds", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Angry Birds is a video game franchise createdl");
 //		singleTest("microsoft", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Microsoft Corporation is an American multinational software");
-		singleTest("iPods", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "The iPod is a line of portable media players");
+//		singleTest("iPods", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "The iPod is a line of portable media players");
+//		singleTest("Apple", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Apple Inc., formerly Apple Computer, Inc., is an American multinational corporation headquartered");
+//		singleTest("Blackberries", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "The BlackBerry is a line of wireless handheld devices");
+//		singleTest("Kik", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Kik Messenger is an instant messaging");
+		singleTest("AirDrop", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "AirDrop is a Wi-Fi ad-hoc service");
 		
 	}
 	
