@@ -152,11 +152,11 @@ var markSelection = (function() {
 							'left' : left - 13,
 							'z-index' : 10000,
 							position : 'absolute'
-						}).hide().fadeIn('slow');
+						}).hide().show();
 
 						// When users click close the popup.
 						jQuery('body').click(function() {
-							jQuery('#myModal').fadeOut('slow');
+							jQuery('#myModal').hide();
 						});
 					} else {
 						console.log("no results for " + selectedText)

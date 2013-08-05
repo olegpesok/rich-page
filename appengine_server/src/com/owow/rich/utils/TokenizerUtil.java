@@ -1,35 +1,39 @@
 package com.owow.rich.utils;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import com.owow.rich.items.NGram;
 import com.owow.rich.items.Token;
 
 public class TokenizerUtil {
 
+	public static String cleanUnwantedChars(String text)
+	{
+		return text.replaceAll("[/<>!@#$%^&*_=+~,\";.:(){}\\[\\]|\\\\-]", "");
+	}
+	// NOTE: can be changed to array
 	public List<Token> tokenize(String text) {
-		// text = text.replaceAll("[/<>!@#$%^&*-_=+~`?,\";.:'(){}\\[\\]|\\\\]",
-		// "");
-		text = text.replaceAll("[\"%(){}\\[\\]~,/<>!$&.]", "");
-		text = text.toLowerCase();
+		text = text.replaceAll("[/<>!@#$%^&*_=+~?,\";.:(){}\\[\\]|\\\\-]", "");
 		LinkedList<Token> tokens = new LinkedList<Token>();
 
-		StringTokenizer st = new StringTokenizer(text, "|-_+;:@&#*= ");
+		StringTokenizer st = new StringTokenizer(text, "\"%(){}\\[\\]~,/<>!$&.|_+;:@&#*= -");
+		String[] strs = st.tokenize();
 
-		for (int i = 0; st.hasMoreTokens(); i++) {
-			String s = st.nextToken();
-			if (!s.trim().isEmpty()) tokens.add(new Token(s, i));
-		}
+		// tokens = new Token[strs.length];
+
+		for (int i = 0; i < strs.length; i++)
+			tokens.add(new Token(strs[i], i));
+		// tokens[i] = new Token(strs[i],i);
+
 		return tokens;
 	}
 	public List<NGram> combineToNGrams(List<Token> tokens, int size) {
 		LinkedList<NGram> ngrams = new LinkedList<NGram>();
 		LinkedList<Token> ngram = new LinkedList<Token>();
-		for (int i = 0; i < size; i++) {
+		for (int i = size - 1; i >= 0; i--) {
 			int count = 0;
+			ngram.clear();
 			for (Token t : tokens)
 			{
 				ngram.add(t);
@@ -50,11 +54,10 @@ public class TokenizerUtil {
 
 		return null;
 	}
-	
+
 	public List<NGram> getAllNgram(String query, int ngramLen) {
-		List<Token> tokens = this.tokenize(query);
-		List<NGram> nGrams = this.combineToNGrams(tokens, ngramLen);
-		Collections.reverse(nGrams);
+		List<Token> tokens = tokenize(query);
+		List<NGram> nGrams = combineToNGrams(tokens, ngramLen);
 		return nGrams;
-   }
+	}
 }

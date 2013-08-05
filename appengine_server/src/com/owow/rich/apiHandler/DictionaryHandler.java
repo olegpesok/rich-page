@@ -1,5 +1,7 @@
 package com.owow.rich.apiHandler;
 
+import java.util.logging.Logger;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -14,6 +16,10 @@ public class DictionaryHandler extends ApiHandler {
 		final JSONObject jsonData = HtmlUtil.getJSONFromServerAndTitle(server, query);
 		final JSONObject ret = new JSONObject();
 		final JSONArray textsArray = new JSONArray();
+		if (!jsonData.has("tuc")) {
+			Logger.getLogger(DictionaryHandler.class.toString()).warning("no results title = " + query);;
+			return null;
+		}
 		final JSONArray tuc = jsonData.getJSONArray("tuc");
 
 		for (int i = 0; i < tuc.length(); i++)
@@ -31,7 +37,6 @@ public class DictionaryHandler extends ApiHandler {
 		ar.view = getView(ar, query);
 		return ar;
 	}
-
 	public ApiView getView(ApiResponse fromGetData, String title) throws Exception
 	{
 		String s = title + " may refer to: <br />";
