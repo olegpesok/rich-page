@@ -4,44 +4,45 @@
  * @param p snippet.
  */
 {template .helloWorld}
-  <head>
-    <title>Conext Box</title>
-    <meta name="keywords" content="template">
-    <meta name="author" content="Taylor Poulos">
+<head>
+<title>Conext Box</title>
+<meta name="keywords" content="template">
+<meta name="author" content="Taylor Poulos">
 
-    <link rel="stylesheet" href="reset.css">
-    <link href="style.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="reset.css">
+<link href="style.css" rel="stylesheet" type="text/css">
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="js/jquery.slimscroll.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="js/page_script.js"></script>
-  </head>
-  <body>
+</head>
+<body>
 
-  <div class="context-box-container">
-    <div class="context-box-header context-box-frame">
-        <div class="context-box-frame-icons">
-        <span class="context-box-frame-icon icon-info" id="context-box-info-toggle"></span> 
-        <span class="context-box-frame-icon icon-link"  id="context-box-links-toggle"></span>
-      </div>
-    </div>
-    <div id="context-box-content-container">
-      <div class="context-box-info context-box-content context-box-open" id="context-box-info">
-        <div class="context-box-info-description">
-         {$p|noAutoescape}
-        </div>
-      </div>
-      
-      <div class="context-box-links context-box-content  " id="context-box-links">        
-        <!-- Related Links -->
-      </div>
-    </div>
-    <div class="context-box-footer context-box-frame">
+	<div class="context-box-container">
+		<div class="context-box-header context-box-frame">
+			<div class="context-box-frame-icons">
+				<span class="context-box-frame-icon icon-info"
+					id="context-box-info-toggle"></span> <span
+					class="context-box-frame-icon icon-link"
+					id="context-box-links-toggle"></span>
+			</div>
+		</div>
+		<div id="context-box-content-container-container">
+			<div id="context-box-content-container">
+				<div class="context-box-info context-box-content context-box-open"
+					id="context-box-info">
+					<div class="context-box-info-description">
+						{$p|noAutoescape} 
+					</div>
+				</div>
+				<div class="context-box-links context-box-content" id="context-box-links">
+					<!-- Related Links -->
+				</div>
+			</div>
+		</div>
+		<div class="context-box-footer context-box-frame"></div>
+	</div>
 
-    </div>
-  </div>
 
-
-  <script src="js/page_script.js"></script>  
-	</body>
+</body>
 {/template}

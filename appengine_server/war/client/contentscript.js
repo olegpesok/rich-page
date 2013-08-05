@@ -16,6 +16,13 @@ DEBUG = "http://localhost:8888/";
 NOTDEBUG = 'http://rich-page.appspot.com/'
 RICH_SERVER = NOTDEBUG;
 
+// Setting trim function
+if (!String.prototype.trim) {
+	String.prototype.trim = function() {
+		return this.replace(/^\s+|\s+$/g, '');
+	};
+}
+
 // // Get selected text:
 function getSelectedText() {
 	var text = "";
@@ -25,7 +32,7 @@ function getSelectedText() {
 			&& document.selection.type == "Text") {
 		text = document.selection.createRange().text;
 	}
-	return text;
+	return text.trim();
 }
 
 function doSomethingWithSelectedText() {
@@ -151,8 +158,7 @@ var markSelection = (function() {
 						jQuery('body').click(function() {
 							jQuery('#myModal').fadeOut('slow');
 						});
-					}
-					else {
+					} else {
 						console.log("no results for " + selectedText)
 					}
 				});
