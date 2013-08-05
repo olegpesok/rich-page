@@ -82,7 +82,8 @@ public class ServletTest {
 //		singleTest("Apple", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Apple Inc., formerly Apple Computer, Inc., is an American multinational corporation headquartered");
 //		singleTest("Blackberries", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "The BlackBerry is a line of wireless handheld devices");
 //		singleTest("Kik", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Kik Messenger is an instant messaging");
-		singleTest("AirDrop", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "AirDrop is a Wi-Fi ad-hoc service");
+//		singleTest("AirDrop", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "AirDrop is a Wi-Fi ad-hoc service");
+		singleTest("Google Play", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Google Play, formerly known as the Android Market");
 		
 	}
 	
