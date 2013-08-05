@@ -90,7 +90,8 @@ public class HtmlUtil {
 	}
 	public static JSONObject getJSON(final String url) 
 	      throws JSONException, IOException {
-		return new JSONObject(getUrlSource(url));
+		String res = getUrlSource(url); 
+		return new JSONObject(res);
 	}
 
 }

@@ -84,7 +84,6 @@ public class DebugServlet  extends HttpServlet {
 				return apiResponse;
 			}			
       }
-		
 	   return null;
    }
 	

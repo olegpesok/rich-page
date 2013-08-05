@@ -32,7 +32,7 @@ public class ServletTest {
 		Assert.assertTrue(response.getBoolean("resultOK"));
 		gu.set("v", "");
 
-		String shouldContain = "Roald Dahl's Willy Wonka is a musical play";
+		String shouldContain = "Willy Wonka is a major character of Roald Dahl";
 		String res = HtmlUtil.getUrlSource(gu.build());
 
 		Assert.assertTrue(res, res.contains(shouldContain));
