@@ -17,8 +17,8 @@ public class FreebaseHandler extends ApiHandler {
 
 	String	   GOOGLE_API_KEY	                                 = "AIzaSyBjIW5540wkFEpZE2D3fx-TrLykSJ9MAiU";
 	private int	FREEBASE_SCORE_LOW_THRESHOLD	                  = 0;
-	private int	FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD	= 500;
-	private int MAX_SEARCH_RESPONSE = 3;
+	private int	FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD	= 450;
+	private int MAX_SEARCH_RESPONSE = 2;
 
 	/**
 	 * Return the first result from freebase.

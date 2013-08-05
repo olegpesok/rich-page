@@ -26,10 +26,14 @@ import com.owow.rich.RichLogger;
 
 public class NlpUtils {
 
-	private final String	    API_KEY	      = "d5f35667e3dbc7bba2936fb03991144dba85c18d";
-	// private final String API_KEY = "dc86318ce4f5cf5ae2872376afe43940938d7edf";
-
-	private final AlchemyAPI	ALCHEMY_API	= AlchemyAPI.GetInstanceFromString(API_KEY);
+	private String getAlchemyApiKey(){
+//		return "f73a4e3d28fbb12206ba958524e55e9d1c3f265f";
+//		return "dc86318ce4f5cf5ae2872376afe43940938d7edf";
+//		return "d5f35667e3dbc7bba2936fb03991144dba85c18d";
+		return "7765f99062f08e86ad5caab7db048a57f3179384";
+   }
+	
+	private final AlchemyAPI ALCHEMY_API	= AlchemyAPI.GetInstanceFromString(getAlchemyApiKey());
 
 	public class Tag {
 		public String	text;
@@ -102,8 +106,8 @@ public class NlpUtils {
 		try {
 			text1 = URLDecoder.decode(text1, "UTF-8");
 			text2 = URLDecoder.decode(text2, "UTF-8");
-		} catch (Exception e) {
-			RichLogger.log.log(Level.SEVERE, "fucking encoding " + text1 + " AND " + text2, e);
+		} catch(Exception e) {
+//			RichLogger.log.log(Level.SEVERE, "fucking encoding " + text1 + " AND " + text2, e);
 		}
 
 		List<Tag> tagsList1 = extractAllTags(text1);
@@ -123,7 +127,7 @@ public class NlpUtils {
 		for (Tag tag : tagSet2)
 			if (tagSet1.contains(tag)) {
 				mathcingTagSet.add(tag);
-				score += tag.score;
+				score += 1;//tag.score;
 			}
 		score /= Math.log(1 + tagsList1.size() + tagsList2.size());
 		return new ScoredResult(tagsList1, tagsList2, mathcingTagSet, score);
@@ -218,5 +222,8 @@ public class NlpUtils {
 	public String categorizeText(String text) {
 		return null;
 	}
+	
+
+	
 
 }

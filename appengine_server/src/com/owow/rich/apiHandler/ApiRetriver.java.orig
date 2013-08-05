@@ -43,9 +43,13 @@ public class ApiRetriver {
 				try {
 					List<ApiResponse> apiResponseList = handler.getAllApiResponses(highlight, mainApiType);
 					if (apiResponseList != null && apiResponseList.size() > 0) {
+<<<<<<< HEAD
 						if (apiResponseList.get(0).goodEnough == true)
 							return apiResponseList.get(0);
 
+=======
+						
+>>>>>>> 26e5ea2db78878ac7f5d6634bbcd783c66e7b9f9
 						ApiResponse apiResponse = apiResponsePicker.choseResult(apiResponseList, webPage, highlight);
 						
 						if (apiResponse != null) pushMemcache(highlight, apiResponse.view, Memcache.getInstance());

@@ -71,6 +71,22 @@ public class ServletTest {
 		singleTest("shalom", ApiType.dictionary.getIdentifyer(), "http://en.wikipedia.org/wiki/Shalom", true, "Jewish greeting");
 	}
 	
+	@Test
+	public void manyTests() throws JSONException, IOException {
+//		singleTest("Music", ApiType.freebase.getIdentifyer(), "url=http://www.mtv.com/music/", true, "Music is an art");
+//		singleTest("Scott Sassa", ApiType.freebase.getIdentifyer(), "http://www.hollywoodreporter.com/news/scott-sassa-lands-gig-at-521671", true, "Scott");
+//		singleTest("Central Italy", ApiType.freebase.getIdentifyer(), "http://wikitravel.org/en/Central_Italy", true, "Central Italy is one of the five official");
+//		singleTest("Angry Birds", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Angry Birds is a video game franchise createdl");
+//		singleTest("microsoft", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Microsoft Corporation is an American multinational software");
+//		singleTest("iPods", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "The iPod is a line of portable media players");
+//		singleTest("Apple", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Apple Inc., formerly Apple Computer, Inc., is an American multinational corporation headquartered");
+//		singleTest("Blackberries", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "The BlackBerry is a line of wireless handheld devices");
+//		singleTest("Kik", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Kik Messenger is an instant messaging");
+//		singleTest("AirDrop", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "AirDrop is a Wi-Fi ad-hoc service");
+		singleTest("Google Play", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Google Play, formerly known as the Android Market");
+		
+	}
+	
 	private void singleTest(String query, String method, String url, boolean showView, String expectedSubString) throws JSONException, IOException {
 		GenericUrl gu = new GenericUrl(servlet);
 		gu.set("m", method).set("q", query);
