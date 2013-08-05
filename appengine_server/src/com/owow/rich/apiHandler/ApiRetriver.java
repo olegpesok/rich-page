@@ -11,12 +11,15 @@ import com.owow.rich.RichLogger;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.Memcache;
 import com.owow.rich.utils.ComparisonUtils;
+import com.owow.rich.utils.NlpUtils;
 import com.owow.rich.utils.ComparisonUtils.ScoredObjectList;
+import com.owow.rich.utils.NlpUtils.ScoredResult;
 
 public class ApiRetriver {
 	final static String	          MEMPREFIX	      = "apiFactory/";
 	final static ApiType	          DEFAULT_API_TYPE	= ApiType.freebase;
 	private static ComparisonUtils	tfIdfUtil	   = new ComparisonUtils();
+	private static ApiResponsePicker apiResponsePicker = new ApiResponsePicker();
 	ApiRetriver( ) {}
 
 	public static ApiResponse getApiResponse(String highlight, String method, WebPage webPage)
@@ -47,7 +50,7 @@ public class ApiRetriver {
 					if (apiResponseList != null && apiResponseList.size() > 0) {
 						if (apiResponseList.get(0).goodEnough == true) return apiResponseList.get(0);
 
-						ApiResponse apiResponse = findBestMatchAccordingToContext(apiResponseList, webPage, highlight);
+						ApiResponse apiResponse = apiResponsePicker.choseResult(apiResponseList, webPage, highlight);
 						if (apiResponse != null) pushMemcache(highlight, apiResponse.view, Memcache.getInstance());
 						return apiResponse;
 					}
@@ -56,23 +59,6 @@ public class ApiRetriver {
 				}
 			}
 		return null;
-	}
-
-	public static ApiResponse findBestMatchAccordingToContext(List<ApiResponse> apiResponseList, WebPage webPage, String highlight) {
-		// If there not more then one result just returns the first result:
-		if (apiResponseList.size() <= 1) return Iterables.getFirst(apiResponseList, null);
-      else {
-			Function<ApiResponse, String> getTextFunction = new Function<ApiResponse, String>(){
-				@Override
-				public String apply(ApiResponse response) {
-					return response.text;
-				}
-			};
-
-			ScoredObjectList<ApiResponse> rankedDcoumets = tfIdfUtil.getRankList(highlight, highlight, apiResponseList, getTextFunction);
-			if (rankedDcoumets.isEmpty()) return Iterables.getFirst(apiResponseList, null);
-         else return rankedDcoumets.getBest();
-		}
 	}
 
 	public static void pushMemcache(String query, ApiView view, Memcache mem)
