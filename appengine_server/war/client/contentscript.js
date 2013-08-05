@@ -152,6 +152,9 @@ var markSelection = (function() {
 							jQuery('#myModal').fadeOut('slow');
 						});
 					}
+					else {
+						console.log("no results for " + selectedText)
+					}
 				});
 			}
 		}
