@@ -18,6 +18,7 @@ public class FreebaseHandler extends ApiHandler {
 	String	   GOOGLE_API_KEY	          = "AIzaSyBjIW5540wkFEpZE2D3fx-TrLykSJ9MAiU";
 	private int	FREEBASE_SCORE_LOW_THRESHOLD	= 0;
 	private int	FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD	= 500;
+	private int MAX_SEARCH_RESPONSE = 3;
 
 	/**
 	 * Return the first result from freebase.
@@ -37,14 +38,10 @@ public class FreebaseHandler extends ApiHandler {
 		JSONArray searchResponse = getFreebaseSearchResponse(highlight);
 
 		List<ApiResponse> responses = Lists.newArrayList();
-		for (int i = 0; i < searchResponse.length(); i++) {
+		for (int i = 0; i < Math.min(searchResponse.length(), MAX_SEARCH_RESPONSE ); i++) {
 			
 			ApiResponse apiResponse = getSingleResponse(searchResponse.getJSONObject(i), apiType);
-			
 			if (apiResponse != null) {
-				RichLogger.log.log(Level.INFO, "----------FB------------");
-		   	RichLogger.log.log(Level.INFO, "Score: [ " + apiResponse.apiInternalScore + " ] object: " + apiResponse.text);
-		   	
 				responses.add(apiResponse);
 			}
 		}
@@ -72,19 +69,29 @@ public class FreebaseHandler extends ApiHandler {
 	 */
 	private ApiResponse getSingleResponse(JSONObject searchResult, ApiType apiType) {
 		try {
+
 			int score = searchResult.getInt("score");
 			if (score >= FREEBASE_SCORE_LOW_THRESHOLD) {
 				String mid = searchResult.getString("mid");
+				String title = searchResult.getString("name");
 				JSONObject topicResponse = getFreebseTopic(mid, apiType);
 
 				if (!topicResponse.has("property")) // TODO: log PropertyNotFound.
 				return null;
 
-				String description = topicResponse.getJSONObject("property").getJSONObject("/common/topic/description").getJSONArray("values").getJSONObject(0)
-				      .getString("value");
+				// Takes the longest description:
+				JSONArray values = topicResponse.getJSONObject("property").getJSONObject("/common/topic/description").getJSONArray("values");
+				String description = ""; 
+				for (int i = 0; i < values.length(); i++) {
+					String currentDescription = values.getJSONObject(i).getString("value");
+					if(currentDescription.length() > description.length()) {
+						description = currentDescription;
+					}
+            }
+				
 				String html = "<p>" + description.replace(". ", ". </p><p>") + "</p>";
 
-				ApiResponse apiResponse = new ApiResponse(topicResponse, html, apiType, score, description);
+				ApiResponse apiResponse = new ApiResponse(topicResponse, html, apiType, score, description, mid, title);
 				if(apiResponse.apiInternalScore >= FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD) {
 					apiResponse.goodEnough = true;
 				}

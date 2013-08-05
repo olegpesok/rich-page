@@ -20,17 +20,21 @@ public class ApiResponse implements Serializable {
 	
 	public JSONObject	         json;
 	public ApiView	            view;
-	public String text;
 	public int apiInternalScore;
+	public String text;
+	public String id;
+	public String title;
 	public boolean	            resultOk	        = true;
 	// private Exception mError;
 	public ApiType	            myType;
 
-	public ApiResponse(JSONObject json, String html, ApiType apiType, int score, String text) {
+	public ApiResponse(JSONObject json, String html, ApiType apiType, int score, String text, String id, String title) {
 		this.apiInternalScore = score;
 		this.text = text;
 		this.json = json;
 		this.view = new ApiView(html);
+		this.id = id;
+		this.title = title;
 		myType = apiType;
    }
 	
@@ -40,7 +44,7 @@ public class ApiResponse implements Serializable {
 
 	public ApiResponse(JSONObject json, ApiView view, ApiType apiType)
 	{
-		this(json, view.getView(), apiType, 0, view.getView());
+		this(json, view.getView(), apiType, 0, view.getView(), null, null);
 	}
 	
 	public ApiResponse(JSONObject json, ApiType type)

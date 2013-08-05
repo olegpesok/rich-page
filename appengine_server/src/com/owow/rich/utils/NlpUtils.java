@@ -4,6 +4,7 @@ import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -22,8 +23,10 @@ import com.owow.rich.RichLogger;
 
 public class NlpUtils {
 	
-	private final AlchemyAPI ALCHEMY_API = AlchemyAPI
-			.GetInstanceFromString("dc86318ce4f5cf5ae2872376afe43940938d7edf");
+	private final String API_KEY = "d5f35667e3dbc7bba2936fb03991144dba85c18d";
+//	private final String API_KEY = "dc86318ce4f5cf5ae2872376afe43940938d7edf";
+	
+	private final AlchemyAPI ALCHEMY_API = AlchemyAPI.GetInstanceFromString(API_KEY);
 	
 	public class Tag {
 		public String text;
@@ -53,50 +56,67 @@ public class NlpUtils {
 		} 
 	}
 	
-	public class scoredResult implements Comparable<scoredResult>{
-		public String text;
+	public class ScoredResult implements Comparable<ScoredResult>{
+		public List<Tag> firstTagList;
+		public List<Tag> seconTagdList;
+		public Set<Tag> matchingTagSet;
+		public String firstText;
+		public String secondText;
 		public double score;
-		public scoredResult(String text, double score) {
-			this.text = text;
+		
+		public ScoredResult(List<Tag> firstTagList, List<Tag> secondTagList, Set<Tag> mathcingTagSet, double score) {
+			this.firstTagList = firstTagList;
+			this.seconTagdList = secondTagList;
+			this.matchingTagSet = mathcingTagSet;
 			this.score = score;
+		}
+		
+		@Override
+		public String toString() {
+		   return "score:" + score + " matching tags:" + matchingTagSet;
 		}
 
 		@Override
-      public int compareTo(scoredResult o) {
+      public int compareTo(ScoredResult o) {
 	      return (int)((score - o.score)*10000);
       }
 	}
 
-	public List<scoredResult> rankResults(String text, List<String> textList) {
-		List<scoredResult> scoredResults = Lists.newArrayList();
+	public List<ScoredResult> rankResults(String text, List<String> textList) {
+		List<ScoredResult> scoredResults = Lists.newArrayList();
 		List<Tag> tagList = extractAllTags(text);
 		for (String otherText : textList) {
 			List<Tag> otherTagList = extractAllTags(otherText);
-			double score = compare(tagList, otherTagList);
-			scoredResults.add(new scoredResult(otherText, score));
+			ScoredResult scoreResult = compare(tagList, otherTagList);
+			scoredResults.add(scoreResult);
       }
 		Collections.sort(scoredResults);
 		return scoredResults;
 	}
 	
-	public double compare(String text1, String text2) {
+	public ScoredResult compare(String text1, String text2) {
 		List<Tag> tagsList1 = extractAllTags(text1);
 		List<Tag> tagsList2 = extractAllTags(text2);
-		return compare(tagsList1, tagsList2);
+		ScoredResult result = compare(tagsList1, tagsList2);
+		result.firstText = text1;
+		result.secondText = text2;
+		return result;
 	}
 
-	private double compare(List<Tag> tagsList1, List<Tag> tagsList2) {
+	private ScoredResult compare(List<Tag> tagsList1, List<Tag> tagsList2) {
 		HashSet<Tag> tagSet1 = new HashSet<Tag>(tagsList1);
 		HashSet<Tag> tagSet2 = new HashSet<Tag>(tagsList2);
-		
+   	
+		HashSet<Tag> mathcingTagSet = new HashSet<Tag>();
 		double score = 0;
 		for (Tag tag : tagSet2) {
 	      if(tagSet1.contains(tag)) {
+	      	mathcingTagSet.add(tag);
 	      	score += tag.score;
 	      }
       }
 		score /= Math.log(1 + tagsList1.size() + tagsList2.size());
-		return score;
+		return new ScoredResult(tagsList1, tagsList2, mathcingTagSet, score);
    }
 	
 	

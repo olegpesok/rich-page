@@ -7,17 +7,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.appengine.datanucleus.Utils.Function;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import com.owow.rich.RichLogger;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.apiHandler.FreebaseHandler;
-import com.owow.rich.items.WebPage;
 import com.owow.rich.utils.ComparisonUtils;
-import com.owow.rich.utils.ComparisonUtils.ScoredObject;
-import com.owow.rich.utils.ComparisonUtils.ScoredObjectList;
 import com.owow.rich.utils.NlpUtils;
-import com.owow.rich.utils.NlpUtils.Tag;
+import com.owow.rich.utils.NlpUtils.ScoredResult;
 
 @SuppressWarnings("serial")
 public class DebugServlet  extends HttpServlet {
@@ -27,62 +26,76 @@ public class DebugServlet  extends HttpServlet {
 	
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp) {
 		try {
-			
-//			ScoredObjectList<String> res = tfIdfUtil.simpleFindBestMatch(req.getParameter("t"), Lists.newArrayList(req.getParameter("t1"), req.getParameter("t2"), req.getParameter("t3")));
-//			List<ScoredObject<String>> list = res.scoredObjectList;
-//			for (ScoredObject<String> scoredObject : list) {
-//				resp.getWriter().write(scoredObject.score + " " + scoredObject.documentText +" \r\n");
-//         }
-			
 			final String highlight = req.getParameter("highlight");
 			final String url = req.getParameter("url");
+			Document doc = Jsoup.connect(url).get();
+			String pageText = doc.body().text();
+			resp.getWriter().write("highglihgt:" + highlight +  " text:" + pageText + "\r\n\r\n");
+			List<ApiResponse> apiResponseList = new FreebaseHandler().getAllApiResponses(highlight, ApiType.freebase);
 			
-			List<ApiResponse> apiResponse = new FreebaseHandler().getAllApiResponses(highlight, ApiType.freebase);
-			int counter = 0;
-			for (ApiResponse scoredObject : apiResponse) {
-				counter++;
-				if (counter > 3 ){
-					break;
-				}
+			ApiResponse chosenApiResponse = chose(apiResponseList, highlight, pageText);
+			
+			// print for debug.
+			for (ApiResponse apiResponse : apiResponseList) {
+				ScoredResult score = nlpUtils.compare(pageText,apiResponse.text);
+				ScoredResult highlight_score = nlpUtils.compare(highlight,apiResponse.text);
+				ScoredResult title_score = nlpUtils.compare(pageText,apiResponse.title);
+				ScoredResult highlight_title_score = nlpUtils.compare(highlight,apiResponse.title);
 				
-				List<Tag> concepts = nlpUtils.extractConcepts(scoredObject.text);
-				List<Tag> entites = nlpUtils.extractEntities(scoredObject.text);
-				List<Tag> keyWords = nlpUtils.extractKeyWords(scoredObject.text);
-				String category = nlpUtils.categorizeText(scoredObject.text);
-				
-				resp.getWriter().write(scoredObject.apiInternalScore + " " + scoredObject.text +" \r\n");
-				
-				resp.getWriter().write("---------------- \r\n");
+				resp.getWriter().write(
+						"id: " + apiResponse.id +
+						"\r\n h_score:" + highlight_score +
+						"\r\n ht_score:" + highlight_title_score +
+						"\r\n t_score:" + title_score +
+						"\r\n score:" + score +
+						"\r\n internal score:" + apiResponse.apiInternalScore +
+						"\r\n title:" + apiResponse.title +
+						"\r\n text:" + apiResponse.text + "\r\n\r\n");
          }
-			
-//			resp.getWriter().write("---------------- \r\n");
-//			resp.getWriter().write("---------------- \r\n");
-//			
-//			Function<ApiResponse, String> getTextFunction = new Function<ApiResponse, String>() {
-//				@Override public String apply(ApiResponse response) {
-//					return response.text;
-//				}};
-//			
-//			String fullText = highlight;
-//			if( url != null) {
-//				WebPage page = new WebPage(null, null, url);
-//				fullText = page.getText();
-//			}
-//			resp.getWriter().write("get more info");
-//			
-//				
-//			ScoredObjectList<ApiResponse> rankedDcoumets = tfIdfUtil.getRankList(fullText, highlight, apiResponse, getTextFunction);
-//			List<ScoredObject<ApiResponse>> list = rankedDcoumets.scoredObjectList;
-//			for (ScoredObject<ApiResponse> scoredObject : list) {
-//				resp.getWriter().write(scoredObject.score + " " + scoredObject.documentText +" \r\n");
-//				resp.getWriter().write("---------------- \r\n");
-//         }
-			
-			
-						
+	
       } catch (Exception e) {
       	RichLogger.log.log(Level.SEVERE, "error in debuge servlet", e);
       }
+	}
+	
+	private int	FREEBASE_SCORE_LOW_THRESHOLD	= 0;
+	private int	FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD	= 500;
+	
+	private int MAX_SEARCH_RESPONSE = 3;
+	
+	private double TITLE_HIGHLIGHT_SCORE_THRESHOLD = 0.5;
+	private double SCORE_THRESHOLD = 0.15;
+	
+	private ApiResponse chose(List<ApiResponse> apiResponseList, String highlight, String pageText) {
+		
+		for (ApiResponse apiResponse : apiResponseList) {
+			// IF freebase score is high enough just return.
+			if (apiResponse.apiInternalScore >= FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD) {
+				return apiResponse;
+			}
+			ScoredResult highlight_title_score = nlpUtils.compare(highlight,apiResponse.title);
+			if (highlight_title_score.score > TITLE_HIGHLIGHT_SCORE_THRESHOLD) {
+				return apiResponse;
+			}
+			
+			ScoredResult score = nlpUtils.compare(pageText,apiResponse.text);
+			if (highlight_title_score.score > SCORE_THRESHOLD) {
+				return apiResponse;
+			}
+			
+			
+      }
+		
+	   return null;
+   }
+	
+	
+	public void runAllTest() {
+		
+	}
+	
+	public void runSingleTest(String text, String url, String resultid) {
+		
 	}
 
 }
