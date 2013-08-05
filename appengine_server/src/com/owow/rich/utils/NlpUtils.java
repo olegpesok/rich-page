@@ -101,10 +101,10 @@ public class NlpUtils {
 	
 	public ScoredResult compare(String text1, String text2) {
 		try {
-		text1 = URLDecoder.decode(text1);
-		text2 = URLDecoder.decode(text2);
+			text1 = URLDecoder.decode(text1, "UTF-8");
+			text2 = URLDecoder.decode(text2, "UTF-8");
 		} catch(Exception e) {
-			RichLogger.log.log(Level.SEVERE, "fucking encoding " + text1 + " AND " + text2, e);
+//			RichLogger.log.log(Level.SEVERE, "fucking encoding " + text1 + " AND " + text2, e);
 		}
 		
 		List<Tag> tagsList1 = extractAllTags(text1);

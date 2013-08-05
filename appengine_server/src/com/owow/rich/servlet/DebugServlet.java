@@ -10,11 +10,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.owow.rich.RichLogger;
 import com.owow.rich.apiHandler.ApiResponse;
+import com.owow.rich.apiHandler.ApiResponsePicker;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.apiHandler.FreebaseHandler;
+import com.owow.rich.items.WebPage;
 import com.owow.rich.utils.ComparisonUtils;
 import com.owow.rich.utils.NlpUtils;
 import com.owow.rich.utils.NlpUtils.ScoredResult;
@@ -24,22 +25,25 @@ public class DebugServlet  extends HttpServlet {
 
 	private ComparisonUtils tfIdfUtil = new ComparisonUtils();
 	private NlpUtils nlpUtils = new NlpUtils();
-
+	private ApiResponsePicker apiResponsePicker = new ApiResponsePicker();
+	
 	@Override
    public void doGet(final HttpServletRequest req, final HttpServletResponse resp) {
 		try {
-			
-			
-			
-			
 			final String highlight = req.getParameter("highlight");
 			final String url = req.getParameter("url");
 			Document doc = Jsoup.connect(url).get();
 			String pageText = doc.body().text();
-			resp.getWriter().write("highglihgt:" + highlight +  " text:" + pageText + "\r\n\r\n");
+			resp.getWriter().write("highglihgt:" + highlight +  "\r\n text:" + pageText + "\r\n\r\n");
 			List<ApiResponse> apiResponseList = new FreebaseHandler().getAllApiResponses(highlight, ApiType.freebase);
 			
-			ApiResponse chosenApiResponse = chose(apiResponseList, highlight, pageText);
+			ApiResponse chosenApiResponse = apiResponsePicker.choseResult(apiResponseList, new WebPage(pageText, pageText, url) , highlight);
+			
+			if (chosenApiResponse != null) {
+				resp.getWriter().write("chose: " + chosenApiResponse.title + "\r\n\r\n");
+			} else {
+				resp.getWriter().write("chose: Nothing \r\n\r\n");
+			}
 			
 			// print for debug.
 			for (ApiResponse apiResponse : apiResponseList) {
@@ -64,41 +68,9 @@ public class DebugServlet  extends HttpServlet {
       }
 	}
 	
-	private int	FREEBASE_SCORE_LOW_THRESHOLD	= 0;
-	private int	FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD	= 500;
-	
-	private int MAX_SEARCH_RESPONSE = 3;
-	
-	private double TITLE_HIGHLIGHT_SCORE_THRESHOLD = 0.5;
-	private double SCORE_THRESHOLD = 0.15;
-	
-	private ApiResponse chose(List<ApiResponse> apiResponseList, String highlight, String pageText) {
-		
-		for (ApiResponse apiResponse : apiResponseList) {
-			// IF freebase score is high enough just return.
-			if (apiResponse.apiInternalScore >= FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD) {
-				return apiResponse;
-			}
-			ScoredResult highlight_title_score = nlpUtils.compare(highlight,apiResponse.title);
-			if (highlight_title_score.score > TITLE_HIGHLIGHT_SCORE_THRESHOLD) {
-				return apiResponse;
-			}
-			
-			ScoredResult score = nlpUtils.compare(pageText,apiResponse.text);
-			if (highlight_title_score.score > SCORE_THRESHOLD) {
-				return apiResponse;
-			}			
-      }
-	   return null;
-   }
-	
-	
 	public void runAllTest() {
-		
 	}
 	
 	public void runSingleTest(String text, String url, String resultid) {
-		
 	}
-
 }

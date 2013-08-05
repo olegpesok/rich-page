@@ -71,6 +71,17 @@ public class ServletTest {
 		singleTest("shalom", ApiType.dictionary.getIdentifyer(), "http://en.wikipedia.org/wiki/Shalom", true, "Jewish greeting");
 	}
 	
+	@Test
+	public void manyTests() throws JSONException, IOException {
+//		singleTest("Music", ApiType.freebase.getIdentifyer(), "url=http://www.mtv.com/music/", true, "Music is an art");
+//		singleTest("Scott Sassa", ApiType.freebase.getIdentifyer(), "http://www.hollywoodreporter.com/news/scott-sassa-lands-gig-at-521671", true, "Scott");
+//		singleTest("Central Italy", ApiType.freebase.getIdentifyer(), "http://wikitravel.org/en/Central_Italy", true, "Central Italy is one of the five official");
+//		singleTest("Angry Birds", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Angry Birds is a video game franchise createdl");
+		singleTest("microsoft", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Microsoft Corporation is an American multinational software");
+		Microsoft Corporation is an American multinational software
+		
+	}
+	
 	private void singleTest(String query, String method, String url, boolean showView, String expectedSubString) throws JSONException, IOException {
 		GenericUrl gu = new GenericUrl(servlet);
 		gu.set("m", method).set("q", query);
