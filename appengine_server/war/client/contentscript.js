@@ -11,7 +11,7 @@ jQuery(document).ready(function(jQuery) {
 	});
 });
 
-RICH_SERVER = 'http://localhost:8888/';
+RICH_SERVER = 'http://rich-page.appspot.com/';
 
 // // Get selected text:
 function getSelectedText() {

@@ -152,7 +152,7 @@ public class WikipediaHandler extends ApiHandler {
 			view += pelems.getString(i);
 		String bad = "<br /><strong class=\"error mw-ext-cite-error\">Cite error: There are <code>&lt;ref&gt;</code> tags on this page, but the references will not show without a <code>{{reflist}}</code> template (see the <a href=\"/wiki/Help:Cite_errors/Cite_error_refs_without_references\" title=\"Help:Cite errors/Cite error refs without references\">help page</a>).</strong>";
 
-		String shalti = "<sup [ a-zA-Z0-9=\"_-]{0,40}><a [# a-zA-Z0-9=\"_-]{0,30}><span>\\[</span>[0-9]{1,3}<span>\\]</span></a></sup>";
+		String shalti = "<sup id=\"[ a-zA-Z0-9=_-]+\" class=\"reference\"><a href=\"#[ a-zA-Z0-9=_-]+\"><span>\\[</span>[0-9]{1,3}<span>\\]</span></a></sup>";
 		view = view.replace(bad, "").replaceAll(shalti, "");
 		return new ApiView(view);
 	}
