@@ -14,7 +14,7 @@ jQuery(document).ready(function(jQuery) {
 
 DEBUG = "http://localhost:8888/";
 NOTDEBUG = 'http://rich-page.appspot.com/'
-RICH_SERVER = NOTDEBUG;
+RICH_SERVER = DEBUG;
 
 // Setting trim function
 if (!String.prototype.trim) {
@@ -152,11 +152,11 @@ var markSelection = (function() {
 							'left' : left - 13,
 							'z-index' : 10000,
 							position : 'absolute'
-						}).hide().fadeIn('slow');
+						}).hide().show();
 
 						// When users click close the popup.
 						jQuery('body').click(function() {
-							jQuery('#myModal').fadeOut('slow');
+							jQuery('#myModal').hide();
 						});
 					} else {
 						console.log("no results for " + selectedText)

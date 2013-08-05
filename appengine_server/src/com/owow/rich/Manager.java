@@ -57,13 +57,17 @@ public class Manager {
 			return new ApiResponse(query, null, apiView, null);
 		}
 
-		// Looks if we have any of the ngrams of the query in the cache.
 		List<NGram> nGrams = tokenizer.getAllNgram(query, NGRAM_LEN);
-		ApiResponse apiResponse = cache.getFirstMatchingNgram(nGrams);
 
-		// db queries
-		if (apiResponse == null) apiResponse = storage.getFirstMatchingNgram(webPage, nGrams);
+		ApiResponse apiResponse = null;
+		if (nGrams.size() > 3)
+		{
+			// Looks if we have any of the ngrams of the query in the cache.
+			apiResponse = cache.getFirstMatchingNgram(nGrams);
 
+			// db queries
+			if (apiResponse == null) apiResponse = storage.getFirstMatchingNgram(webPage, nGrams);
+		}
 		// Do live retrieve.
 		if (apiResponse == null) apiResponse = ApiRetriver.getApiResponse(query, method, webPage);
 
