@@ -14,7 +14,7 @@ jQuery(document).ready(function(jQuery) {
 
 DEBUG = "http://localhost:8888/";
 NOTDEBUG = 'http://rich-page.appspot.com/'
-RICH_SERVER = DEBUG;
+RICH_SERVER = NOTDEBUG;
 
 // Setting trim function
 if (!String.prototype.trim) {

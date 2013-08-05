@@ -8,10 +8,13 @@ import com.owow.rich.items.Token;
 
 public class TokenizerUtil {
 
+	public static String cleanUnwantedChars(String text)
+	{
+		return text.replaceAll("[/<>!@#$%^&*_=+~,\";.:(){}\\[\\]|\\\\-]", "");
+	}
 	// NOTE: can be changed to array
 	public List<Token> tokenize(String text) {
-		// text = text.replaceAll("[/<>!@#$%^&*-_=+~`?,\";.:'(){}\\[\\]|\\\\]",
-		// "");
+		text = text.replaceAll("[/<>!@#$%^&*_=+~?,\";.:(){}\\[\\]|\\\\-]", "");
 		LinkedList<Token> tokens = new LinkedList<Token>();
 
 		StringTokenizer st = new StringTokenizer(text, "\"%(){}\\[\\]~,/<>!$&.|_+;:@&#*= -");
