@@ -1,6 +1,7 @@
 package com.owow.rich.apiHandler;
 
 import java.io.StringWriter;
+import java.util.logging.Logger;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -20,8 +21,10 @@ public class WolframAlphaHandler extends ApiHandler {
 		final JSONObject ret = new JSONObject();
 
 		final org.w3c.dom.Document d = HtmlUtil.getDocumentFromUrl(server + title);
-		if (d.getDocumentElement().getAttribute("success").contains("false") || !d.getDocumentElement().getAttribute("error").equals("false")) throw new Exception(
-		      "failed");
+		if (d.getDocumentElement().getAttribute("success").contains("false") || !d.getDocumentElement().getAttribute("error").equals("false")) {
+			Logger.getLogger("Wolfram").warning("failed with " + title);
+			return null;
+		}
 
 		// parsing document to string
 		final DOMSource domSource = new DOMSource(d.getDocumentElement());
@@ -33,13 +36,13 @@ public class WolframAlphaHandler extends ApiHandler {
 
 		ret.put("data", dataWriter.toString());
 
-	   return new ApiResponse(ret, at);
+		return new ApiResponse(title, ret, at);
 	}
 
 	@Override
-   public ApiView getView(ApiResponse fromGetData) throws Exception {
-	   // TODO Auto-generated method stub
-	   return null;
-   }
+	public ApiView getView(ApiResponse fromGetData) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

@@ -20,18 +20,21 @@ public class ApiResponse implements Serializable {
 	public static boolean goodEnough = false;
 	public JSONObject	         json;
 	public ApiView	            view;
-	
-
+<<<<<<< HEAD
 	public int apiInternalScore;
 	public String text;
 	public String id;
 	public String title;
-
-
+=======
+	public String	            title;
+	public String	            text;
+	public int	               apiInternalScore;
+>>>>>>> b615bbe7a08fd7cf061e9afee737bc50e0a7eb4c
 	public boolean	            resultOk	        = true;
 	// private Exception mError;
 	public ApiType	            myType;
 
+<<<<<<< HEAD
 	public ApiResponse(JSONObject json, String html, ApiType apiType, int score, String text, String id, String title) {
 		this.apiInternalScore = score;
 		this.text = text;
@@ -39,6 +42,14 @@ public class ApiResponse implements Serializable {
 		this.view = new ApiView(html);
 		this.id = id;
 		this.title = title;
+=======
+	public ApiResponse(String title, JSONObject json, String html, ApiType apiType, int score, String text) {
+		this.title = title;
+		apiInternalScore = score;
+		this.text = text;
+		this.json = json;
+		view = new ApiView(html);
+>>>>>>> b615bbe7a08fd7cf061e9afee737bc50e0a7eb4c
 		myType = apiType;
 	}
 
@@ -48,7 +59,11 @@ public class ApiResponse implements Serializable {
 
 	public ApiResponse(String title, JSONObject json, ApiView view, ApiType apiType)
 	{
-		this(json, view.getView(), apiType, 0, view.getView(), null, title);
+<<<<<<< HEAD
+		this(json, view.getView(), apiType, 0, view.getView(), null, null);
+=======
+		this(title, json, view.getView(), apiType, 0, view.getView());
+>>>>>>> b615bbe7a08fd7cf061e9afee737bc50e0a7eb4c
 	}
 
 	public ApiResponse(String title, JSONObject json, ApiType type)

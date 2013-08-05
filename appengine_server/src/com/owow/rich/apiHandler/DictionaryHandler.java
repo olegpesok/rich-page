@@ -27,7 +27,7 @@ public class DictionaryHandler extends ApiHandler {
 			} else if (tuc.getJSONObject(i).has("phrase")) textsArray.put(tuc.getJSONObject(i).getJSONObject("phrase").getString("text"));
 		ret.put("data", textsArray);
 		ret.put("query", query);
-		ApiResponse ar = new ApiResponse(ret, at);
+		ApiResponse ar = new ApiResponse(query, ret, at);
 		ar.view = getView(ar, query);
 		return ar;
 	}

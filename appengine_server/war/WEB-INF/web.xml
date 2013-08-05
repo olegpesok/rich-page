@@ -10,6 +10,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-class>com.owow.rich.servlet.SnippetServlet</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>ImageServlet</servlet-name>
+		<servlet-class>com.owow.rich.servlet.ImageServlet</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>PageProccessServlet</servlet-name>
 		<servlet-class>com.owow.rich.servlet.PageProccessServlet</servlet-class>
 	</servlet>
@@ -29,8 +33,11 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>DebugServlet</servlet-name>
 		<servlet-class>com.owow.rich.servlet.DebugServlet</servlet-class>
 	</servlet>
-	
 
+	<servlet-mapping>
+		<servlet-name>ImageServlet</servlet-name>
+		<url-pattern>/Image</url-pattern>
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>SnippetServlet</servlet-name>
 		<url-pattern>/Snippet</url-pattern>

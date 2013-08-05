@@ -1,5 +1,7 @@
 package com.owow.rich.apiHandler;
 
+import java.util.logging.Logger;
+
 import org.json.JSONObject;
 
 import com.owow.rich.utils.HtmlUtil;
@@ -12,17 +14,20 @@ public class GeographicHandler extends ApiHandler {
 
 		final JSONObject serverResponse = HtmlUtil.getJSONFromServerAndTitle(server, query);
 
-		if (serverResponse.getJSONArray("geonames").length() == 0) throw new Exception("no result");
+		if (serverResponse.getJSONArray("geonames").length() == 0) {
+			Logger.getLogger(GeographicHandler.class.toString()).info("no results. title = " + query);
+			return null;
+		}
 
 		final JSONObject json = new JSONObject();
 		json.put("data", serverResponse.getJSONArray("geonames"));
-		return new ApiResponse(json, type);
+		return new ApiResponse(query, json, type);
 	}
 
 	@Override
-   public ApiView getView(ApiResponse fromGetData) throws Exception {
-	   // TODO Auto-generated method stub
-	   return null;
-   }
+	public ApiView getView(ApiResponse fromGetData) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

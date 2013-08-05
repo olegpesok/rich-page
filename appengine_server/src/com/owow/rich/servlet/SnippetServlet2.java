@@ -23,7 +23,6 @@ import com.owow.rich.apiHandler.WikipediaHandler.WikiHost.WikiHostFactory;
 import com.owow.rich.entity.SearchTermExtractor;
 import com.owow.rich.items.Highlight;
 import com.owow.rich.items.SearchTerm;
-import com.owow.rich.items.WebPage;
 import com.owow.rich.utils.TemplateUtil;
 
 @SuppressWarnings("serial")
@@ -86,11 +85,11 @@ public class SnippetServlet2 extends HttpServlet {
 			}
 			JSONObject retJO = new JSONObject();
 			retJO.put("data", ja);
-			return new ApiResponse(retJO, ApiType.wiki);
+			return new ApiResponse(highlight, retJO, ApiType.wiki);
 		}
 		else
 		{
-			//CR: need to add the web page as well as we want content: 
+			// CR: need to add the web page as well as we want content:
 			ApiResponse fin = ApiRetriver.getApiResponse(highlight, method, null);
 			if (fin != null) if (showView == null) resp.getWriter().write(fin.toString());
 			else {

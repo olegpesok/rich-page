@@ -1,5 +1,7 @@
 package com.owow.rich.apiHandler;
 
+import java.util.logging.Logger;
+
 import org.json.JSONObject;
 
 import com.owow.rich.utils.HtmlUtil;
@@ -13,19 +15,21 @@ public class DuckDuckGoHandler extends ApiHandler {
 
 		if (data.getJSONArray("RelatedTopics").length() == 0
 		      && data.getString("Answer").length() == 0
-		      && data.getJSONArray("Results").length() == 0) throw new Exception("no results");
+		      && data.getJSONArray("Results").length() == 0) {
+			Logger.getLogger(DuckDuckGoHandler.class.toString()).info("no results. title = " + title);
+			return null;
+		}
 
 		final JSONObject ret = new JSONObject();
 		ret.put("data", data);
 
-
-		return new ApiResponse(ret, type);
+		return new ApiResponse(title, ret, type);
 	}
 
 	@Override
-   public ApiView getView(ApiResponse fromGetData) throws Exception {
-	   // TODO Auto-generated method stub
-	   return null;
-   }
+	public ApiView getView(ApiResponse fromGetData) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
