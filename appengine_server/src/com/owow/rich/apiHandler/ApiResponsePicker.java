@@ -30,10 +30,6 @@ public class ApiResponsePicker {
 					e = e;
 				}
 				
-				if (apiResponse.goodEnough) {
-					return apiResponse;
-				}
-				
 				// This is going to have problem with.
 				if (highlight.toLowerCase().equals(apiResponse.title.toLowerCase())) {
 					return apiResponse;
@@ -75,6 +71,10 @@ public class ApiResponsePicker {
    	double bestScore = 0.0;
    	double secondBestScore = 0.0;
    	for (ApiResponse apiResponse : apiResponseList) {
+			if (apiResponse.goodEnough) {
+				return apiResponse;
+			}
+   		
    		ScoredResult score = nlpUtils.compare(webPage.getText(), apiResponse.title + ". " +apiResponse.text);
    		if (score.score > bestScore) {
    			chosenResponse = apiResponse;
