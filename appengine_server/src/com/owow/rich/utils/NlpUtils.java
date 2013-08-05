@@ -26,8 +26,9 @@ import com.owow.rich.RichLogger;
 
 public class NlpUtils {
 
-	private final String	    API_KEY	      = "d5f35667e3dbc7bba2936fb03991144dba85c18d";
-	// private final String API_KEY = "dc86318ce4f5cf5ae2872376afe43940938d7edf";
+//	private final String	    API_KEY  = "d5f35667e3dbc7bba2936fb03991144dba85c18d";
+	 private final String API_KEY = "dc86318ce4f5cf5ae2872376afe43940938d7edf";
+//	 private final String API_KEY = "f73a4e3d28fbb12206ba958524e55e9d1c3f265f";
 
 	private final AlchemyAPI	ALCHEMY_API	= AlchemyAPI.GetInstanceFromString(API_KEY);
 

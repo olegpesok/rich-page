@@ -15,7 +15,12 @@ public class ApiResponsePicker {
 	private NlpUtils nlpUtils = new NlpUtils();
 	
 	public ApiResponse choseResult(List<ApiResponse> apiResponseList, WebPage webPage, String highlight) {
-		try{
+		try {
+			ApiResponse bestApiResponse = isAnyOneBetterByFar(apiResponseList, webPage, highlight);
+			if (bestApiResponse != null) {
+				return bestApiResponse;
+			}
+			
 			for (ApiResponse apiResponse : apiResponseList) {
 				try {
 					highlight = URLDecoder.decode(highlight, "UTF-8");
@@ -62,7 +67,28 @@ public class ApiResponsePicker {
 		}
    }
 	
-	
+   private ApiResponse isAnyOneBetterByFar(List<ApiResponse> apiResponseList, WebPage webPage, String highlight) {
+   	ApiResponse chosenResponse = null;
+   	double bestScore = 0.0;
+   	double secondBestScore = 0.0;
+   	for (ApiResponse apiResponse : apiResponseList) {
+   		ScoredResult score = nlpUtils.compare(webPage.getText(), apiResponse.title + ". " +apiResponse.text);
+   		if (score.score > bestScore) {
+   			chosenResponse = apiResponse;
+   			secondBestScore = bestScore;
+   			bestScore = score.score;
+   		} else if(score.score > secondBestScore){
+   			secondBestScore = score.score; 
+   		}
+   	}
+   	if (bestScore > 0.6 && (bestScore - secondBestScore) > 0.2) {
+   		return chosenResponse;
+   	} else {
+   		return null;
+   	}
+   }
+
+
 // string distance
    private static int minimum(int a, int b, int c) {
            return Math.min(Math.min(a, b), c);
