@@ -1,6 +1,7 @@
 if (window.console) {
 	console.log('rich-page is running')
 }
+
 // Get mouse location:
 var mouseX;
 var mouseY;
@@ -11,7 +12,9 @@ jQuery(document).ready(function(jQuery) {
 	});
 });
 
-RICH_SERVER = 'http://rich-page.appspot.com/';
+DEBUG = "http://localhost:8888/";
+NOTDEBUG = 'http://rich-page.appspot.com/'
+RICH_SERVER = DEBUG;
 
 // // Get selected text:
 function getSelectedText() {
@@ -140,6 +143,7 @@ var markSelection = (function() {
 							'height' : 410,
 							'top' : top - 13,
 							'left' : left - 13,
+							'z-index' : 10000,
 							position : 'absolute'
 						}).hide().fadeIn('slow');
 
