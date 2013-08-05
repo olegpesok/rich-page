@@ -77,8 +77,8 @@ public class ServletTest {
 //		singleTest("Scott Sassa", ApiType.freebase.getIdentifyer(), "http://www.hollywoodreporter.com/news/scott-sassa-lands-gig-at-521671", true, "Scott");
 //		singleTest("Central Italy", ApiType.freebase.getIdentifyer(), "http://wikitravel.org/en/Central_Italy", true, "Central Italy is one of the five official");
 //		singleTest("Angry Birds", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Angry Birds is a video game franchise createdl");
-		singleTest("microsoft", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Microsoft Corporation is an American multinational software");
-		Microsoft Corporation is an American multinational software
+//		singleTest("microsoft", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Microsoft Corporation is an American multinational software");
+		singleTest("iPods", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "The iPod is a line of portable media players");
 		
 	}
 	

@@ -102,13 +102,8 @@ public class NlpUtils {
 		try {
 			text1 = URLDecoder.decode(text1, "UTF-8");
 			text2 = URLDecoder.decode(text2, "UTF-8");
-<<<<<<< HEAD
 		} catch(Exception e) {
 //			RichLogger.log.log(Level.SEVERE, "fucking encoding " + text1 + " AND " + text2, e);
-=======
-		} catch (Exception e) {
-			RichLogger.log.log(Level.SEVERE, "fucking encoding " + text1 + " AND " + text2, e);
->>>>>>> 7fddcfd618f6f60d07d8af069df26a0e566db897
 		}
 
 		List<Tag> tagsList1 = extractAllTags(text1);
@@ -223,5 +218,8 @@ public class NlpUtils {
 	public String categorizeText(String text) {
 		return null;
 	}
+	
+
+	
 
 }
