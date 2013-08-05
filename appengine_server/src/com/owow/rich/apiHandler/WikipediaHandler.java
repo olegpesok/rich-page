@@ -134,6 +134,7 @@ public class WikipediaHandler extends ApiHandler {
 		// json.put("score", 100);
 		ApiResponse ret = new ApiResponse(query, json, type);
 		ret.view = getView(ret);
+		ret.goodEnough = true;
 		return ret;
 	}
 	public WikiHost getHost()

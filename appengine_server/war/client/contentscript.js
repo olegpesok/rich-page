@@ -14,7 +14,7 @@ jQuery(document).ready(function(jQuery) {
 
 DEBUG = "http://localhost:8888/";
 NOTDEBUG = 'http://rich-page.appspot.com/'
-RICH_SERVER = NOTDEBUG;
+RICH_SERVER = DEBUG;
 
 // Setting trim function
 if (!String.prototype.trim) {
@@ -53,6 +53,10 @@ function doSomethingWithSelectedText() {
 
 document.onmouseup = doSomethingWithSelectedText;
 document.onkeyup = doSomethingWithSelectedText;
+
+function closeOwowContextBox() {
+	jQuery('#myModal').hide();
+}
 
 var markSelection = (function() {
 	var markerTextChar = "\ufeff";
@@ -156,7 +160,7 @@ var markSelection = (function() {
 
 						// When users click close the popup.
 						jQuery('body').click(function() {
-							jQuery('#myModal').hide();
+							closeOwowContextBox();
 						});
 					} else {
 						console.log("no results for " + selectedText)
