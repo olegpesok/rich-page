@@ -66,9 +66,9 @@ public class ServletTest {
 		Assert.assertTrue(res, res.contains(shouldContain));
 	}
 
-//	@Test
+	@Test
 	public void test4() throws JSONException, IOException {
-		singleTest("shalom", ApiType.dictionary.getIdentifyer(), "http://theshalomcenter.org/", true, "Jewish greeting");
+		singleTest("shalom", ApiType.dictionary.getIdentifyer(), "http://en.wikipedia.org/wiki/Shalom", true, "Jewish greeting");
 	}
 	
 	private void singleTest(String query, String method, String url, boolean showView, String expectedSubString) throws JSONException, IOException {

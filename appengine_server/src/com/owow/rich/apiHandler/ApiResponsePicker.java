@@ -15,13 +15,18 @@ public class ApiResponsePicker {
 	
 	public ApiResponse choseResult(List<ApiResponse> apiResponseList, WebPage webPage, String highlight) {
 		for (ApiResponse apiResponse : apiResponseList) {
+			// For now skip dictionary.
+			if(apiResponse.myType.equals(ApiType.dictionary)) {
+				return apiResponse;
+			}
+			
 			ScoredResult highlight_title_score = nlpUtils.compare(highlight, apiResponse.title);
 			if (highlight_title_score.score > TITLE_HIGHLIGHT_SCORE_THRESHOLD) {
 				return apiResponse;
 			}
 			
-			if (webPage.text != null) {
-				ScoredResult score = nlpUtils.compare(webPage.text, apiResponse.text);
+			if (webPage.getText() != null) {
+				ScoredResult score = nlpUtils.compare(webPage.getText(), apiResponse.title + ". " +apiResponse.text);
 				if (highlight_title_score.score > SCORE_THRESHOLD) {
 					return apiResponse;
 				}

@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -99,8 +100,12 @@ public class NlpUtils {
 	}
 	
 	public ScoredResult compare(String text1, String text2) {
+		try {
 		text1 = URLDecoder.decode(text1);
 		text2 = URLDecoder.decode(text2);
+		} catch(Exception e) {
+			RichLogger.log.log(Level.SEVERE, "fucking encoding " + text1 + " AND " + text2, e);
+		}
 		
 		List<Tag> tagsList1 = extractAllTags(text1);
 		List<Tag> tagsList2 = extractAllTags(text2);
