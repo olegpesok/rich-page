@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.owow.rich.RichLogger;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiType;
@@ -27,6 +28,10 @@ public class DebugServlet  extends HttpServlet {
 	@Override
    public void doGet(final HttpServletRequest req, final HttpServletResponse resp) {
 		try {
+			
+			
+			
+			
 			final String highlight = req.getParameter("highlight");
 			final String url = req.getParameter("url");
 			Document doc = Jsoup.connect(url).get();

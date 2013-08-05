@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.template.soy.data.SoyMapData;
 import com.owow.rich.Manager;
 import com.owow.rich.apiHandler.ApiResponse;
@@ -38,7 +39,7 @@ public class SnippetServlet extends HttpServlet {
 		final String method = req.getParameter("m");
 		String query = req.getParameter("q");
 		final String url = req.getParameter("url");
-
+		
 		if (query != null && query != "") {
 			// TODO get rid of that.
 

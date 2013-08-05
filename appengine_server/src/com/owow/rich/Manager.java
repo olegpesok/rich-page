@@ -52,7 +52,10 @@ public class Manager {
 	{
 		// Looks for we have the full query(highlight) in the cache.
 		ApiView apiView = cache.queryMemcacheForApiView(query);
-		if (apiView != null) return new ApiResponse(query, null, apiView, null);
+		
+		if (apiView != null) {
+			return new ApiResponse(query, null, apiView, null);
+		}
 
 		// Looks if we have any of the ngrams of the query in the cache.
 		List<NGram> nGrams = tokenizer.getAllNgram(query, NGRAM_LEN);

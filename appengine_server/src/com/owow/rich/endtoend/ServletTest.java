@@ -66,17 +66,17 @@ public class ServletTest {
 		Assert.assertTrue(res, res.contains(shouldContain));
 	}
 
-	@Test
-	public void test4() throws JSONException, IOException {
-		GenericUrl gu = new GenericUrl(servlet);
-		gu.set("m", ApiType.dictionary.getIdentifyer()).set("q", "shalom");
-		JSONObject response = HtmlUtil.getJSON(gu.build());
-		Assert.assertTrue(response.getBoolean("resultOK"));
-		gu.set("v", "");
-
-		String shouldContain = "Jewish greeting";
-		String res = HtmlUtil.getUrlSource(gu.build());
-
-		Assert.assertTrue(res, res.contains(shouldContain));
-	}
+//	@Test
+//	public void test4() throws JSONException, IOException {
+//		GenericUrl gu = new GenericUrl(servlet);
+//		gu.set("m", ApiType.dictionary.getIdentifyer()).set("q", "shalom");
+//		JSONObject response = HtmlUtil.getJSON(gu.build());
+//		Assert.assertTrue(response.getBoolean("resultOK"));
+//		gu.set("v", "");
+//
+//		String shouldContain = "Jewish greeting";
+//		String res = HtmlUtil.getUrlSource(gu.build());
+//
+//		Assert.assertTrue(res, res.contains(shouldContain));
+//	}
 }

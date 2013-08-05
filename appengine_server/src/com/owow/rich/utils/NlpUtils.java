@@ -1,6 +1,7 @@
 package com.owow.rich.utils;
 
 import java.io.StringWriter;
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -83,9 +84,12 @@ public class NlpUtils {
 	}
 
 	public List<ScoredResult> rankResults(String text, List<String> textList) {
+		text = URLDecoder.decode(text);
+		
 		List<ScoredResult> scoredResults = Lists.newArrayList();
 		List<Tag> tagList = extractAllTags(text);
 		for (String otherText : textList) {
+			otherText = URLDecoder.decode(otherText);
 			List<Tag> otherTagList = extractAllTags(otherText);
 			ScoredResult scoreResult = compare(tagList, otherTagList);
 			scoredResults.add(scoreResult);
@@ -95,6 +99,9 @@ public class NlpUtils {
 	}
 	
 	public ScoredResult compare(String text1, String text2) {
+		text1 = URLDecoder.decode(text1);
+		text2 = URLDecoder.decode(text2);
+		
 		List<Tag> tagsList1 = extractAllTags(text1);
 		List<Tag> tagsList2 = extractAllTags(text2);
 		ScoredResult result = compare(tagsList1, tagsList2);

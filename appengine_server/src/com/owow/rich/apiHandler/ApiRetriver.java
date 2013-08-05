@@ -5,15 +5,10 @@ import java.net.URLEncoder;
 import java.util.List;
 import java.util.logging.Level;
 
-import com.google.appengine.datanucleus.Utils.Function;
-import com.google.appengine.labs.repackaged.com.google.common.collect.Iterables;
 import com.owow.rich.RichLogger;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.Memcache;
 import com.owow.rich.utils.ComparisonUtils;
-import com.owow.rich.utils.NlpUtils;
-import com.owow.rich.utils.ComparisonUtils.ScoredObjectList;
-import com.owow.rich.utils.NlpUtils.ScoredResult;
 
 public class ApiRetriver {
 	final static String	          MEMPREFIX	      = "apiFactory/";
