@@ -137,25 +137,26 @@ public class NlpUtils {
 	}
 
 	public List<Tag> extractAllTags(String text) {
+		// get from cache.
+		final String CAHCE_NAME = "extractAllTags";
+		List<Tag> cahcedList = (List<Tag>)PersistentCahce.get(""+text.hashCode(), CAHCE_NAME);
+		if(cahcedList != null){ return cahcedList; }
+		
 		List<Tag> results = Lists.newArrayList();
 		results.addAll(extractConcepts(text));
 		results.addAll(extractEntities(text));
 		results.addAll(extractKeyWords(text));
+		
+		// save in cahce:
+		PersistentCahce.set(""+text.hashCode(),results, CAHCE_NAME);
+		
 		return results;
 	}
 
 	public List<Tag> extractConcepts(String text) {
 		try {
-			// get from cache.
-			List<Tag> cahcedList = (List<Tag>)PersistentCahce.get(""+text.hashCode(), "extractConcepts");
-			if(cahcedList != null){
-				return cahcedList;
-			}
-			
 			Document document = ALCHEMY_API.TextGetRankedConcepts(text);
-			List<Tag> results = getAlchemyItems(document, "concepts", "concept");
-			PersistentCahce.set(""+text.hashCode(),results, "extractConcepts");
-			return results;
+			return getAlchemyItems(document, "concepts", "concept");
 		} catch (Exception e) {
 			PersistentCahce.set(""+text.hashCode() ,Lists.newArrayList(), "extractConcepts");
 			return Lists.newArrayList();

@@ -32,7 +32,7 @@ public class PersistentCahce {
 		memcahceService.setErrorHandler(ErrorHandlers.getConsistentLogAndContinue(Level.INFO));
 	}
 	
-	public static Object get(String key, String namespace) throws EntityNotFoundException
+	public static Object get(String key, String namespace)
 	{
 		if (!disable) {
 			try{
@@ -70,23 +70,6 @@ public class PersistentCahce {
 			return null;
 	}	
 
-	private static String serlize(Object object) throws IOException {
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		ObjectOutputStream oos = new ObjectOutputStream(buffer);
-		oos.writeObject(object);
-		oos.flush();
-		oos.close();
-		return new String(buffer.toByteArray());
-	}
-	
-	private static Object deserlize(String byteArray) throws IOException, ClassNotFoundException {
-		
-		ByteArrayInputStream in = new ByteArrayInputStream(byteArray.getBytes());
-		ObjectInputStream ois = new ObjectInputStream(in);
-		Object obj = ois.readObject();
-		return obj;
-	}
-
 	public static void set(String key, Object value, String namespace)
 	{
 		try { 
@@ -104,11 +87,30 @@ public class PersistentCahce {
 		      Entity entity = new Entity(dataStoreKey);
 		      
 		      entity.setUnindexedProperty("value", new Text(serlizeValue));
+		      entity.setUnindexedProperty("namespace", namespace);
+		      
 		      datastore.put(entity);
 			}
 		} catch(Exception e) {
 			e = e;
 		}
+	}
+	
+	private static String serlize(Object object) throws IOException {
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(buffer);
+		oos.writeObject(object);
+		oos.flush();
+		oos.close();
+		return new String(buffer.toByteArray());
+	}
+	
+	private static Object deserlize(String byteArray) throws IOException, ClassNotFoundException {
+		
+		ByteArrayInputStream in = new ByteArrayInputStream(byteArray.getBytes());
+		ObjectInputStream ois = new ObjectInputStream(in);
+		Object obj = ois.readObject();
+		return obj;
 	}
 
 }
