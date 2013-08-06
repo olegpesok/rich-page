@@ -21,6 +21,7 @@ import com.owow.rich.storage.PersistentCahce;
 import com.owow.rich.utils.ComparisonUtils;
 import com.owow.rich.utils.NlpUtils;
 import com.owow.rich.utils.NlpUtils.ScoredResult;
+import com.owow.rich.utils.NlpUtils.Tag;
 
 @SuppressWarnings("serial")
 public class DebugServlet  extends HttpServlet {
@@ -32,9 +33,8 @@ public class DebugServlet  extends HttpServlet {
 	@Override
    public void doGet(final HttpServletRequest req, final HttpServletResponse resp) {
 		try {
-			PersistentCahce.set("key1", "value1", "namespace1");
-			Object res = PersistentCahce.get("key1", "namespace1");
-			res = res;
+			
+			List<Tag> res = nlpUtils.extractConcepts("Google Plus is a social networking service operated by Google Inc. 7");
 			if(true) {
 				return;
 			}
