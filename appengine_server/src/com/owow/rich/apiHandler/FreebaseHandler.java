@@ -1,16 +1,18 @@
 package com.owow.rich.apiHandler;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.api.client.http.GenericUrl;
+import com.google.appengine.api.search.Results;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
-import com.owow.rich.RichLogger;
+import com.google.appengine.labs.repackaged.com.google.common.collect.Sets;
 import com.owow.rich.utils.HtmlUtil;
 
 public class FreebaseHandler extends ApiHandler {
@@ -36,7 +38,10 @@ public class FreebaseHandler extends ApiHandler {
 	@Override
 	public List<ApiResponse> getAllApiResponses(String highlight, ApiType apiType) throws Exception {
 		JSONArray searchResponse = getFreebaseSearchResponse(highlight);
-
+//		JSONArray reconcileResponse = getFreebaseReconcilehResponse(highlight);
+//		searchResponse = combineSearchAndReconcileResults(searchResponse, reconcileResponse);
+		
+		
 		List<ApiResponse> responses = Lists.newArrayList();
 
 		for (int i = 0; i < Math.min(searchResponse.length(), MAX_SEARCH_RESPONSE ); i++) {
@@ -48,6 +53,27 @@ public class FreebaseHandler extends ApiHandler {
 		}
 		return responses;
 	}
+
+	private JSONArray combineSearchAndReconcileResults(JSONArray searchResponse, JSONArray reconcileResponse) throws JSONException {
+		JSONArray results = new JSONArray();
+		Set<String> mids =  Sets.newHashSet();
+		
+		for (int i = 0; i < Math.min(reconcileResponse.length(), MAX_SEARCH_RESPONSE ); i++) {
+			if (!mids.contains(reconcileResponse.getJSONObject(i))) {
+				mids.add(reconcileResponse.getJSONObject(i).getString("mid"));
+				results.put(reconcileResponse.getJSONObject(i));
+			}
+		}
+		
+		for (int i = 0; i < Math.min(searchResponse.length(), MAX_SEARCH_RESPONSE ); i++) {
+			if (!mids.contains(searchResponse.getJSONObject(i))) {
+				mids.add(searchResponse.getJSONObject(i).getString("mid"));
+				results.put(searchResponse.getJSONObject(i));
+			}
+		}
+		
+	   return results;
+   }
 
 	/**
 	 * Give a query we return all the results for this query.
@@ -61,6 +87,21 @@ public class FreebaseHandler extends ApiHandler {
 
 		return searchResponse;
 	}
+	
+	
+	
+	/**
+	 * Use the reconcile api.
+	 */
+//	private JSONArray getFreebaseReconcilehResponse(String title) throws IOException, JSONException {
+//		GenericUrl searchUrl = new GenericUrl("https://www.googleapis.com/freebase/v1/reconcile");
+//		searchUrl.put("name", title);
+//		searchUrl.put("key", GOOGLE_API_KEY);
+//		final String searchData = HtmlUtil.getUrlSource(searchUrl.toString());
+//		JSONArray searchResponse = new JSONObject(searchData).getJSONArray("candidate");
+//
+//		return searchResponse;
+//	}
 
 	/**
 	 * Retrieve the result and create the ApiResponse from it.
@@ -70,15 +111,17 @@ public class FreebaseHandler extends ApiHandler {
 	 */
 	private ApiResponse getSingleResponse(JSONObject searchResult, ApiType apiType) {
 		try {
-
-			int score = searchResult.getInt("score");
+			int score = !searchResult.isNull("score")? searchResult.getInt("score") : 1;
 			String title = searchResult.getString("name");
 			if (score >= FREEBASE_SCORE_LOW_THRESHOLD) {
 				String mid = searchResult.getString("mid");
 				JSONObject topicResponse = getFreebseTopic(mid, apiType);
+				List<String> alias = getAlias(mid, apiType);
 
-				if (!topicResponse.has("property")) // TODO: log PropertyNotFound.
-				return null;
+				
+				if (!topicResponse.has("property")) { // TODO: log PropertyNotFound.
+					return null;
+				}
 
 				// Takes the longest description:
 				JSONArray values = topicResponse.getJSONObject("property").getJSONObject("/common/topic/description").getJSONArray("values");
@@ -89,10 +132,9 @@ public class FreebaseHandler extends ApiHandler {
 						description = currentDescription;
 					}
             }
-				
 				String html = "<p>" + description.replace(". ", ". </p><p>") + "</p>";
 
-				ApiResponse apiResponse = new ApiResponse(topicResponse, html, apiType, score, description, mid, title);
+				ApiResponse apiResponse = new ApiResponse(topicResponse, html, apiType, score, description, mid, title, alias);
 				if(apiResponse.apiInternalScore >= FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD) {
 					apiResponse.goodEnough = true;
 				}
@@ -104,6 +146,28 @@ public class FreebaseHandler extends ApiHandler {
 		}
 		return null;
 	}
+
+	private List<String> getAlias(String mid, ApiType apiType) {
+		try {
+			List<String> results = Lists.newArrayList();
+			GenericUrl topicUrl = new GenericUrl("https://www.googleapis.com/freebase/v1/topic" + mid);
+			topicUrl.put("filter", "/common/topic/alias");
+			topicUrl.put("key", GOOGLE_API_KEY);
+			String topicData;
+
+			topicData = HtmlUtil.getUrlSource(topicUrl.toString());
+			JSONObject jsonObject = new JSONObject(topicData);
+			JSONArray values = jsonObject.getJSONObject("property").getJSONObject("/common/topic/alias").getJSONArray("values");
+			for (int i = 0; i < values.length(); i++) {
+				String value = values.getJSONObject(i).getString("value");
+				results.add(value);
+         }
+			return results;
+		} catch (Exception e) {
+			return Lists.newArrayList();
+		}
+	   
+   }
 
 	/**
 	 * Reterive the result from free base according to the mid.

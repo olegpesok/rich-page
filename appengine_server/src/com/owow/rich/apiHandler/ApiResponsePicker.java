@@ -16,11 +16,18 @@ public class ApiResponsePicker {
 	
 	public ApiResponse choseResult(List<ApiResponse> apiResponseList, WebPage webPage, String highlight) {
 		try {
+			
+			// according to the internal score, if good enough and in big gap over the others.
+			ApiResponse goodEnoughResponse = isGoodEnough(apiResponseList, webPage, highlight);
+			if (goodEnoughResponse != null) {
+				return goodEnoughResponse;
+			}
+			
+			// according to text tags comparison score:
 			ApiResponse bestApiResponse = isAnyOneBetterByFar(apiResponseList, webPage, highlight);
 			if (bestApiResponse != null) {
 				return bestApiResponse;
 			}
-			
 			
 			for (ApiResponse apiResponse : apiResponseList) {
 				try {
@@ -40,6 +47,12 @@ public class ApiResponsePicker {
 					return apiResponse;
 				}
 				
+				// check for match to the aliases.
+				for (String alias : apiResponse.alias) {
+					if (computeLevenshteinDistance(highlight.toLowerCase(), alias.toLowerCase()) <= 2) {
+						return apiResponse;
+					}
+            }
 				
 				// For now skip dictionary.
 				if(apiResponse.myType.equals(ApiType.dictionary)) {
@@ -64,6 +77,29 @@ public class ApiResponsePicker {
 		}
    }
 	
+	private ApiResponse isGoodEnough(List<ApiResponse> apiResponseList, WebPage webPage, String highlight) {
+		ApiResponse bestResponse = null;
+		ApiResponse secondBestResponse = null;
+		for (ApiResponse apiResponse : apiResponseList) {
+	   	ScoredResult score = nlpUtils.compare(webPage.getText(), apiResponse.title + ". " +apiResponse.text);
+			if (bestResponse == null || bestResponse.apiInternalScore < apiResponse.apiInternalScore) {
+				secondBestResponse = apiResponse;
+				bestResponse = apiResponse;
+			} else if(secondBestResponse == null || secondBestResponse.apiInternalScore < apiResponse.apiInternalScore){
+				secondBestResponse = apiResponse; 
+			}
+		}
+		
+		if ( (bestResponse != null && bestResponse.goodEnough) && 
+				(secondBestResponse == null || bestResponse.apiInternalScore - secondBestResponse.apiInternalScore > 400) ) {
+			return bestResponse;
+		} else {
+			return null;
+		}
+	}
+	
+	
+	
    private ApiResponse isAnyOneBetterByFar(List<ApiResponse> apiResponseList, WebPage webPage, String highlight) {
    	webPage.getText();
    	
@@ -71,10 +107,6 @@ public class ApiResponsePicker {
    	double bestScore = 0.0;
    	double secondBestScore = 0.0;
    	for (ApiResponse apiResponse : apiResponseList) {
-			if (apiResponse.goodEnough) {
-				return apiResponse;
-			}
-   		
    		ScoredResult score = nlpUtils.compare(webPage.getText(), apiResponse.title + ". " +apiResponse.text);
    		if (score.score > bestScore) {
    			chosenResponse = apiResponse;

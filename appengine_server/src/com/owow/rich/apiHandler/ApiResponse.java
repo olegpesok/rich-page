@@ -24,14 +24,16 @@ public class ApiResponse implements Serializable {
 	public JSONObject	         json;
 	public ApiView	            view;
 
-	public long	               apiInternalScore;
-	public String	            text;
-	public String	            id;
-	public String	            title;
+	public int apiInternalScore;
+	public String text;
+	public String id;
+	public String title;
+	public List<String> alias = Lists.newArrayList();
 
 	public boolean	            resultOk	        = true;
 	// private Exception mError;
 	public ApiType	            myType;
+	
 
 	public ApiResponse(JSONObject json, String html, ApiType apiType, int score, String text, String id, String title) {
 		apiInternalScore = score;
@@ -40,7 +42,8 @@ public class ApiResponse implements Serializable {
 		view = new ApiView(html);
 		this.id = id;
 		this.title = title;
-		myType = apiType;
+		this.alias = alias;
+		this.myType = apiType;
 	}
 
 	public ApiResponse(String title, JSONObject json, String html, ApiType apiType) {
@@ -49,7 +52,7 @@ public class ApiResponse implements Serializable {
 
 	public ApiResponse(String title, JSONObject json, ApiView view, ApiType apiType)
 	{
-		this(json, view.getView(), apiType, 0, view.getView(), null, title);
+		this(json, view.getView(), apiType, 0, view.getView(), null, title, new ArrayList<String>());
 	}
 
 	public ApiResponse(String title, JSONObject json, ApiType type)

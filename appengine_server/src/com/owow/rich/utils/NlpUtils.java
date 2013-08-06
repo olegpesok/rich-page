@@ -1,5 +1,6 @@
 package com.owow.rich.utils;
 
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -7,7 +8,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -23,6 +23,7 @@ import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.google.appengine.labs.repackaged.org.json.XML;
 import com.owow.rich.RichLogger;
+import com.owow.rich.storage.PersistentCahce;
 
 public class NlpUtils {
 
@@ -30,12 +31,14 @@ public class NlpUtils {
 //		return "f73a4e3d28fbb12206ba958524e55e9d1c3f265f";
 //		return "dc86318ce4f5cf5ae2872376afe43940938d7edf";
 //		return "d5f35667e3dbc7bba2936fb03991144dba85c18d";
-		return "7765f99062f08e86ad5caab7db048a57f3179384";
+//		return "7765f99062f08e86ad5caab7db048a57f3179384";
+		return "d511edb07905973cec006dee63a2110cca933e41";
    }
 	
 	private final AlchemyAPI ALCHEMY_API	= AlchemyAPI.GetInstanceFromString(getAlchemyApiKey());
 
-	public class Tag {
+	
+	public static class Tag implements Serializable{
 		public String	text;
 		public double	score;
 		public String	type;
@@ -134,10 +137,19 @@ public class NlpUtils {
 	}
 
 	public List<Tag> extractAllTags(String text) {
+		// get from cache.
+		final String CAHCE_NAME = "extractAllTags";
+		List<Tag> cahcedList = (List<Tag>)PersistentCahce.get(""+text.hashCode(), CAHCE_NAME);
+		if(cahcedList != null){ return cahcedList; }
+		
 		List<Tag> results = Lists.newArrayList();
 		results.addAll(extractConcepts(text));
 		results.addAll(extractEntities(text));
 		results.addAll(extractKeyWords(text));
+		
+		// save in cahce:
+		PersistentCahce.set(""+text.hashCode(),results, CAHCE_NAME);
+		
 		return results;
 	}
 
@@ -146,10 +158,11 @@ public class NlpUtils {
 			Document document = ALCHEMY_API.TextGetRankedConcepts(text);
 			return getAlchemyItems(document, "concepts", "concept");
 		} catch (Exception e) {
+			PersistentCahce.set(""+text.hashCode() ,Lists.newArrayList(), "extractConcepts");
 			return Lists.newArrayList();
 		}
 	}
-
+	
 	public List<Tag> extractEntities(String text) {
 		try {
 			Document document = ALCHEMY_API.TextGetRankedNamedEntities(text);
