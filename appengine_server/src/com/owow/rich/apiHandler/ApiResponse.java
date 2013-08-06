@@ -1,6 +1,8 @@
 package com.owow.rich.apiHandler;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,6 +11,8 @@ import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.appengine.api.datastore.Text;
+import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
+
 
 public class ApiResponse implements Serializable {
 
@@ -26,20 +30,22 @@ public class ApiResponse implements Serializable {
 	public String text;
 	public String id;
 	public String title;
-
+	public List<String> alias = Lists.newArrayList();
 
 	public boolean	            resultOk	        = true;
 	// private Exception mError;
 	public ApiType	            myType;
+	
 
-	public ApiResponse(JSONObject json, String html, ApiType apiType, int score, String text, String id, String title) {
+	public ApiResponse(JSONObject json, String html, ApiType apiType, int score, String text, String id, String title, List<String> alias) {
 		this.apiInternalScore = score;
 		this.text = text;
 		this.json = json;
 		this.view = new ApiView(html);
 		this.id = id;
 		this.title = title;
-		myType = apiType;
+		this.alias = alias;
+		this.myType = apiType;
 	}
 
 	public ApiResponse(String title, JSONObject json, String html, ApiType apiType) {
@@ -48,7 +54,7 @@ public class ApiResponse implements Serializable {
 
 	public ApiResponse(String title, JSONObject json, ApiView view, ApiType apiType)
 	{
-		this(json, view.getView(), apiType, 0, view.getView(), null, title);
+		this(json, view.getView(), apiType, 0, view.getView(), null, title, new ArrayList<String>());
 	}
 
 	public ApiResponse(String title, JSONObject json, ApiType type)

@@ -83,7 +83,9 @@ public class ServletTest {
 //		singleTest("Blackberries", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "The BlackBerry is a line of wireless handheld devices");
 //		singleTest("Kik", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Kik Messenger is an instant messaging");
 //		singleTest("AirDrop", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "AirDrop is a Wi-Fi ad-hoc service");
-		singleTest("Google Play", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Google Play, formerly known as the Android Market");
+//		singleTest("Google Play", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Google Play, formerly known as the Android Market");
+//		singleTest("Tencent", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "Tencent Holdings Limited is a Chinese investment");
+		singleTest("Google plus", ApiType.freebase.getIdentifyer(), "http://ben-evans.com/?page=11", true, "is a social networking service operated by Google Inc.");
 		
 	}
 	
