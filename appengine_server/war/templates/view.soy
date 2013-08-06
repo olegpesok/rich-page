@@ -1,0 +1,31 @@
+{namespace examples.simple}
+/**
+ * Says hello to the world.
+ * @param p wikipeid p.
+ */
+{template .helloWorld}
+<head>
+<title>Admin page - Add</title>
+<style type="text/css" src="../reset.css"></style>
+</head>
+<body>
+	<div align="center" style="margin: auto">
+		<h1>View</h1>
+		<form action="" method="get">
+			<input type="text" placeholder="Search.." name="q" /> <input
+				type="hidden" name="act" value="view">
+		</form>
+		<table border="1">
+			<tr>
+				<th>Key</th>
+				<th>title</th>
+				<th>Json</th>
+				<th>View</th>
+				<th>Type</th>
+			</tr>
+			{$p|noAutoescape}
+		</table>
+	</div>
+</body>
+
+{/template}

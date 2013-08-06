@@ -1,12 +1,9 @@
 package com.owow.rich.items;
 
-import java.util.logging.Level;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.jsoup.Jsoup;
-import org.w3c.dom.Document;
-
-import com.alchemyapi.api.AlchemyAPI;
-import com.owow.rich.RichLogger;
 
 public class WebPage {
 
@@ -19,6 +16,15 @@ public class WebPage {
 		this.url = url;
 	}
 
+	public String getHost()
+	{
+		try {
+			return new URL(url).getHost();
+		} catch (MalformedURLException exception)
+		{
+			return "none";
+		}
+	}
 	public String getText()
 	{
 		try {
@@ -26,15 +32,18 @@ public class WebPage {
 			{
 				org.jsoup.nodes.Document doc = Jsoup.connect(url).get();
 				text = doc.body().text();
-//				
-//				AlchemyAPI a = AlchemyAPI
-//				      .GetInstanceFromString("dc86318ce4f5cf5ae2872376afe43940938d7edf");
-//				Document d = a.URLGetText(url);
-//				if (d.getDocumentElement().getElementsByTagName("status").item(0).getTextContent().equals("ERROR")) { 
-//					RichLogger.log.log(Level.SEVERE,"Error, API alchemy failed at retriving the text");
-//				} else {
-//					text = d.getDocumentElement().getElementsByTagName("text").item(0).getTextContent();
-//				}
+				//
+				// AlchemyAPI a = AlchemyAPI
+				// .GetInstanceFromString("dc86318ce4f5cf5ae2872376afe43940938d7edf");
+				// Document d = a.URLGetText(url);
+				// if
+				// (d.getDocumentElement().getElementsByTagName("status").item(0).getTextContent().equals("ERROR"))
+				// {
+				// RichLogger.log.log(Level.SEVERE,"Error, API alchemy failed at retriving the text");
+				// } else {
+				// text =
+				// d.getDocumentElement().getElementsByTagName("text").item(0).getTextContent();
+				// }
 			}
 			return text;
 

@@ -52,7 +52,7 @@ public class NGramDatastoreEntity implements Serializable {
 	public static class FreebaseSimpleResult
 	{
 		public String	id;
-		public int		score;
+		public long		score;
 		// For long strings, appengine uses Text object
 		public Text		text;
 		public static FreebaseSimpleResult createFromApiResponse(ApiResponse ar)

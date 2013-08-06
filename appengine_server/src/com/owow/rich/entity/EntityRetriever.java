@@ -18,9 +18,9 @@ public class EntityRetriever {
 			return null;
 		}
 	}
-	
+
 	public ApiResponse getApiResponseFromStorage(NGram ngram, ApiType apitype, Storage storage, WebPage wp)
 	{
-		return storage.loadEntity(wp, ngram);
+		return storage.loadEntity(wp, ngram.toString());
 	}
 }

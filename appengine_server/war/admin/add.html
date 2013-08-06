@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Admin page - Add</title>
+<style type="text/css" src="../reset.css"></style>
+</head>
+<body>
+	<div align="center" style="margin: auto">
+		<h1>Add New Ngram</h1>
+		<form action="./AdminPage" method="get">
+			<table style="text-align: center">
+				<tr>
+					<td>NGram:</td>
+					<td><input type="text" name="ngram" placeholder="NGram.." /></td>
+				</tr>
+				<tr>
+					<td>Server:</td>
+					<td><input type="text" name="serv" placeholder="Server.." /></td>
+				</tr>
+				<tr>
+					<td>Type:</td>
+					<td><select name="m">
+							<option value="fr">Freebase</option>
+							<option value="wi">Wikipedia</option>
+							<option value="di">Dictionary</option>
+							<option value="cu">Custom-made</option>
+					</select></td>
+				</tr>
+				<tr>
+					<td>View:</td>
+					<td><textarea rows="30" cols="50" name="view"></textarea></td>
+				</tr>
+				<tr>
+					<td>Json:</td>
+					<td><textarea rows="30" cols="50" name="view"></textarea></td>
+				</tr>
+				<tr>
+					<td colspan="2"><input style="width: 100%" type="submit"
+						name="act" value="Add"></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</body>
+</html>

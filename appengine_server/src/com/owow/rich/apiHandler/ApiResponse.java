@@ -15,28 +15,29 @@ public class ApiResponse implements Serializable {
 	public final static String	JSONKEY	        = "json";
 	public final static String	VIEWKEY	        = "view";
 	public final static String	APITYPEKEY	     = "apitype";
+	public final static String	TITLEKEY	        = "title";
+	public final static String	IDKEY	           = "id";
+	public final static String	SCOREKEY	        = "score";
 	private static final long	serialVersionUID	= -4369034077791508101L;
 
-	public boolean goodEnough = false;
+	public boolean	            goodEnough	     = false;
 	public JSONObject	         json;
 	public ApiView	            view;
-	
 
-	public int apiInternalScore;
-	public String text;
-	public String id;
-	public String title;
-
+	public long	               apiInternalScore;
+	public String	            text;
+	public String	            id;
+	public String	            title;
 
 	public boolean	            resultOk	        = true;
 	// private Exception mError;
 	public ApiType	            myType;
 
 	public ApiResponse(JSONObject json, String html, ApiType apiType, int score, String text, String id, String title) {
-		this.apiInternalScore = score;
+		apiInternalScore = score;
 		this.text = text;
 		this.json = json;
-		this.view = new ApiView(html);
+		view = new ApiView(html);
 		this.id = id;
 		this.title = title;
 		myType = apiType;
@@ -75,10 +76,12 @@ public class ApiResponse implements Serializable {
 	public PropertyContainer getPropertyContainerFromApiResponse()
 	{
 		PropertyContainer propertyContainer = new EmbeddedEntity();
-		propertyContainer.setProperty(JSONKEY, new Text(json.toString()));
-
+		propertyContainer.setProperty(JSONKEY, json == null ? null : new Text(json.toString()));
 		propertyContainer.setProperty(VIEWKEY, new Text(view.getView().toString()));
-		propertyContainer.setProperty(APITYPEKEY, myType.getIdentifyer());
+		propertyContainer.setProperty(APITYPEKEY, myType == null ? null : myType.getIdentifyer());
+		propertyContainer.setProperty(TITLEKEY, title);
+		propertyContainer.setProperty(SCOREKEY, apiInternalScore);
+		propertyContainer.setProperty(IDKEY, id);
 
 		return propertyContainer;
 	}
@@ -88,25 +91,23 @@ public class ApiResponse implements Serializable {
 		if (!ent.hasProperty(APITYPEKEY)) return null;
 		JSONObject json;
 		try {
-			json = new JSONObject(((Text) ent.getProperty(VIEWKEY)).getValue());
+			json = ent.getProperty(JSONKEY) == null ? null : new JSONObject(((Text) ent.getProperty(JSONKEY)).getValue());
 		} catch (JSONException e) {
 			json = null;
 		}
-		ApiView apiView = new ApiView(((Text) ent.getProperty(VIEWKEY)).getValue());
+		ApiView apiView = !ent.hasProperty(VIEWKEY) ? new ApiView("") : new ApiView(((Text) ent.getProperty(VIEWKEY)).getValue());
 		ApiType apiType = ApiType.create((String) ent.getProperty(APITYPEKEY));
-		return new ApiResponse(title, json, apiView, apiType);
+
+		ApiResponse ar = new ApiResponse(title, json, apiView, apiType);
+
+		ar.apiInternalScore = ent.hasProperty(SCOREKEY) && ent.getProperty(SCOREKEY) != null
+		      ? (Long) ent.getProperty(SCOREKEY) : -1;
+		ar.id = (String) (ent.hasProperty(IDKEY) ? ent.getProperty(IDKEY) : null);
+		ar.title = (String) (ent.hasProperty(TITLEKEY) ? ent.getProperty(TITLEKEY) : null);
+		return ar;
 	}
-	// public boolean isOK()
-	// {
-	// return resultOk;
-	// }
-	// public Exception getError()
-	// {
-	// return mError;
-	// }
-	// public void setError(Exception Error)
-	// {
-	// resultOk = false;
-	// mError = Error;
-	// }
+
+	public static ApiResponse getApiResponseFromEntity(Entity ent) {
+		return getApiResponseFromEntity(null, ent);
+	}
 }

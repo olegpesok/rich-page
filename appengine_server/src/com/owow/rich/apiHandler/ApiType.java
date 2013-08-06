@@ -5,8 +5,8 @@ import java.util.Map;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
 
 public enum ApiType {
-	//qoura(QouraHandler.class, "qo"),
-	//google(GoogleHandler.class, "go"),
+	// qoura(QouraHandler.class, "qo"),
+	// google(GoogleHandler.class, "go"),
 	crunch(CrunchBaseHandler.class, "cr"),
 	wiki(WikipediaHandler.class, "wi"),
 	dictionary(DictionaryHandler.class, "di"),
@@ -17,7 +17,8 @@ public enum ApiType {
 	geo(GeographicHandler.class, "ge"),
 	freebase(FreebaseHandler.class, "fr"),
 	yelp(YelpHandler.class, "ye"),
-	stackoverflaw(StackOverflowHandler.class, "st");
+	stackoverflaw(StackOverflowHandler.class, "st"),
+	custom(StackOverflowHandler.class, "cu");
 
 	public Class<? extends ApiHandler>	myClass;
 	public String	                    nickname;
@@ -46,7 +47,8 @@ public enum ApiType {
 	public static ApiType create(String s)
 	{
 		if (map == null) setMap();
-		return map.get(s);
+		ApiType ap = map.get(s);
+		return ap == null ? custom : ap;
 	}
 
 	static void setMap()
