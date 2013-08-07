@@ -34,18 +34,12 @@ public class DebugServlet  extends HttpServlet {
    public void doGet(final HttpServletRequest req, final HttpServletResponse resp) {
 		try {
 			
-			List<Tag> res = nlpUtils.extractConcepts("Google Plus is a social networking service operated by Google Inc. 7");
-			if(true) {
-				return;
-			}
-			
 			final String highlight = req.getParameter("highlight");
 			final String url = req.getParameter("url");
 			Document doc = Jsoup.connect(url).get();
 			String pageText = doc.body().text();
 			resp.getWriter().write("highglihgt:" + highlight +  "\r\n text:" + pageText + "\r\n\r\n");
 			List<ApiResponse> apiResponseList = new FreebaseHandler().getAllApiResponses(highlight, ApiType.freebase);
-			
 //			List<ApiResponse> apiResponseList = new WikipediaHandler().getAllApiResponses(highlight, ApiType.wiki);
 			
 			ApiResponse chosenApiResponse = apiResponsePicker.choseResult(apiResponseList, new WebPage(pageText, pageText, url) , highlight);

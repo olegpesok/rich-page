@@ -8,6 +8,17 @@ import com.owow.rich.items.WebPage;
 import com.owow.rich.utils.NlpUtils;
 import com.owow.rich.utils.NlpUtils.ScoredResult;
 
+/**
+ * Scores we use:
+ * - Api specific score (e.g Freebase score). 
+ * - Similarity of the highlight and the title of the entity(and it's aliases). (allowing edit distance of 2).
+ * - Similarity of the tags(entities, concepts, key-words) in the page, and in the entity body. (using Aclhemy API)
+ * - TFIDF similarity of the bodies.
+ * - Latent Semantic Analysis.
+ * 
+ * - The class both order the resutls and decied if the best result is good enough to show or not.
+ *
+ */
 public class ApiResponsePicker {
 
 	private double TITLE_HIGHLIGHT_SCORE_THRESHOLD = 0.5;
