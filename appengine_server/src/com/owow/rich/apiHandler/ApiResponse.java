@@ -8,22 +8,22 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.appengine.api.datastore.EmbeddedEntity;
-import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.appengine.api.datastore.Text;
 import com.google.common.collect.Lists;
 
 public class ApiResponse implements Serializable {
 
-	public final static String	JSONKEY	        = "json";
-	public final static String	VIEWKEY	        = "view";
-	public final static String	APITYPEKEY	     = "apitype";
-	public final static String	TITLEKEY	        = "title";
-	public final static String	IDKEY	           = "id";
-	public final static String	SCOREKEY	        = "score";
+	public final static String	JSONKEY	         = "json";
+	public final static String	VIEWKEY	         = "view";
+	public final static String	BACKUPRESPONSEKEY	= "backUp";
+	public final static String	APITYPEKEY	      = "apitype";
+	public final static String	TITLEKEY	         = "title";
+	public final static String	IDKEY	            = "id";
+	public final static String	SCOREKEY	         = "score";
 	private static final long	serialVersionUID	= -4369034077791508101L;
 
-	public boolean	            goodEnough	     = false;
+	public boolean	            goodEnough	      = false;
 	public JSONObject	         json;
 	public ApiView	            view;
 
@@ -31,9 +31,9 @@ public class ApiResponse implements Serializable {
 	public String	            text;
 	public String	            id;
 	public String	            title;
-	public List<String>	      alias	           = Lists.newArrayList();
+	public List<String>	      alias	            = Lists.newArrayList();
 
-	public boolean	            resultOk	        = true;
+	public boolean	            resultOk	         = true;
 	// private Exception mError;
 	public ApiType	            myType;
 
@@ -78,7 +78,7 @@ public class ApiResponse implements Serializable {
 		return myType.myClass.newInstance().getView(this);
 	}
 
-	public PropertyContainer getPropertyContainerFromApiResponse(String... views)
+	public PropertyContainer getPropertyContainerFromApiResponse(ApiResponse... apiResponses)
 	{
 		final PropertyContainer propertyContainer = new EmbeddedEntity();
 		// propertyContainer.setProperty(JSONKEY, json == null ? null : new
@@ -87,11 +87,12 @@ public class ApiResponse implements Serializable {
 		propertyContainer.setProperty(APITYPEKEY, myType == null ? null : myType.getIdentifyer());
 
 		final EmbeddedEntity embeddedViewsEntity = new EmbeddedEntity();
-		embeddedViewsEntity.setProperty(VIEWKEY, new Text(view.getView().toString()));
 		int index = 0;
-		for (String view : views) {
+		for (ApiResponse apiResponse : apiResponses) {
 			index++;
+			embeddedViewsEntity.setProperty(BACKUPRESPONSEKEY + index, apiResponse.getPropertyContainerFromApiResponse());
 		}
+		embeddedViewsEntity.setProperty("length", index);
 
 		propertyContainer.setProperty(TITLEKEY, title);
 		propertyContainer.setProperty(SCOREKEY, apiInternalScore);
@@ -100,17 +101,13 @@ public class ApiResponse implements Serializable {
 		return propertyContainer;
 	}
 
-	public PropertyContainer getPropertyContainerFromApiResponse()
+	public EmbeddedEntity getPropertyContainerFromApiResponse()
 	{
-		final PropertyContainer propertyContainer = new EmbeddedEntity();
+		final EmbeddedEntity propertyContainer = new EmbeddedEntity();
 		// propertyContainer.setProperty(JSONKEY, json == null ? null : new
 		// Text(json.toString()));
 		propertyContainer.setProperty(VIEWKEY, new Text(view.getView().toString()));
 		propertyContainer.setProperty(APITYPEKEY, myType == null ? null : myType.getIdentifyer());
-
-		final EmbeddedEntity views = new EmbeddedEntity();
-		views.setProperty(VIEWKEY, new Text(view.getView().toString()));
-
 		propertyContainer.setProperty(TITLEKEY, title);
 		propertyContainer.setProperty(SCOREKEY, apiInternalScore);
 		propertyContainer.setProperty(IDKEY, id);
@@ -118,7 +115,7 @@ public class ApiResponse implements Serializable {
 		return propertyContainer;
 	}
 
-	public static ApiResponse getApiResponseFromEntity(String title, Entity ent)
+	public static ApiResponse getApiResponseFromEntity(String title, PropertyContainer ent)
 	{
 		if (!ent.hasProperty(APITYPEKEY)) return null;
 		// JSONObject json;
@@ -140,7 +137,7 @@ public class ApiResponse implements Serializable {
 		return ar;
 	}
 
-	public static ApiResponse getApiResponseFromEntity(Entity ent) {
+	public static ApiResponse getApiResponseFromEntity(PropertyContainer ent) {
 		return getApiResponseFromEntity(null, ent);
 	}
 }

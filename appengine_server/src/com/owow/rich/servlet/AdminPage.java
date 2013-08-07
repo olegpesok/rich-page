@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.template.soy.data.SoyMapData;
 import com.owow.rich.Manager;
 import com.owow.rich.apiHandler.ApiResponse;
@@ -30,9 +31,13 @@ public class AdminPage extends HttpServlet {
 	      throws IOException {
 		// URL startingUrl = new URL(req.getParameter("url"));
 		String act = req.getParameter("act");
-		if (act.equals("viewAll")) doGetViewAll(req, resp);
-		else if (act.equals("Add")) doGetAdd(req, resp);
-		else if (act.equals("view")) doGetView(req, resp);
+		if (act.equals("viewAll")) {
+	      doGetViewAll(req, resp);
+      } else if (act.equals("Add")) {
+	      doGetAdd(req, resp);
+      } else if (act.equals("view")) {
+	      doGetView(req, resp);
+      }
 
 		// resp.getWriter().write("OK - " + damn);
 	}
@@ -44,7 +49,7 @@ public class AdminPage extends HttpServlet {
 		resp.setContentType("text/html");
 		SoyMapData smd = new SoyMapData();
 
-		Entity entity = m.storage.loadEntityJustEntity(new WebPage("", "", ""), ngram);
+		PropertyContainer entity = m.storage.loadEntityJustEntity(new WebPage("", "", ""), ngram);
 		if (entity != null)
 		{
 			ApiResponse ar = ApiResponse.getApiResponseFromEntity(entity);
@@ -64,9 +69,11 @@ public class AdminPage extends HttpServlet {
 		String serv = req.getParameter("serv");
 		JSONObject json = null;
 		String preJson = req.getParameter("json");
-		if (preJson != null) try {
-			json = new JSONObject(req.getParameter("json"));
-		} catch (JSONException e) {}
+		if (preJson != null) {
+	      try {
+	      	json = new JSONObject(req.getParameter("json"));
+	      } catch (JSONException e) {}
+      }
 		Manager m = new Manager();
 		m.storage.saveApiResponse(new WebPage(null, null, serv), ngram, new ApiResponse(ngram, json, view, at));
 		resp.sendRedirect("./AdminPage?act=viewAll");
@@ -87,12 +94,14 @@ public class AdminPage extends HttpServlet {
 		for (Entity ent : apis)
 		{
 			ApiResponse ar = ApiResponse.getApiResponseFromEntity(ent);
-			if (ar != null) html += String.format(format,
-			      ent.getKey().toString(),
-			      ar.title,
-			      ar.json,
-			      ar.view == null ? "" : ar.view.getView(),
-			      ar.myType == null ? "" : ar.myType.nickname);
+			if (ar != null) {
+	         html += String.format(format,
+	               ent.getKey().toString(),
+	               ar.title,
+	               ar.json,
+	               ar.view == null ? "" : ar.view.getView(),
+	               ar.myType == null ? "" : ar.myType.nickname);
+         }
 		}
 
 		resp.setContentType("text/html");
