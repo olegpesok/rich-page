@@ -25,14 +25,16 @@ public class PageProccessServlet extends HttpServlet {
 	      throws IOException {
 
 		final String url = req.getParameter("url");
-		WebPage webPage = new WebPage(null, null, url);
-		try {
-			log.info("Processing page " + url);
-			manager.processPage(webPage);
-		} catch (Exception e) {
-			log.warning("Could not process page " + url + ", " + e.getMessage());
+		if (url != null) {
+			WebPage webPage = new WebPage(null, null, url);
+			try {
+				log.info("Processing page " + url);
+				manager.processPage(webPage);
+			} catch (Exception e) {
+				log.warning("Could not process page " + url + ", " + e.getMessage());
+			}
+		} else {
+			resp.getWriter().write("please provide a ?url=[url]");
 		}
-		return;
-
 	}
 }

@@ -3,6 +3,8 @@ package com.owow.rich;
 import java.util.List;
 import java.util.Map;
 
+import com.google.api.client.repackaged.com.google.common.base.Joiner;
+import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiRetriver;
@@ -14,12 +16,14 @@ import com.owow.rich.items.Token;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.PreviousResultsCache;
 import com.owow.rich.storage.Storage;
+import com.owow.rich.utils.NameExtractor;
 import com.owow.rich.utils.TokenizerUtil;
 
 public class Manager {
 
 	private TokenizerUtil	     tokenizer;
 	private EntityRetriever	     entityRetriever;
+	private NameExtractor nameExtractor = new NameExtractor();
 	public Storage	              storage;
 
 	public final static int	     NGRAM_LEN	= 2;
@@ -76,12 +80,18 @@ public class Manager {
 
 	public Map<NGram, ApiResponse> processPage(WebPage webPage) throws Exception {
 
-		// Toknaize Text (split):
-		List<Token> tokens = tokenizer.tokenize(webPage.getText());
-		List<NGram> nGrams = tokenizer.combineToNGrams(tokens, NGRAM_LEN);
+		// We extract the names:
+		List<List<String>> namesLists = nameExtractor.getNameExtractor(webPage.getText());
+		List<NGram> allNGrams = Lists.newArrayList();
+		for (List<String> namesList : namesLists) {
+			String names = Joiner.on(" ").join(namesList);
+			List<Token> tokens = tokenizer.tokenize(names);
+			List<NGram> nGrams = tokenizer.combineToNGrams(tokens, NGRAM_LEN);
+			allNGrams.addAll(nGrams);
+      }		
 
 		Map<NGram, ApiResponse> entitesMap = Maps.newHashMap();
-		for (NGram ngram : nGrams) {
+		for (NGram ngram : allNGrams) {
 			if (entitesMap.containsKey(ngram) || storage.containsKey(ngram)) continue;
 			ApiResponse entity = entityRetriever.getTopEntity(ngram, ApiType.freebase);
 			entitesMap.put(ngram, entity);
