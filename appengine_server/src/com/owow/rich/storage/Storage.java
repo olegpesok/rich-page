@@ -14,10 +14,6 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
-import com.google.appengine.api.datastore.Query.Filter;
-import com.google.appengine.api.datastore.Query.FilterOperator;
-import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.items.NGram;
 import com.owow.rich.items.WebPage;
@@ -105,20 +101,7 @@ public class Storage {
 		if (!arguable) return;
 		saveArguableApiResponse(webpage, ngram, entity);
 	}
-
-	public void saveLog(String user, String ip, String query, WebPage wp, boolean resultOk)
-	{
-		final Key key = KeyFactory.createKey(LOG_KIND, query + "." + wp.getHost() + "." + new java.util.Date().getTime());
-		final Entity e = new Entity(key);
-		e.setProperty("user", user);
-		e.setProperty("ip", ip);
-		e.setProperty("q", query);
-		e.setProperty("ok", resultOk);
-		e.setProperty("url", wp.url);
-		e.setProperty("host", wp.getHost());
-		e.setProperty("time", new java.util.Date().getTime());
-		datastore.put(e);
-	}
+	
 	public ApiResponse getFirstMatchingNgram(WebPage context, List<NGram> ngrams)
 	{
 		ApiResponse apiResponse = null;
@@ -133,13 +116,14 @@ public class Storage {
 
 	public ApiResponse loadEntity(WebPage context, String ngram)
 	{
-		final PropertyContainer entity = loadEntityJustEntity(context, ngram);
+		final PropertyContainer entity = loadPropertyContainer(context, ngram);
 		if (entity != null) return ApiResponse.getApiResponseFromEntity(ngram, entity);
 		return null;
 	}
-	public PropertyContainer loadEntityJustEntity(WebPage context, String ngram)
+	public PropertyContainer loadPropertyContainer(WebPage context, String ngram)
 	{
 		// TODO new, used
+		// TODO hanle default
 		final Query query = new Query(KeyFactory.createKey(ENTITY_KIND, ngram));
 		final List<Entity> listEntities = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(1));
 
@@ -153,8 +137,7 @@ public class Storage {
 				EmbeddedEntity emb = (EmbeddedEntity) entity.getProperty(ApiResponse.BACKUPRESPONSEKEY);
 				return (EmbeddedEntity) emb.getProperty(ApiResponse.BACKUPRESPONSEKEY + String.valueOf(domainPref));
 			}
-			else if (domainPref instanceof EmbeddedEntity)
-				return (PropertyContainer) domainPref;
+			else if (domainPref instanceof EmbeddedEntity) return (PropertyContainer) domainPref;
 		}
 		return listEntities.get(0);
 	}
@@ -170,51 +153,9 @@ public class Storage {
 
 	public List<Entity> queryTheDB(int offset, int length)
 	{
-		// TODO new
 		final Query q = new Query(ENTITY_KIND).addSort(Entity.KEY_RESERVED_PROPERTY);
 		final List<Entity> l = datastore.prepare(q).asList(FetchOptions.Builder.withOffset(offset).limit(length));
 
 		return l;
 	}
-
-	public List<Entity> queryTheDBForAnalitics(WebPage domain, int offset, int length)
-	{
-		// TODO new
-		final Query query = new Query(LOG_KIND).addSort(Entity.KEY_RESERVED_PROPERTY).addSort("q");
-		final Filter domainFilter = new FilterPredicate("domain", FilterOperator.EQUAL, domain.getHost());
-		query.setFilter(domainFilter);
-		final List<Entity> l = datastore.prepare(query).asList(FetchOptions.Builder.withOffset(offset).limit(length));
-		return l;
-	}
-
-	public List<Entity> queryTheDBForAnalitics(WebPage domain, String highligh, long minTimestamp, long maxTimestamp, int offset, int length)
-	{
-		// TODO new
-		final Query query = new Query(LOG_KIND).addSort(Entity.KEY_RESERVED_PROPERTY).addSort("q");
-		final Filter domainFilter = new FilterPredicate("domain", FilterOperator.EQUAL, domain.getHost());
-		final Filter highlightFilter = new FilterPredicate("query", FilterOperator.EQUAL, highligh);
-		final Filter minTimeFilter = new FilterPredicate("time", FilterOperator.GREATER_THAN_OR_EQUAL, minTimestamp);
-		final Filter maxTimeFilter = new FilterPredicate("time", FilterOperator.LESS_THAN_OR_EQUAL, maxTimestamp);
-		final Filter combinedFilter = CompositeFilterOperator.and(domainFilter, highlightFilter, minTimeFilter, maxTimeFilter);
-		query.setFilter(combinedFilter);
-		final List<Entity> l = datastore.prepare(query).asList(FetchOptions.Builder.withOffset(offset).limit(length));
-		return l;
-	}
-
-	/**
-	 * Count how many result a query have. Caution! this might talk long time in
-	 * case of lots of results.
-	 * 
-	 * @param query
-	 * @return
-	 */
-	public int countHowManyResults(Query query)
-	{
-		// TODO new
-		query.setKeysOnly();
-		final List<Entity> l = datastore.prepare(query).asList(FetchOptions.Builder.withDefaults());
-		query.clearKeysOnly();
-		return l.size();
-	}
-
 }

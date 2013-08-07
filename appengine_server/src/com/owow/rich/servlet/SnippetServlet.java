@@ -15,6 +15,7 @@ import com.owow.rich.Manager;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.items.WebPage;
+import com.owow.rich.storage.AnaliticsManager;
 import com.owow.rich.utils.TemplateUtil;
 
 /**
@@ -28,7 +29,7 @@ public class SnippetServlet extends HttpServlet {
 	final boolean	             debug	         = true;
 	final static ApiType	       DEFAULT_API_TYPE	= ApiType.freebase;
 	private static final Logger	log	         = Logger.getLogger("Rich");
-	private Manager	          manger	         = new Manager();
+	private Manager	          manager	         = new Manager();
 
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)
@@ -43,24 +44,30 @@ public class SnippetServlet extends HttpServlet {
 
 			WebPage webpage = new WebPage(null, null, url);
 
-			ApiResponse apiResponse = manger.getApiResponse(webpage, query, method);
+			ApiResponse apiResponse = manager.getApiResponse(webpage, query, method);
 
 			// Send the response in json/html format:
-			if (apiResponse != null) // Send html:
-			if (showView != null) {
-				printApiResposeView(apiResponse, resp);
+			if (apiResponse != null)
+			{// Send html:
+				if (showView != null) {
+					printApiResposeView(apiResponse, resp);
+					AnaliticsManager am = new AnaliticsManager(manager.storage);
 
-				manger.storage.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, webpage, apiResponse != null);
-				// Send Json format:
-			} else {
-				JSONObject jsonObject = new JSONObject();
-				try {
-					jsonObject.put("resultOK", apiResponse != null && !apiResponse.view.getView().isEmpty());
-				} catch (JSONException e) {
-					log.warning("json problem in simple resultOK");
+					am.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, webpage, apiResponse != null);
+					// Send Json format:
+				} else {
+					JSONObject jsonObject = new JSONObject();
+					try {
+						jsonObject.put("resultOK", apiResponse != null && !apiResponse.view.getView().isEmpty());
+					} catch (JSONException e) {
+						log.warning("json problem in simple resultOK");
+					}
+					resp.setContentType("application/json");
+					resp.getWriter().write(jsonObject.toString());
 				}
-				resp.setContentType("application/json");
-				resp.getWriter().write(jsonObject.toString());
+			} else {
+				AnaliticsManager am = new AnaliticsManager(manager.storage);
+				am.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, webpage, apiResponse != null);
 			}
 		}
 	}

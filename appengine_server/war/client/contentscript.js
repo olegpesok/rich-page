@@ -10,11 +10,17 @@ jQuery(document).ready(function(jQuery) {
 		mouseX = e.pageX;
 		mouseY = e.pageY;
 	});
+
+	jQuery('body').click(function() {
+		closeOwowContextBox2();
+	});
 });
 
 DEBUG = "http://localhost:8888/";
 NOTDEBUG = 'http://rich-page.appspot.com/'
 RICH_SERVER = DEBUG;
+
+var CLOSEITNEXTCLICK = false;
 
 // Setting trim function
 if (!String.prototype.trim) {
@@ -56,6 +62,17 @@ document.onkeyup = doSomethingWithSelectedText;
 
 function closeOwowContextBox() {
 	jQuery('#myModal').hide();
+	// jQuery('#owow_rich_div').hide();
+}
+
+function closeOwowContextBox2() {
+	if (CLOSEITNEXTCLICK) {
+		if ($('#myModal').is(':visible')) {
+			jQuery('#myModal').hide();
+			CLOSEITNEXTCLICK = false;
+		}
+	}
+	// jQuery('#owow_rich_div').hide();
 }
 
 var markSelection = (function() {
@@ -66,11 +83,23 @@ var markSelection = (function() {
 			+ Math.random().toString().substr(2);
 
 	var selectionEl;
+	var jOwowRichDiv;
+
+	var lastText;
+	var hold = false;
+	var lastPos = {
+		top : 0,
+		left : 0
+	};
 
 	return function() {
 		var sel, range;
-
 		var selectedText = getSelectedText();
+
+		if (selectedText != lastText)
+			jQuery("#owow_rich_div").remove();
+		var dataReady;
+
 		if (selectedText) {
 			if (document.selection && document.selection.createRange) {
 				// Clone the TextRange and collapse
@@ -126,8 +155,6 @@ var markSelection = (function() {
 				} while (obj = obj.offsetParent);
 
 				top += markerEl.offsetHeight;
-				left -= 13;
-				top -= 13;
 				obj = markerEl.parentNode;
 				var text = obj.innerText;
 				for ( var i = 0; i <= 5 && (text.split(' ', 14)).length < 13; i++) {
@@ -136,11 +163,58 @@ var markSelection = (function() {
 				}
 				markerEl.parentNode.removeChild(markerEl);
 
+				if (lastText == selectedText && lastPos.top == top
+						&& lastPos.left == left && hold)
+					return;
+				hold = true;
+				lastText = selectedText;
+				lastPos = {
+					top : top,
+					left : left
+				}
+				jQuery("body")
+						.append(
+								'<div id="owow_rich_div"><img id="owow_rich_img" style="width:100%;height:100%" src="'
+										+ RICH_SERVER
+										+ 'icons/question.png" /></div>');
+
+				var toShow = true;
+				var toHide = true;
+				dataReady = false;
+
+				jQuery("#owow_rich_div").css({
+					'width' : 20,
+					'height' : 20,
+					"background-color" : "#fff",
+					'top' : top,
+					'left' : left,
+					// 'z-index' : 20000,
+					position : 'absolute'
+				}).show().click(
+						function() {
+							if (dataReady) {
+								jQuery('#myModal').show().css({
+									'display' : 'block'
+								});
+								console.log('clicked');
+								CLOSEITNEXTCLICK = false;
+								setTimeout(function() {
+									CLOSEITNEXTCLICK = true;
+								}, 1000);
+
+							} else {
+								jQuery(this).children().attr("src",
+										RICH_SERVER + "img/throbber.gif");
+								toHide = false;
+							}
+						});
 				// alert(text);
 				var host = window.location;
 				jQuery.get(RICH_SERVER + 'Snippet?q=' + selectedText + '&text='
 						+ text + '&url=' + host, function(data) {
-					if (data && data.resultOK) {
+					if (data && data.resultOK && toShow) {
+
+						dataReady = true;
 						// Remove previous popup.
 						jQuery('#myModal').remove();
 
@@ -152,21 +226,26 @@ var markSelection = (function() {
 						jQuery('#myModal').css({
 							'width' : 335,
 							'height' : 410,
-							'top' : top - 13,
-							'left' : left - 13,
+							'top' : top - 26,
+							'left' : left - 26,
 							'z-index' : 10000,
 							position : 'absolute'
-						}).hide().show();
-
-						// When users click close the popup.
-						jQuery('body').click(function() {
-							closeOwowContextBox();
+						}).show().bind('click', function(event) {
+							CLOSEITNEXTCLICK = true;
 						});
+						if (toHide) {
+							jQuery('#myModal').hide();
+						}
+						CLOSEITNEXTCLICK = true;
 					} else {
+						jQuery("#owow_rich_div").hide();
 						console.log("no results for " + selectedText)
 					}
 				});
 			}
+
+		} else {
+			hold = false;
 		}
 	};
 })();

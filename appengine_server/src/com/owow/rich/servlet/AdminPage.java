@@ -49,7 +49,7 @@ public class AdminPage extends HttpServlet {
 		resp.setContentType("text/html");
 		SoyMapData smd = new SoyMapData();
 
-		PropertyContainer entity = m.storage.loadEntityJustEntity(new WebPage("", "", ""), ngram);
+		PropertyContainer entity = m.storage.loadPropertyContainer(new WebPage("", "", ""), ngram);
 		if (entity != null)
 		{
 			ApiResponse ar = ApiResponse.getApiResponseFromEntity(entity);

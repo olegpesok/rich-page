@@ -22,7 +22,7 @@ public class WebPage {
 			return new URL(url).getHost();
 		} catch (MalformedURLException exception)
 		{
-			return "none";
+			return "";
 		}
 	}
 	public String getText()
