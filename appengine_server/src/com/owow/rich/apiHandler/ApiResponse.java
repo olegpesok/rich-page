@@ -1,6 +1,8 @@
 package com.owow.rich.apiHandler;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,6 +11,7 @@ import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.appengine.api.datastore.Text;
+import com.google.common.collect.Lists;
 
 public class ApiResponse implements Serializable {
 
@@ -24,18 +27,17 @@ public class ApiResponse implements Serializable {
 	public JSONObject	         json;
 	public ApiView	            view;
 
-	public int apiInternalScore;
-	public String text;
-	public String id;
-	public String title;
-	public List<String> alias = Lists.newArrayList();
+	public long	               apiInternalScore;
+	public String	            text;
+	public String	            id;
+	public String	            title;
+	public List<String>	      alias	           = Lists.newArrayList();
 
 	public boolean	            resultOk	        = true;
 	// private Exception mError;
 	public ApiType	            myType;
-	
 
-	public ApiResponse(JSONObject json, String html, ApiType apiType, int score, String text, String id, String title) {
+	public ApiResponse(JSONObject json, String html, ApiType apiType, int score, String text, String id, String title, List<String> alias) {
 		apiInternalScore = score;
 		this.text = text;
 		this.json = json;
@@ -43,7 +45,7 @@ public class ApiResponse implements Serializable {
 		this.id = id;
 		this.title = title;
 		this.alias = alias;
-		this.myType = apiType;
+		myType = apiType;
 	}
 
 	public ApiResponse(String title, JSONObject json, String html, ApiType apiType) {
@@ -62,11 +64,11 @@ public class ApiResponse implements Serializable {
 
 	@Override
 	public String toString() {
-		JSONObject jsonObject = new JSONObject();
+		final JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject.put("json", json);
 			jsonObject.put("view", view);
-		} catch (JSONException e) {
+		} catch (final JSONException e) {
 			e.printStackTrace();
 		}
 		return jsonObject.toString();
@@ -76,12 +78,39 @@ public class ApiResponse implements Serializable {
 		return myType.myClass.newInstance().getView(this);
 	}
 
-	public PropertyContainer getPropertyContainerFromApiResponse()
+	public PropertyContainer getPropertyContainerFromApiResponse(String... views)
 	{
-		PropertyContainer propertyContainer = new EmbeddedEntity();
-		propertyContainer.setProperty(JSONKEY, json == null ? null : new Text(json.toString()));
+		final PropertyContainer propertyContainer = new EmbeddedEntity();
+		// propertyContainer.setProperty(JSONKEY, json == null ? null : new
+		// Text(json.toString()));
 		propertyContainer.setProperty(VIEWKEY, new Text(view.getView().toString()));
 		propertyContainer.setProperty(APITYPEKEY, myType == null ? null : myType.getIdentifyer());
+
+		final EmbeddedEntity embeddedViewsEntity = new EmbeddedEntity();
+		embeddedViewsEntity.setProperty(VIEWKEY, new Text(view.getView().toString()));
+		int index = 0;
+		for (String view : views) {
+			index++;
+		}
+
+		propertyContainer.setProperty(TITLEKEY, title);
+		propertyContainer.setProperty(SCOREKEY, apiInternalScore);
+		propertyContainer.setProperty(IDKEY, id);
+
+		return propertyContainer;
+	}
+
+	public PropertyContainer getPropertyContainerFromApiResponse()
+	{
+		final PropertyContainer propertyContainer = new EmbeddedEntity();
+		// propertyContainer.setProperty(JSONKEY, json == null ? null : new
+		// Text(json.toString()));
+		propertyContainer.setProperty(VIEWKEY, new Text(view.getView().toString()));
+		propertyContainer.setProperty(APITYPEKEY, myType == null ? null : myType.getIdentifyer());
+
+		final EmbeddedEntity views = new EmbeddedEntity();
+		views.setProperty(VIEWKEY, new Text(view.getView().toString()));
+
 		propertyContainer.setProperty(TITLEKEY, title);
 		propertyContainer.setProperty(SCOREKEY, apiInternalScore);
 		propertyContainer.setProperty(IDKEY, id);
@@ -92,16 +121,17 @@ public class ApiResponse implements Serializable {
 	public static ApiResponse getApiResponseFromEntity(String title, Entity ent)
 	{
 		if (!ent.hasProperty(APITYPEKEY)) return null;
-		JSONObject json;
-		try {
-			json = ent.getProperty(JSONKEY) == null ? null : new JSONObject(((Text) ent.getProperty(JSONKEY)).getValue());
-		} catch (JSONException e) {
-			json = null;
-		}
-		ApiView apiView = !ent.hasProperty(VIEWKEY) ? new ApiView("") : new ApiView(((Text) ent.getProperty(VIEWKEY)).getValue());
-		ApiType apiType = ApiType.create((String) ent.getProperty(APITYPEKEY));
+		// JSONObject json;
+		// try {
+		// json = ent.getProperty(JSONKEY) == null ? null : new JSONObject(((Text)
+		// ent.getProperty(JSONKEY)).getValue());
+		// } catch (JSONException e) {
+		// json = null;
+		// }
+		final ApiView apiView = !ent.hasProperty(VIEWKEY) ? new ApiView("") : new ApiView(((Text) ent.getProperty(VIEWKEY)).getValue());
+		final ApiType apiType = ApiType.create((String) ent.getProperty(APITYPEKEY));
 
-		ApiResponse ar = new ApiResponse(title, json, apiView, apiType);
+		final ApiResponse ar = new ApiResponse(title, new JSONObject(), apiView, apiType);
 
 		ar.apiInternalScore = ent.hasProperty(SCOREKEY) && ent.getProperty(SCOREKEY) != null
 		      ? (Long) ent.getProperty(SCOREKEY) : -1;

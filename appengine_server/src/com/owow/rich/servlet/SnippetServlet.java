@@ -38,7 +38,6 @@ public class SnippetServlet extends HttpServlet {
 		final String method = req.getParameter("m");
 		String query = req.getParameter("q");
 		final String url = req.getParameter("url");
-
 		if (query != null && query != "") {
 			// TODO get rid of that.
 
@@ -50,7 +49,8 @@ public class SnippetServlet extends HttpServlet {
 			if (apiResponse != null) // Send html:
 			if (showView != null) {
 				printApiResposeView(apiResponse, resp);
-				manger.storage.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, url, apiResponse != null);
+
+				manger.storage.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, webpage, apiResponse != null);
 				// Send Json format:
 			} else {
 				JSONObject jsonObject = new JSONObject();
