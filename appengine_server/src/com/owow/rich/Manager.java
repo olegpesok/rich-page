@@ -81,7 +81,7 @@ public class Manager {
 	public Map<NGram, ApiResponse> processPage(WebPage webPage) throws Exception {
 
 		// We extract the names:
-		List<List<String>> namesLists = nameExtractor.getNameExtractor(webPage.getText());
+		List<List<String>> namesLists = nameExtractor.getNameExtractor(webPage.url);
 		List<NGram> allNGrams = Lists.newArrayList();
 		for (List<String> namesList : namesLists) {
 			String names = Joiner.on(" ").join(namesList);

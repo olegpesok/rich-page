@@ -14,12 +14,12 @@ import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 
 public class NameExtractor {
 	
-	public List<List<String>> getNameExtractor(String text) throws JSONException, IOException {
+	public List<List<String>> getNameExtractor(String pageUrl) throws JSONException, IOException {
 		try{
 		//Sends request to Python:
-		GenericUrl url = new GenericUrl("http://stormy-forest-1816.herokuapp.com/");
-		url.put("t", text);
-		String jsonString = HtmlUtil.getUrlSource(url.toString());
+		GenericUrl herokuUrl = new GenericUrl("http://stormy-forest-1816.herokuapp.com/");
+		herokuUrl.put("url", pageUrl);
+		String jsonString = HtmlUtil.getUrlSource(herokuUrl.toString());
 		JSONArray jsonArray = new JSONArray(jsonString);
 		List<List<String>> results = Lists.newArrayList();
 		for (int i = 0; i < jsonArray.length(); i++) {

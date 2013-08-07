@@ -30,8 +30,10 @@ public class PageProccessServlet extends HttpServlet {
 			try {
 				log.info("Processing page " + url);
 				manager.processPage(webPage);
+				resp.getWriter().write("Done");
 			} catch (Exception e) {
 				log.warning("Could not process page " + url + ", " + e.getMessage());
+				resp.getWriter().write("Could not process page " + url + ", " + e.getMessage());
 			}
 		} else {
 			resp.getWriter().write("please provide a ?url=[url]");

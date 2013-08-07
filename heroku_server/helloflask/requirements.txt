@@ -1,10 +1,13 @@
+BeautifulSoup==3.2.1
 Flask==0.10.1
 Jinja2==2.7
 MarkupSafe==0.18
+PyYAML==3.10
 Werkzeug==0.9.3
 gunicorn==17.5
 itsdangerous==0.22
+meld3==0.6.10
+nltk==2.0.1rc4
+numpy==1.7.1
+supervisor==3.0
 wsgiref==0.1.2
-numpy
-http://pyyaml.org/download/pyyaml/PyYAML-3.10.tar.gz
-http://pypi.python.org/packages/source/n/nltk/nltk-2.0.1rc4.zip
