@@ -3,6 +3,8 @@ package com.owow.rich;
 import java.util.List;
 import java.util.Map;
 
+import org.datanucleus.util.StringUtils;
+
 import com.google.api.client.repackaged.com.google.common.base.Joiner;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
@@ -92,9 +94,17 @@ public class Manager {
 
 		Map<NGram, ApiResponse> entitesMap = Maps.newHashMap();
 		for (NGram ngram : allNGrams) {
-			if (entitesMap.containsKey(ngram) || storage.containsKey(ngram)) continue;
-			ApiResponse entity = entityRetriever.getTopEntity(ngram, ApiType.freebase);
-			entitesMap.put(ngram, entity);
+			try{
+				if (StringUtils.isEmpty(ngram.searchTerm) || entitesMap.containsKey(ngram) || storage.containsKey(ngram)) {
+					continue;
+				}
+				ApiResponse entity = entityRetriever.getTopEntity(ngram, ApiType.freebase);
+				entitesMap.put(ngram, entity);
+				
+         } catch (Exception e) {
+	         e =e;
+	         e =e;
+         }
 		}
 
 		storage.saveEntitesMap(webPage, entitesMap);

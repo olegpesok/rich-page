@@ -4,13 +4,13 @@ import nltk
 import json
 import urllib
 
-
-fdist = nltk.FreqDist([w.lower() for w in nltk.corpus.brown.words()]) 
-
 nltk.download('maxent_treebank_pos_tagger')
 nltk.download('maxent_ne_chunker')
 nltk.download('words')
 nltk.download('stopwords')
+nltk.download('brown')
+
+fdist = nltk.FreqDist([w.lower() for w in nltk.corpus.brown.words()]) 
 stop_words = nltk.corpus.stopwords.words('english')
 
 app = Flask(__name__)

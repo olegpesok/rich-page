@@ -161,7 +161,7 @@ public class Storage {
 	public boolean containsKey(NGram ngram) {
 
 		try {
-			datastore.get(KeyFactory.createKey(ENTITY_KIND, ngram.toString()));
+			Entity res = datastore.get(KeyFactory.createKey(ENTITY_KIND, ngram.toString()));
 			return true;
 		} catch (final EntityNotFoundException e) {
 			return false;

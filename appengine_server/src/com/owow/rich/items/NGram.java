@@ -5,7 +5,7 @@ import java.util.List;
 
 public class NGram {
 	public List<Token>	tokens;
-	private String	    searchTerm;
+	public String	    searchTerm;
 	@Override
 	public int hashCode() {
 		return toString().hashCode();
