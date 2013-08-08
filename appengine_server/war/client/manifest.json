@@ -1,7 +1,7 @@
 {
   "name": "Rich Page",
   "manifest_version": 2,
-  "version": "2.3.0",
+  "version": "2.5.0",
   "description": "(Very temporary name) inc.",
   "permissions": [
     "https://localhost:8888/*",
