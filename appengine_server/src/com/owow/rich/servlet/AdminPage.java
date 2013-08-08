@@ -148,7 +148,7 @@ public class AdminPage extends HttpServlet {
 		for (int i = 0; i < s.length(); i++)
 		{
 			char c = s.charAt(i);
-			if (c > 127 || c == '"' || c == '<' || c == '>')
+			if (c > 127 || c == '"'/* || c == '<' || c == '>' */)
 			{
 				out.append("&#" + (int) c + ";");
 			}
