@@ -94,7 +94,7 @@ public class Manager {
 
 		Map<NGram, ApiResponse> entitesMap = Maps.newHashMap();
 		for (NGram ngram : allNGrams) {
-			if (StringUtils.isEmpty(ngram.searchTerm) || entitesMap.containsKey(ngram) || storage.containsKey(ngram)) {
+			if (StringUtils.isEmpty(ngram.searchTerm) || entitesMap.containsKey(ngram) || storage.containsKey(ngram.getSearchTerm())) {
 				continue;
 			}
 			ApiResponse entity = entityRetriever.getTopEntity(ngram, ApiType.freebase);
