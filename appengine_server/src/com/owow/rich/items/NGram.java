@@ -15,7 +15,7 @@ public class NGram {
 	public boolean equals(Object obj) {
 		return toString().equals(((NGram) obj).toString());
 	}
-
+	
 	public NGram(List<Token> ngram) {
 		tokens = new LinkedList<Token>();
 		for (Token t : ngram)

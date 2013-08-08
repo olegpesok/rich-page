@@ -3,6 +3,7 @@ package com.owow.rich.utils;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.owow.rich.items.NGram;
 import com.owow.rich.items.Token;
 
@@ -60,4 +61,11 @@ public class TokenizerUtil {
 		List<NGram> nGrams = combineToNGrams(tokens, ngramLen);
 		return nGrams;
 	}
+	public NGram toNgram(List<String> namesList) {
+		List<Token> tokens = Lists.newArrayList();
+		for (String string : namesList) {
+			tokens.add(new Token(string, 0));
+      }
+	   return new NGram(tokens);
+   }
 }
