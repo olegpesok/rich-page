@@ -24,10 +24,10 @@ public class Manager {
 
 	private TokenizerUtil	     tokenizer;
 	private EntityRetriever	     entityRetriever;
-	private NameExtractor nameExtractor = new NameExtractor();
+	private NameExtractor	     nameExtractor	= new NameExtractor();
 	public Storage	              storage;
 
-	public final static int	     NGRAM_LEN	= 2;
+	public final static int	     NGRAM_LEN	    = 2;
 	private PreviousResultsCache	cache;
 
 	public Manager( ) {
@@ -45,7 +45,7 @@ public class Manager {
 	 * Try to find a matching result to the query, look in the cache, and
 	 * previous results in the db before sending request to external services
 	 * (e.g Free-base) in order to save time and money.
-	 *
+	 * 
 	 * @param webPage
 	 *           - The context of the query
 	 * @param query

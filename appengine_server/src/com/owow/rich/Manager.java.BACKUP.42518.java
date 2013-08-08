@@ -24,10 +24,10 @@ public class Manager {
 
 	private TokenizerUtil	     tokenizer;
 	private EntityRetriever	     entityRetriever;
-	private NameExtractor nameExtractor = new NameExtractor();
+	private NameExtractor	     nameExtractor	= new NameExtractor();
 	public Storage	              storage;
 
-	public final static int	     NGRAM_LEN	= 2;
+	public final static int	     NGRAM_LEN	    = 2;
 	private PreviousResultsCache	cache;
 
 	public Manager( ) {
@@ -45,7 +45,7 @@ public class Manager {
 	 * Try to find a matching result to the query, look in the cache, and
 	 * previous results in the db before sending request to external services
 	 * (e.g Free-base) in order to save time and money.
-	 *
+	 * 
 	 * @param webPage
 	 *           - The context of the query
 	 * @param query
@@ -70,12 +70,18 @@ public class Manager {
 			apiResponse = cache.getFirstMatchingNgram(nGrams);
 
 			// db queries
-			if (apiResponse == null) apiResponse = storage.getFirstMatchingNgram(webPage, nGrams);
+			if (apiResponse == null) {
+	         apiResponse = storage.getFirstMatchingNgram(webPage, nGrams);
+         }
 		}
 		// Do live retrieve.
-		if (apiResponse == null) apiResponse = ApiRetriver.getApiResponse(query, method, webPage);
+		if (apiResponse == null) {
+	      apiResponse = ApiRetriver.getApiResponse(query, method, webPage);
+      }
 
-		if (apiResponse != null) cache.save(query, apiResponse.view.toString());
+		if (apiResponse != null) {
+	      cache.save(query, apiResponse.view.toString());
+      }
 		return apiResponse;
 	}
 
@@ -85,6 +91,19 @@ public class Manager {
 		List<List<String>> namesLists = nameExtractor.getNameExtractor(webPage.url);
 		Set<NGram> allNGrams = Sets.newHashSet();
 		for (List<String> namesList : namesLists) {
+<<<<<<< HEAD
+			String names = Joiner.on(" ").join(namesList);
+			List<Token> tokens = tokenizer.tokenize(names);
+			List<NGram> nGrams = tokenizer.combineToNGrams(tokens, NGRAM_LEN);
+			allNGrams.addAll(nGrams);
+		}
+
+		Map<NGram, ApiResponse> entitesMap = Maps.newHashMap();
+		for (NGram ngram : allNGrams) {
+			if (entitesMap.containsKey(ngram) || storage.containsKey(ngram.toString())) {
+	         continue;
+         }
+=======
 //			String names = Joiner.on(" ").join(namesList);
 //			List<Token> tokens = tokenizer.tokenize(names);
 //			List<NGram> nGrams = tokenizer.combineToNGrams(tokens, NGRAM_LEN);
@@ -97,6 +116,7 @@ public class Manager {
 			if (StringUtils.isEmpty(ngram.searchTerm) || entitesMap.containsKey(ngram) || storage.containsKey(ngram)) {
 				continue;
 			}
+>>>>>>> f9f2c4d61b75d38453f5e281872ddb43d3b4458d
 			ApiResponse entity = entityRetriever.getTopEntity(ngram, ApiType.freebase);
 			entitesMap.put(ngram, entity);
 		}

@@ -2,18 +2,17 @@ package com.owow.rich;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.datanucleus.util.StringUtils;
-
+import com.google.api.client.repackaged.com.google.common.base.Joiner;
+import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
-import com.google.appengine.labs.repackaged.com.google.common.collect.Sets;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiRetriver;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.apiHandler.ApiView;
 import com.owow.rich.entity.EntityRetriever;
 import com.owow.rich.items.NGram;
+import com.owow.rich.items.Token;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.PreviousResultsCache;
 import com.owow.rich.storage.Storage;
@@ -83,20 +82,17 @@ public class Manager {
 
 		// We extract the names:
 		List<List<String>> namesLists = nameExtractor.getNameExtractor(webPage.url);
-		Set<NGram> allNGrams = Sets.newHashSet();
+		List<NGram> allNGrams = Lists.newArrayList();
 		for (List<String> namesList : namesLists) {
-//			String names = Joiner.on(" ").join(namesList);
-//			List<Token> tokens = tokenizer.tokenize(names);
-//			List<NGram> nGrams = tokenizer.combineToNGrams(tokens, NGRAM_LEN);
-			NGram nGram = tokenizer.toNgram(namesList);
-			allNGrams.add(nGram);
+			String names = Joiner.on(" ").join(namesList);
+			List<Token> tokens = tokenizer.tokenize(names);
+			List<NGram> nGrams = tokenizer.combineToNGrams(tokens, NGRAM_LEN);
+			allNGrams.addAll(nGrams);
       }		
 
 		Map<NGram, ApiResponse> entitesMap = Maps.newHashMap();
 		for (NGram ngram : allNGrams) {
-			if (StringUtils.isEmpty(ngram.searchTerm) || entitesMap.containsKey(ngram) || storage.containsKey(ngram)) {
-				continue;
-			}
+			if (entitesMap.containsKey(ngram) || storage.containsKey(ngram)) continue;
 			ApiResponse entity = entityRetriever.getTopEntity(ngram, ApiType.freebase);
 			entitesMap.put(ngram, entity);
 		}

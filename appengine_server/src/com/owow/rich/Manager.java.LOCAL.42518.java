@@ -2,18 +2,17 @@ package com.owow.rich;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.datanucleus.util.StringUtils;
-
+import com.google.api.client.repackaged.com.google.common.base.Joiner;
+import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
-import com.google.appengine.labs.repackaged.com.google.common.collect.Sets;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiRetriver;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.apiHandler.ApiView;
 import com.owow.rich.entity.EntityRetriever;
 import com.owow.rich.items.NGram;
+import com.owow.rich.items.Token;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.PreviousResultsCache;
 import com.owow.rich.storage.Storage;
@@ -24,10 +23,10 @@ public class Manager {
 
 	private TokenizerUtil	     tokenizer;
 	private EntityRetriever	     entityRetriever;
-	private NameExtractor nameExtractor = new NameExtractor();
+	private NameExtractor	     nameExtractor	= new NameExtractor();
 	public Storage	              storage;
 
-	public final static int	     NGRAM_LEN	= 2;
+	public final static int	     NGRAM_LEN	    = 2;
 	private PreviousResultsCache	cache;
 
 	public Manager( ) {
@@ -45,7 +44,7 @@ public class Manager {
 	 * Try to find a matching result to the query, look in the cache, and
 	 * previous results in the db before sending request to external services
 	 * (e.g Free-base) in order to save time and money.
-	 *
+	 * 
 	 * @param webPage
 	 *           - The context of the query
 	 * @param query
@@ -70,12 +69,18 @@ public class Manager {
 			apiResponse = cache.getFirstMatchingNgram(nGrams);
 
 			// db queries
-			if (apiResponse == null) apiResponse = storage.getFirstMatchingNgram(webPage, nGrams);
+			if (apiResponse == null) {
+	         apiResponse = storage.getFirstMatchingNgram(webPage, nGrams);
+         }
 		}
 		// Do live retrieve.
-		if (apiResponse == null) apiResponse = ApiRetriver.getApiResponse(query, method, webPage);
+		if (apiResponse == null) {
+	      apiResponse = ApiRetriver.getApiResponse(query, method, webPage);
+      }
 
-		if (apiResponse != null) cache.save(query, apiResponse.view.toString());
+		if (apiResponse != null) {
+	      cache.save(query, apiResponse.view.toString());
+      }
 		return apiResponse;
 	}
 
@@ -83,20 +88,19 @@ public class Manager {
 
 		// We extract the names:
 		List<List<String>> namesLists = nameExtractor.getNameExtractor(webPage.url);
-		Set<NGram> allNGrams = Sets.newHashSet();
+		List<NGram> allNGrams = Lists.newArrayList();
 		for (List<String> namesList : namesLists) {
-//			String names = Joiner.on(" ").join(namesList);
-//			List<Token> tokens = tokenizer.tokenize(names);
-//			List<NGram> nGrams = tokenizer.combineToNGrams(tokens, NGRAM_LEN);
-			NGram nGram = tokenizer.toNgram(namesList);
-			allNGrams.add(nGram);
-      }		
+			String names = Joiner.on(" ").join(namesList);
+			List<Token> tokens = tokenizer.tokenize(names);
+			List<NGram> nGrams = tokenizer.combineToNGrams(tokens, NGRAM_LEN);
+			allNGrams.addAll(nGrams);
+		}
 
 		Map<NGram, ApiResponse> entitesMap = Maps.newHashMap();
 		for (NGram ngram : allNGrams) {
-			if (StringUtils.isEmpty(ngram.searchTerm) || entitesMap.containsKey(ngram) || storage.containsKey(ngram)) {
-				continue;
-			}
+			if (entitesMap.containsKey(ngram) || storage.containsKey(ngram.toString())) {
+	         continue;
+         }
 			ApiResponse entity = entityRetriever.getTopEntity(ngram, ApiType.freebase);
 			entitesMap.put(ngram, entity);
 		}
