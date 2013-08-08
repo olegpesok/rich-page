@@ -51,6 +51,7 @@ public class HtmlUtil {
 	public static String getUrlSource(final String url) throws IOException {
 		final URL yahoo = new URL(url);
 		final URLConnection yc = yahoo.openConnection();
+		yc.setConnectTimeout(60 * 1000);
 
 		return getUrlSource(yc);
 	}

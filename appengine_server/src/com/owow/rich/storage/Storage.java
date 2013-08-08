@@ -1,5 +1,6 @@
 package com.owow.rich.storage;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +29,8 @@ public class Storage {
 	final static String	      LOG_KIND	     = "logy";
 	public final static String	HOST_KEY	     = "Hosty";
 	public final static String	PAGE_URL	     = "Page_Url";
+	public final static String	CREATED	     = "created";
+	
 
 	// xxX Make new DB API that might be bad
 	// xxX Delete from that DB
@@ -100,6 +103,7 @@ public class Storage {
 		entity.setPropertiesFrom(apiResponse.getPropertyContainerFromApiResponse());
 		entity.setProperty(HOST_KEY, webpage.getHost());
 		entity.setProperty(PAGE_URL, webpage.url);
+		entity.setProperty(CREATED, new Date());
 		datastore.put(entity);
 		if (!arguable) return;
 		saveArguableApiResponse(webpage, ngram, entity);
