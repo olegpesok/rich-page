@@ -49,6 +49,7 @@ def pos(text):
 
 def filter_results(results):
 	# results = [x for x in results if not (x[0][1] == 'NN' and len(x) == 1)]
+	results = [x for x in results if  not (x.endswith('=')]
 	results = [x for x in results if  not (fdist[x[0][0].lower().strip('.,?!')] > 0 and len(x) == 1)]
 	results = [x for x in results if not (x[0][0].lower() in stop_words and len(x) == 1)]
 	results = [x for x in results if not (len(x) > 2)]

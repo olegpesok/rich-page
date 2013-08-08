@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.datanucleus.util.StringUtils;
 
+import com.google.api.client.http.GenericUrl;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Sets;
 import com.owow.rich.apiHandler.ApiResponse;
@@ -19,6 +20,7 @@ import com.owow.rich.storage.PreviousResultsCache;
 import com.owow.rich.storage.Storage;
 import com.owow.rich.utils.NameExtractor;
 import com.owow.rich.utils.TokenizerUtil;
+import com.sun.jndi.toolkit.url.UrlUtil;
 
 public class Manager {
 
@@ -80,7 +82,6 @@ public class Manager {
 	}
 
 	public Map<NGram, ApiResponse> processPage(WebPage webPage) throws Exception {
-
 		// We extract the names:
 		List<List<String>> namesLists = nameExtractor.getNameExtractor(webPage.url);
 		Set<NGram> allNGrams = Sets.newHashSet();

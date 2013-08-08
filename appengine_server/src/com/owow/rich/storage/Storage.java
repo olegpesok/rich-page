@@ -27,6 +27,7 @@ public class Storage {
 	final static String	      DOMAIN_PREFIX	= "From_";
 	final static String	      LOG_KIND	     = "logy";
 	public final static String	HOST_KEY	     = "Hosty";
+	public final static String	PAGE_URL	     = "Page_Url";
 
 	// xxX Make new DB API that might be bad
 	// xxX Delete from that DB
@@ -98,6 +99,7 @@ public class Storage {
 		final Entity entity = new Entity(k);
 		entity.setPropertiesFrom(apiResponse.getPropertyContainerFromApiResponse());
 		entity.setProperty(HOST_KEY, webpage.getHost());
+		entity.setProperty(PAGE_URL, webpage.url);
 		datastore.put(entity);
 		if (!arguable) return;
 		saveArguableApiResponse(webpage, ngram, entity);
