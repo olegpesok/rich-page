@@ -188,6 +188,7 @@ public class Storage {
 			}
 			else if (domainPref instanceof EmbeddedEntity) return (PropertyContainer) domainPref;
 		}
+		if (listEntities.get(0).hasProperty("dont")) return null;
 		return listEntities.get(0);
 	}
 	public boolean containsKey(String ngram) {
