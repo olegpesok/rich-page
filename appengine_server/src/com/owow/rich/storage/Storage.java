@@ -77,11 +77,12 @@ public class Storage {
 		datastore.put(entity);
 	}
 
-	public void saveCustomView(String domain, String ngram, int pref) throws EntityNotFoundException
+	public void saveCustomDomainView(String domain, String ngram, int pref) throws EntityNotFoundException
 	{
 		Key key = KeyFactory.createKey(ENTITY_KIND, ngram);
 		Entity entity = datastore.get(key);
-
+		entity.setProperty(DOMAIN_PREFIX + domain, pref);
+		datastore.put(entity);
 	}
 
 	public void saveApiResponse(WebPage webpage, String ngram, ApiResponse apiResponse)
@@ -101,7 +102,49 @@ public class Storage {
 		if (!arguable) return;
 		saveArguableApiResponse(webpage, ngram, entity);
 	}
-	
+
+	public void saveApiResponse(WebPage webpage, String ngram, ApiResponse apiResponse, boolean arguable, boolean saveCurrentAsBackup)
+	      throws EntityNotFoundException
+	{
+		// TODO new
+		if (apiResponse == null) return;
+		final Key k = KeyFactory.createKey(ENTITY_KIND, ngram);
+		Entity entity;
+
+		if (saveCurrentAsBackup && containsKey(ngram))
+		{
+			entity = datastore.get(k);
+			EmbeddedEntity embeddedEntity;
+			long length;
+			if (entity.hasProperty(ApiResponse.BACKUPRESPONSEKEY)) {
+				embeddedEntity = (EmbeddedEntity) entity.getProperty(ApiResponse.BACKUPRESPONSEKEY);
+				length = (Long) embeddedEntity.getProperty("length");
+			}
+			else {
+				embeddedEntity = new EmbeddedEntity();
+				embeddedEntity.setProperty("length", 0);
+				length = 0;
+			}
+
+			embeddedEntity.setProperty("length", ++length);
+			PropertyContainer pc = ApiResponse.getApiResponseFromEntity(entity).getPropertyContainerFromApiResponse();
+			EmbeddedEntity ee = new EmbeddedEntity();
+			ee.setPropertiesFrom(pc);
+			embeddedEntity.setProperty(ApiResponse.BACKUPRESPONSEKEY + length, pc);
+
+			entity.setProperty(ApiResponse.BACKUPRESPONSEKEY, embeddedEntity);
+		}
+		else {
+			entity = new Entity(k);
+		}
+
+		entity.setPropertiesFrom(apiResponse.getPropertyContainerFromApiResponse());
+		entity.setProperty(HOST_KEY, webpage.getHost());
+
+		datastore.put(entity);
+		if (!arguable) return;
+		saveArguableApiResponse(webpage, ngram, entity);
+	}
 	public ApiResponse getFirstMatchingNgram(WebPage context, List<NGram> ngrams)
 	{
 		ApiResponse apiResponse = null;
@@ -141,10 +184,10 @@ public class Storage {
 		}
 		return listEntities.get(0);
 	}
-	public boolean containsKey(NGram ngram) {
+	public boolean containsKey(String ngram) {
 
 		try {
-			datastore.get(KeyFactory.createKey(ENTITY_KIND, ngram.toString()));
+			datastore.get(KeyFactory.createKey(ENTITY_KIND, ngram));
 			return true;
 		} catch (final EntityNotFoundException e) {
 			return false;

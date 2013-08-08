@@ -1,0 +1,43 @@
+{namespace examples.simple} /** * Says hello to the world. * @param p
+@param page */ {template .helloWorld}
+<head>
+<title>CSS3 Treevew. No JavaScript | by Martin Ivanov</title>
+<meta charset="utf-8" />
+<link href="ava.css" rel="stylesheet" type="text/css">
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script type="text/javascript">
+	function create(htmlStr) {
+		var frag = document.createDocumentFragment(), temp = document
+				.createElement('span');
+		temp.innerHTML = htmlStr;
+		while (temp.firstChild) {
+			frag.appendChild(temp.firstChild);
+		}
+		return frag;
+	}
+
+	$(document).ready
+	(function() {
+		bodyElem = document.getElementsByTagName('body')[0];
+		page={$page};
+		start = Math.max(page - 5, 1);
+
+		dummy = document.getElementById('dummy');
+		for ( var i = start; i < start + 10; i++) {
+
+			$("body").append('<a href="./AdminPage?act=viewAll&page=' + i + '">' + i + '</a>');
+		}
+	});
+</script>
+</head>
+<body>
+	<div class="css-treeview">
+		<ul>{$p|noAutoescape}
+
+		</ul>
+	</div>
+
+	<div id="dummy"></div>
+</body>
+
+{/template}

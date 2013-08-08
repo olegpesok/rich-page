@@ -1,30 +1,36 @@
 {namespace examples.simple}
 /**
  * Says hello to the world.
- * @param p wikipeid p.
+ * @param p
+@param page 
  */
 {template .helloWorld}
 <head>
-<title>Admin page - Add</title>
-<style type="text/css" src="../reset.css"></style>
+<title>CSS3 Treevew. No JavaScript | by Martin Ivanov</title>
+<meta charset="utf-8" />
+<link href="ava.css" rel="stylesheet" type="text/css">
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script type="text/javascript">
+
+	$(document).ready
+	(function() {lb}
+		bodyElem = document.getElementsByTagName('body')[0];
+		page={$page};
+		start = Math.max(page - 5, 1);
+
+		dummy = document.getElementById('dummy');
+		for ( var i = start; i < start + 10; i++) 
+
+			$("body").append('<a href="./AdminPage?act=viewAll&page=' + i + '">' + i + '</a> | ');
+		
+	{rb});
+</script>
 </head>
 <body>
-	<div align="center" style="margin: auto">
-		<h1>View</h1>
-		<form action="" method="get">
-			<input type="text" placeholder="Search.." name="q" /> <input
-				type="hidden" name="act" value="view">
-		</form>
-		<table border="1">
-			<tr>
-				<th>Key</th>
-				<th>title</th>
-				<th>Json</th>
-				<th>View</th>
-				<th>Type</th>
-			</tr>
-			{$p|noAutoescape}
-		</table>
+	<div class="css-treeview">
+		<ul>{$p|noAutoescape}
+
+		</ul>
 	</div>
 </body>
 

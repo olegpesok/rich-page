@@ -86,13 +86,20 @@ public class ApiResponse implements Serializable {
 		propertyContainer.setProperty(VIEWKEY, new Text(view.getView().toString()));
 		propertyContainer.setProperty(APITYPEKEY, myType == null ? null : myType.getIdentifyer());
 
-		final EmbeddedEntity embeddedViewsEntity = new EmbeddedEntity();
-		int index = 0;
-		for (ApiResponse apiResponse : apiResponses) {
-			index++;
-			embeddedViewsEntity.setProperty(BACKUPRESPONSEKEY + index, apiResponse.getPropertyContainerFromApiResponse());
+		// Backup
+		if (apiResponses.length > 0)
+		{
+			final EmbeddedEntity embeddedViewsEntity = new EmbeddedEntity();
+
+			int index = 0;
+			for (ApiResponse apiResponse : apiResponses) {
+				index++;
+				embeddedViewsEntity.setProperty(BACKUPRESPONSEKEY + index, apiResponse.getPropertyContainerFromApiResponse());
+			}
+			embeddedViewsEntity.setProperty("length", index);
+			propertyContainer.setProperty(BACKUPRESPONSEKEY, embeddedViewsEntity);
 		}
-		embeddedViewsEntity.setProperty("length", index);
+		// end backup
 
 		propertyContainer.setProperty(TITLEKEY, title);
 		propertyContainer.setProperty(SCOREKEY, apiInternalScore);
@@ -103,16 +110,7 @@ public class ApiResponse implements Serializable {
 
 	public EmbeddedEntity getPropertyContainerFromApiResponse()
 	{
-		final EmbeddedEntity propertyContainer = new EmbeddedEntity();
-		// propertyContainer.setProperty(JSONKEY, json == null ? null : new
-		// Text(json.toString()));
-		propertyContainer.setProperty(VIEWKEY, new Text(view.getView().toString()));
-		propertyContainer.setProperty(APITYPEKEY, myType == null ? null : myType.getIdentifyer());
-		propertyContainer.setProperty(TITLEKEY, title);
-		propertyContainer.setProperty(SCOREKEY, apiInternalScore);
-		propertyContainer.setProperty(IDKEY, id);
-
-		return propertyContainer;
+		return (EmbeddedEntity) getPropertyContainerFromApiResponse(new ApiResponse[0]);
 	}
 
 	public static ApiResponse getApiResponseFromEntity(String title, PropertyContainer ent)

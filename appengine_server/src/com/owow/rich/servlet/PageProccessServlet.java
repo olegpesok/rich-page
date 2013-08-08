@@ -17,8 +17,8 @@ import com.owow.rich.items.WebPage;
 @SuppressWarnings("serial")
 public class PageProccessServlet extends HttpServlet {
 
-	private Manager	          manager	  = new Manager();
-	private static final Logger	log	  = Logger.getLogger("Rich");
+	private Manager	          manager	= new Manager();
+	private static final Logger	log	= Logger.getLogger("Rich");
 
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)
@@ -32,6 +32,7 @@ public class PageProccessServlet extends HttpServlet {
 				manager.processPage(webPage);
 				resp.getWriter().write("Done");
 			} catch (Exception e) {
+				e.printStackTrace();
 				log.warning("Could not process page " + url + ", " + e.getMessage());
 				resp.getWriter().write("Could not process page " + url + ", " + e.getMessage());
 			}
