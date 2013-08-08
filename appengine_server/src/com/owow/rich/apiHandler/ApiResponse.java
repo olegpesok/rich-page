@@ -21,6 +21,8 @@ public class ApiResponse implements Serializable {
 	public final static String	TITLEKEY	         = "title";
 	public final static String	IDKEY	            = "id";
 	public final static String	SCOREKEY	         = "score";
+	public final static String	FILTER_REASON_KEY	         = "filter_reason";
+	
 	private static final long	serialVersionUID	= -4369034077791508101L;
 
 	public boolean	            goodEnough	      = false;
@@ -36,6 +38,7 @@ public class ApiResponse implements Serializable {
 	public boolean	            resultOk	         = true;
 	// private Exception mError;
 	public ApiType	            myType;
+	public String filterReason = "NOT_FILTERD";
 
 	public ApiResponse(JSONObject json, String html, ApiType apiType, int score, String text, String id, String title, List<String> alias) {
 		apiInternalScore = score;
@@ -104,6 +107,7 @@ public class ApiResponse implements Serializable {
 		propertyContainer.setProperty(TITLEKEY, title);
 		propertyContainer.setProperty(SCOREKEY, apiInternalScore);
 		propertyContainer.setProperty(IDKEY, id);
+		propertyContainer.setProperty(FILTER_REASON_KEY, filterReason);
 
 		return propertyContainer;
 	}
@@ -138,4 +142,10 @@ public class ApiResponse implements Serializable {
 	public static ApiResponse getApiResponseFromEntity(PropertyContainer ent) {
 		return getApiResponseFromEntity(null, ent);
 	}
+
+	public List<String> getTitleAndAliases() {
+		List<String> aliasAndTitle = Lists.newArrayList(alias);
+		aliasAndTitle.add(title);
+		return aliasAndTitle;
+   }
 }

@@ -18,7 +18,7 @@ jQuery(document).ready(function(jQuery) {
 
 DEBUG = "http://localhost:8888/";
 NOTDEBUG = 'http://rich-page.appspot.com/'
-RICH_SERVER = NOTDEBUG;
+RICH_SERVER = DEBUG;
 
 var CLOSEITNEXTCLICK = false;
 

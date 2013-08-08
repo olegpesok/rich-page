@@ -7,6 +7,7 @@ import com.google.common.collect.Iterables;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.utils.NlpUtils;
 import com.owow.rich.utils.NlpUtils.ScoredResult;
+import com.owow.rich.utils.StringCompareUtils;
 
 /**
  * Scores we use:
@@ -53,14 +54,14 @@ public class ApiResponsePicker {
 					return apiResponse;
 				}
 				
-				int d = computeLevenshteinDistance(highlight.toLowerCase(), apiResponse.title.toLowerCase());
+				int d = StringCompareUtils.computeLevenshteinDistance(highlight.toLowerCase(), apiResponse.title.toLowerCase());
 				if (d <= 2) {
 					return apiResponse;
 				}
 				
 				// check for match to the aliases.
 				for (String alias : apiResponse.alias) {
-					if (computeLevenshteinDistance(highlight.toLowerCase(), alias.toLowerCase()) <= 2) {
+					if (StringCompareUtils.computeLevenshteinDistance(highlight.toLowerCase(), alias.toLowerCase()) <= 2) {
 						return apiResponse;
 					}
             }
@@ -135,30 +136,6 @@ public class ApiResponsePicker {
    }
 
 
-// string distance
-   private static int minimum(int a, int b, int c) {
-           return Math.min(Math.min(a, b), c);
-   }
-   public static int computeLevenshteinDistance(CharSequence str1,
-                   CharSequence str2) {
-           int[][] distance = new int[str1.length() + 1][str2.length() + 1];
-
-           for (int i = 0; i <= str1.length(); i++)
-                   distance[i][0] = i;
-           for (int j = 1; j <= str2.length(); j++)
-                   distance[0][j] = j;
-
-           for (int i = 1; i <= str1.length(); i++)
-                   for (int j = 1; j <= str2.length(); j++)
-                           distance[i][j] = minimum(
-                                           distance[i - 1][j] + 1,
-                                           distance[i][j - 1] + 1,
-                                           distance[i - 1][j - 1]
-                                                           + ((str1.charAt(i - 1) == str2.charAt(j - 1)) ? 0
-                                                                           : 1));
-
-           return distance[str1.length()][str2.length()];
-   }
 
 	
 //	public static ApiResponse findBestMatchAccordingToContext(List<ApiResponse> apiResponseList, WebPage webPage, String highlight) {
