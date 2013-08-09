@@ -210,8 +210,7 @@ var markSelection = (function() {
 						});
 				// alert(text);
 				var host = window.location;
-				jQuery.get(RICH_SERVER + 'Snippet?q=' + selectedText + '&text='
-						+ text + '&url=' + host, function(data) {
+				jQuery.get(RICH_SERVER + 'Snippet?q=' + selectedText + '&url=' + host, function(data) {
 					if (data && data.resultOK && toShow) {
 
 						dataReady = true;
