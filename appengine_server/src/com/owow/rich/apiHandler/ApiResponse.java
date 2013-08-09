@@ -146,6 +146,8 @@ public class ApiResponse implements Serializable {
 	public List<String> getTitleAndAliases() {
 		List<String> aliasAndTitle = Lists.newArrayList(alias);
 		aliasAndTitle.add(title);
+//		aliasAndTitle.add(text.substring(0, Math.min(200, text.length())));
+		
 		return aliasAndTitle;
    }
 }
