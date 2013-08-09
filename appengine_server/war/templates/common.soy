@@ -2,6 +2,7 @@
 /**
  * Common template for the snippet
  * @param p snippet.
+ * @param links realted_links.
  */
 {template .helloWorld}
 <head>
@@ -36,7 +37,9 @@
 					</div>
 				</div>
 				<div class="context-box-links context-box-content" id="context-box-links">
-					<!-- Related Links -->
+					{call .related_links}
+					  {param links: $links /}
+					{/call}
 				</div>
 			</div>
 		</div>
@@ -45,4 +48,14 @@
 
 
 </body>
+{/template}
+
+/**
+ * Common template for the snippet
+ * @param links related_links.
+ */
+{template .related_links}
+{foreach $link in $links}
+ 	<a href="{$link.link}">{$link.title}</a>
+{/foreach}
 {/template}

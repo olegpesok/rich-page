@@ -19,6 +19,7 @@ import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.PreviousResultsCache;
 import com.owow.rich.storage.Storage;
 import com.owow.rich.utils.NameExtractor;
+import com.owow.rich.utils.RelatedLinkSearch;
 import com.owow.rich.utils.TokenizerUtil;
 import com.sun.jndi.toolkit.url.UrlUtil;
 
@@ -103,6 +104,7 @@ public class Manager {
 		}
 
 		storage.saveEntitesMap(webPage, entitesMap);
+		RelatedLinkSearch.index(webPage);
 		return entitesMap;
 	}
 
