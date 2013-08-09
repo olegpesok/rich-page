@@ -48,7 +48,7 @@ public class SearchUtils {
 		
 		String queryString = "namespcae:" + namespace + " AND (";
 		for (int i = 0; i < tokens.size(); i++) {
-			queryString += "content:" + tokens.get(i);
+			queryString += "content:\"" + tokens.get(i)+"\"";
 		    if(i < tokens.size() -1) {
 		   	 queryString += " OR ";
 		    }

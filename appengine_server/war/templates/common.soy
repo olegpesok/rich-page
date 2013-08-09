@@ -55,7 +55,9 @@
  * @param links related_links.
  */
 {template .related_links}
-{foreach $link in $links}
- 	<a href="{$link.link}">{$link.title}</a>
-{/foreach}
+
+	{foreach $link in $links}
+		<p><a href="{$link.link}">{$link.title}</a></p><br/>
+	{/foreach}
+
 {/template}
