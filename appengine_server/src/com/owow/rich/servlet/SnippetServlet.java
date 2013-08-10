@@ -85,7 +85,13 @@ public class SnippetServlet extends HttpServlet {
 	}
 	private void printApiResposeView(ApiResponse ar, String ngram, HttpServletResponse res, List<WebPage> relatedLinks) throws IOException
 	{
+		SoyListData soyList = new SoyListData();
+		for (WebPage webPage : relatedLinks) {
+			SoyData soyData = new SoyMapData("link", webPage.url, "title", webPage.getTitle());
+			soyList.add(soyData);
+			
+      }
 		res.setContentType("text/html");
-		res.getWriter().write(TemplateUtil.getHtml("common.soy", new SoyMapData("p", ar.view.getView(), "admin", AdminMode, "ngram", ngram, "links", relatedLinks)));
+		res.getWriter().write(TemplateUtil.getHtml("common.soy", new SoyMapData("p", ar.view.getView(), "admin", AdminMode, "ngram", ngram, "links", soyList)));
 	}
 }
