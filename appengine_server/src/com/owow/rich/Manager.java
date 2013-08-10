@@ -89,6 +89,7 @@ public class Manager {
 		}
 		return apiResponse;
 	}
+	
 	public Map<NGram, ApiResponse> processPage(WebPage webPage) throws Exception {
 		// We extract the names:
 		List<List<String>> namesLists = nameExtractor.getNameExtractor(webPage.url);

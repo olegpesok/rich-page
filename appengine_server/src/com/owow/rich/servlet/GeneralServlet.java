@@ -28,10 +28,10 @@ public class GeneralServlet extends HttpServlet {
 		try {
 
 			BingHandler bingHandler = new BingHandler();
-			Manager m = new Manager();
+			Manager manager = new Manager();
 			resp.setContentType("application/json");
 			highlight = URLEncoder.encode(highlight, "UTF-8");
-			JSONObject json = bingHandler.getResults(highlight, m.storage);
+			JSONObject json = bingHandler.getResults(highlight, manager.storage);
 			String display;
 			if (requestType == null || requestType.isEmpty())
 			{

@@ -59,7 +59,7 @@ public class SnippetServlet extends HttpServlet {
 			{// Send html:
 				if (showView != null) {
 					List<WebPage> relatedLinks = Lists.newArrayList();
-					if(url != null){
+					if (url != null){
 						relatedLinks = RelatedLinkSearch.search(webpage, query);
 					}
 					printApiResposeView(apiResponse, query, resp);
