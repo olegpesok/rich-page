@@ -24,9 +24,8 @@ public class SearchUtils {
 	private final static  String INDEX_NAME = "INDEX1";
    private Index index = SearchServiceFactory.getSearchService().getIndex(IndexSpec.newBuilder().setName(INDEX_NAME).build());
 	private TokenizerUtil tokenizeUtil = new TokenizerUtil();
-	
 
-	public void index(String documentId, String documentText, String namespace) {
+	public void  index(String documentId, String documentText, String namespace) {
 		if (namespace == null) {
 			namespace = DEFAULT_NAMESPACE;
 		}
@@ -49,7 +48,7 @@ public class SearchUtils {
 		
 		String queryString = "namespcae:" + namespace + " AND (";
 		for (int i = 0; i < tokens.size(); i++) {
-			queryString += "content:" + tokens.get(i);
+			queryString += "content:\"" + tokens.get(i)+"\"";
 		    if(i < tokens.size() -1) {
 		   	 queryString += " OR ";
 		    }

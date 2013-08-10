@@ -1,6 +1,8 @@
 package com.owow.rich.servlet;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
@@ -10,12 +12,18 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.appengine.labs.repackaged.com.google.common.collect.ImmutableList;
+import com.google.appengine.labs.repackaged.com.google.common.collect.ImmutableMap;
+import com.google.appengine.repackaged.com.google.api.client.util.Lists;
+import com.google.template.soy.data.SoyData;
+import com.google.template.soy.data.SoyListData;
 import com.google.template.soy.data.SoyMapData;
 import com.owow.rich.Manager;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.AnaliticsManager;
+import com.owow.rich.utils.RelatedLinkSearch;
 import com.owow.rich.utils.TemplateUtil;
 
 /**
@@ -45,12 +53,16 @@ public class SnippetServlet extends HttpServlet {
 			WebPage webpage = new WebPage(null, null, url);
 
 			ApiResponse apiResponse = manager.getApiResponse(webpage, query, method);
-
+			
 			// Send the response in json/html format:
 			if (apiResponse != null)
 			{// Send html:
 				if (showView != null) {
-					printApiResposeView(apiResponse, query, resp);
+					List<WebPage> relatedLinks = Lists.newArrayList();
+					if(url != null){
+						relatedLinks = RelatedLinkSearch.search(webpage, query);
+					}
+					printApiResposeView(apiResponse, resp, relatedLinks);
 					AnaliticsManager am = new AnaliticsManager(manager.storage);
 
 					am.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, webpage, apiResponse != null);

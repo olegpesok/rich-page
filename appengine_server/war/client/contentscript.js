@@ -209,20 +209,20 @@ var markSelection = (function() {
 							}
 						});
 				// alert(text);
-				var host = window.location;
-				jQuery.get(RICH_SERVER + 'Snippet?q=' + selectedText + '&text='
-						+ text + '&url=' + host, function(data) {
+				var page_url = window.location.href;
+				jQuery.get(RICH_SERVER + 'Snippet?q=' + selectedText + '&url=' + page_url, function(data) {
 					if (data && data.resultOK && toShow) {
 
 						dataReady = true;
 						// Remove previous popup.
 						jQuery('#myModal').remove();
-
 						// Create and show the popup.
+						var page_url = window.location.href;
 						jQuery("body").append(
 								'<iframe id="myModal" frameborder="0" src="'
 										+ RICH_SERVER + 'Snippet?q='
-										+ selectedText + '&v"></iframe>');
+										+ selectedText + '&v&url='
+										+ page_url + '"></iframe>');
 						jQuery('#myModal').css({
 							'width' : 335,
 							'height' : 410,
