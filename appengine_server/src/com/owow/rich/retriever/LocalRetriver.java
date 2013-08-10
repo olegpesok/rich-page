@@ -11,16 +11,19 @@ import com.owow.rich.storage.PersistentCahce;
 public class LocalRetriver {
 
 	public static Results retirve(Query query) {
-		// TODO: maybe the persistentCahce is stupid.
-		Results results = (Results) PersistentCahce.get(query.getId(), "Results");
-		if(results == null) {
-			results = new Results();
-		}
-		return results;
+		// TODO: Maybe use Objectify:
+//		Results results = (Results) PersistentCahce.get(query.getId(), "Results");
+//		
+//		if(results == null) {
+//			results = new Results();
+//		}
+//		return results;
+		
+		return new Results();
    }
 	
 	public static void saveResults(Query query, Results results) {
-		PersistentCahce.set(query.getId(), results, "Results");
+//		PersistentCahce.set(query.getId(), results, "Results");
    }
 
 	public static void learnFromFeedback(List<Feedback> feedbackList) {

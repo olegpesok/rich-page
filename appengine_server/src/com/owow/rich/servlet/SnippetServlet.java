@@ -62,7 +62,7 @@ public class SnippetServlet extends HttpServlet {
 					if (url != null){
 						relatedLinks = RelatedLinkSearch.search(webpage, query);
 					}
-					printApiResposeView(apiResponse, query, resp);
+					printApiResposeView(apiResponse, query, resp, relatedLinks);
 					AnaliticsManager am = new AnaliticsManager(manager.storage);
 
 					am.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, webpage, apiResponse != null);
@@ -83,9 +83,9 @@ public class SnippetServlet extends HttpServlet {
 			}
 		}
 	}
-	private void printApiResposeView(ApiResponse ar, String ngram, HttpServletResponse res) throws IOException
+	private void printApiResposeView(ApiResponse ar, String ngram, HttpServletResponse res, List<WebPage> relatedLinks) throws IOException
 	{
 		res.setContentType("text/html");
-		res.getWriter().write(TemplateUtil.getHtml("common.soy", new SoyMapData("p", ar.view.getView(), "admin", AdminMode, "ngram", ngram)));
+		res.getWriter().write(TemplateUtil.getHtml("common.soy", new SoyMapData("p", ar.view.getView(), "admin", AdminMode, "ngram", ngram, "links", relatedLinks)));
 	}
 }
