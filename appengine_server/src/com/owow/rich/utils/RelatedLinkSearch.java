@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.appengine.api.search.Results;
 import com.google.appengine.api.search.ScoredDocument;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
+import com.owow.rich.RichLogger;
 import com.owow.rich.items.WebPage;
 
 public class RelatedLinkSearch {
@@ -17,19 +18,21 @@ public class RelatedLinkSearch {
 	
 	public static  List<WebPage> search(WebPage currentPage, String query) {
 		List<WebPage> webPages = Lists.newArrayList();
-		Results<ScoredDocument> documents = searchUtils.search(query, currentPage.getHost());
-		
-		int counter = 0;
-		for (ScoredDocument scoredDocument : documents) {
-			String url = scoredDocument.getId();
-			WebPage webPage = new WebPage(null, null, url);
+		try {
+			Results<ScoredDocument> documents = searchUtils.search(query, currentPage.getHost());
 			
-			
-			webPages.add(webPage);
-			
-			
-			counter++;
-			if(counter == 3) break;
+			int counter = 0;
+			for (ScoredDocument scoredDocument : documents) {
+				String url = scoredDocument.getId();
+				WebPage webPage = new WebPage(null, null, url);
+				
+				webPages.add(webPage);
+				
+				counter++;
+				if(counter == 3) break;
+			}
+      } catch(Exception ex) {
+      	RichLogger.logException("in Related Links", ex);
       }
 		return webPages;
 	}

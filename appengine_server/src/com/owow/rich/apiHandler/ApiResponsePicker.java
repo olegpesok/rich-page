@@ -94,16 +94,16 @@ public class ApiResponsePicker {
 		ApiResponse secondBestResponse = null;
 		for (ApiResponse apiResponse : apiResponseList) {
 	   	ScoredResult score = nlpUtils.compare(webPage.getText(), apiResponse.title + ". " +apiResponse.text);
-			if (bestResponse == null || bestResponse.apiInternalScore < apiResponse.apiInternalScore) {
+			if (bestResponse == null || bestResponse.apiScore < apiResponse.apiScore) {
 				secondBestResponse = apiResponse;
 				bestResponse = apiResponse;
-			} else if(secondBestResponse == null || secondBestResponse.apiInternalScore < apiResponse.apiInternalScore){
+			} else if(secondBestResponse == null || secondBestResponse.apiScore < apiResponse.apiScore){
 				secondBestResponse = apiResponse; 
 			}
 		}
 		
 		if ( (bestResponse != null && bestResponse.goodEnough) && 
-				(secondBestResponse == null || bestResponse.apiInternalScore - secondBestResponse.apiInternalScore > 400) ) {
+				(secondBestResponse == null || bestResponse.apiScore - secondBestResponse.apiScore > 400) ) {
 			return bestResponse;
 		} else {
 			return null;

@@ -1,102 +1,94 @@
 package com.owow.rich.servlet;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
+import com.google.template.soy.data.SoyData;
+import com.google.template.soy.data.SoyListData;
 import com.google.template.soy.data.SoyMapData;
-import com.owow.rich.apiHandler.ApiResponse;
-import com.owow.rich.apiHandler.ApiRetriver;
+import com.owow.rich.Manager;
 import com.owow.rich.apiHandler.ApiType;
-import com.owow.rich.apiHandler.WikipediaHandler;
-import com.owow.rich.apiHandler.WikipediaHandler.WikiHost;
-import com.owow.rich.apiHandler.WikipediaHandler.WikiHost.WikiHostFactory;
-import com.owow.rich.entity.SearchTermExtractor;
-import com.owow.rich.items.Highlight;
-import com.owow.rich.items.SearchTerm;
+import com.owow.rich.items.Query;
+import com.owow.rich.items.Result.Results;
+import com.owow.rich.items.WebPage;
+import com.owow.rich.storage.AnaliticsManager;
+import com.owow.rich.utils.RelatedLinkSearch;
 import com.owow.rich.utils.TemplateUtil;
 
 @SuppressWarnings("serial")
 public class SnippetServlet2 extends HttpServlet {
 
+	@SuppressWarnings("unused")
+	final boolean	             debug	         = true;
+	final static ApiType	       DEFAULT_API_TYPE	= ApiType.freebase;
+	private static final Logger	log	         = Logger.getLogger("Rich");
+	private Manager	          manager	         = new Manager();
+	
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)
 	      throws IOException {
-		resp.setContentType("application/json");
-
-		final String method = req.getParameter("m");
 		final String showView = req.getParameter("v");
+		final String method = req.getParameter("m");
+		String query = req.getParameter("q");
+		final String url = req.getParameter("url");
+		if (query != null && query != "") {
+			// TODO get rid of that.
 
-		String highlight = req.getParameter("highlight");
-		if (highlight == null) {
-			resp.getWriter().write("missing highlight");
-			return;
-		}
+			WebPage webpage = new WebPage(null, null, url);
 
-		try {
-			ApiResponse ar = getApiResponseFromHighlight(req, resp, method, highlight, showView);
-			resp.getWriter().write(ar.toString());
-		} catch (JSONException e) {
-			e.printStackTrace();
+			Results results = manager.getFastResults(new Query(query, webpage));
+			
+			// Send the response in json/html format:
+			if (results != null && results.results.size() > 0)
+			{// Send html:
+				if (showView != null) {
+					List<WebPage> relatedLinks = Lists.newArrayList();
+					if(url != null) {
+						relatedLinks = RelatedLinkSearch.search(webpage, query);
+					}
+					printApiResposeView(results, resp, relatedLinks);
+					AnaliticsManager am = new AnaliticsManager(manager.storage);
+
+					am.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, webpage, results != null);
+					// Send Json format:
+				} else {
+					JSONObject jsonObject = new JSONObject();
+					try {
+						jsonObject.put("resultOK", true);
+					} catch (JSONException e) {
+						log.warning("json problem in simple resultOK");
+					}
+					resp.setContentType("application/json");
+					resp.getWriter().write(jsonObject.toString());
+				}
+			} else {
+				AnaliticsManager am = new AnaliticsManager(manager.storage);
+				am.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, webpage, results != null);
+			}
 		}
 	}
-
-	// unused
-	ApiResponse getApiResponseFromHighlight(final HttpServletRequest req, final HttpServletResponse resp, final String method, String highlight, String showView)
-	      throws UnsupportedEncodingException, IOException, JSONException {
-		if (method.equals("allw"))
-		{
-			String text = req.getParameter("text");
-			text = text != null ? text : highlight;
-
-			final List<SearchTerm> searchTerms = SearchTermExtractor.extractAllTerms(new
-			      Highlight(highlight, text));
-
-			final JSONArray ja = new JSONArray();
-			WikipediaHandler myWikiHandler = new WikipediaHandler();
-			for (final SearchTerm searchTerm : searchTerms) {
-				if (searchTerm.term == null) continue;
-				final String title = URLEncoder.encode(searchTerm.term, "UTF-8");
-
-				WikiHost at = WikiHost.AllEng;
-				List<WikiHost> seq = WikiHostFactory.getWikiHostSequence(at);
-				for (WikiHost wh : seq)
-					if (wh != null)
-					{
-						myWikiHandler.setHost(wh);
-						ApiResponse ar;
-						try {
-							ar = myWikiHandler.getFirstResponse(title, ApiType.wiki);
-							ja.put(ar.json);
-							break;
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-			}
-			JSONObject retJO = new JSONObject();
-			retJO.put("data", ja);
-			return new ApiResponse(highlight, retJO, ApiType.wiki);
-		}
-		else
-		{
-			// CR: need to add the web page as well as we want content:
-			ApiResponse fin = ApiRetriver.getApiResponse(highlight, method, null);
-			if (fin != null) if (showView == null) resp.getWriter().write(fin.toString());
-			else {
-				resp.setContentType("text/html");
-				resp.getWriter().write(TemplateUtil.getHtml("common.soy", new SoyMapData("p", fin.view.getView())));
-			}
-			return fin;
+	
+	private void printApiResposeView(Results results, HttpServletResponse res, List<WebPage> relatedLinks) throws IOException
+	{
+		if (results.results.size() > 1) {
+			SoyListData soyList = new SoyListData();
+			for (WebPage webPage : relatedLinks) {
+				SoyData soyData = new SoyMapData("link", webPage.url, "title", webPage.getTitle());
+				soyList.add(soyData);
+	      }
+			
+			res.setContentType("text/html");
+			
+			res.getWriter().write(TemplateUtil.getHtml("common.soy", new SoyMapData("p", results.results.get(0).view, "links", soyList) ));
 		}
 	}
 }

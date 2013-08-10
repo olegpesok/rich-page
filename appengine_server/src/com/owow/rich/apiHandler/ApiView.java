@@ -1,6 +1,8 @@
 package com.owow.rich.apiHandler;
 
-public class ApiView {
+import java.io.Serializable;
+
+public class ApiView implements Serializable{
 	private String	mView;
 	public ApiView(String view)
 	{

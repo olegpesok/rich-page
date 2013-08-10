@@ -6,27 +6,28 @@ import java.util.Set;
 
 import org.datanucleus.util.StringUtils;
 
-import com.google.api.client.http.GenericUrl;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Sets;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiRetriver;
-import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.apiHandler.ApiView;
-import com.owow.rich.entity.EntityRetriever;
+import com.owow.rich.items.Feedback;
 import com.owow.rich.items.NGram;
+import com.owow.rich.items.Query;
+import com.owow.rich.items.Result.Results;
 import com.owow.rich.items.WebPage;
+import com.owow.rich.retriever.EntityRetriever;
+import com.owow.rich.retriever.GeneralRetriever;
+import com.owow.rich.retriever.LocalRetriver;
 import com.owow.rich.storage.PreviousResultsCache;
 import com.owow.rich.storage.Storage;
 import com.owow.rich.utils.NameExtractor;
 import com.owow.rich.utils.RelatedLinkSearch;
 import com.owow.rich.utils.TokenizerUtil;
-import com.sun.jndi.toolkit.url.UrlUtil;
 
 public class Manager {
 
 	private TokenizerUtil	     tokenizer;
-	private EntityRetriever	     entityRetriever;
 	private NameExtractor nameExtractor = new NameExtractor();
 	public Storage	              storage;
 
@@ -34,12 +35,11 @@ public class Manager {
 	private PreviousResultsCache	cache;
 
 	public Manager( ) {
-		this(new TokenizerUtil(), new EntityRetriever(), new Storage(), new PreviousResultsCache());
+		this(new TokenizerUtil(), new Storage(), new PreviousResultsCache());
 	}
 
-	public Manager(TokenizerUtil tokenizer, EntityRetriever entityRetriever, Storage storage, PreviousResultsCache cache) {
+	public Manager(TokenizerUtil tokenizer, Storage storage, PreviousResultsCache cache) {
 		this.tokenizer = tokenizer;
-		this.entityRetriever = entityRetriever;
 		this.storage = storage;
 		this.cache = cache;
 	}
@@ -81,42 +81,65 @@ public class Manager {
 		if (apiResponse != null) cache.save(query, apiResponse.view.toString());
 		return apiResponse;
 	}
-
-	public Map<NGram, ApiResponse> processPage(WebPage webPage) throws Exception {
-		// We extract the names:
+	
+	/**
+	 * Get results, first try to see if query was process, and can find previous results,
+	 * if not gets live results from the external services.
+	 */
+	public Results getFastResults(Query query) {
+		// If not new query bring the previous results:
+		Results results = LocalRetriver.retirve(query);
+		if (!results.containsFastEntityResults) {
+			results.addFastEntityResults(EntityRetriever.fastRetrieve(query));
+		}
+		if(!results.containsGeneralResults) {
+			results.addGeneralResults(GeneralRetriever.retrieve(query));
+		}
+		LocalRetriver.saveResults(query, results);
+		return results;
+	}
+	
+	/**
+	 * Do deep retrieval for the query (e.g gets a lot of results from Freebase etc.)
+	 * And then  
+	 */
+	public void deepQueryProcess(Query query, boolean incudeGeneralResults) {
+		Results results = LocalRetriver.retirve(query);
+		if (!results.containsDeepEntityResults) {
+			results.addDeepEntityResults(EntityRetriever.deepRetrieve(query));
+		}
+		if (incudeGeneralResults && !results.containsGeneralResults) {
+			results.addGeneralResults(GeneralRetriever.retrieve(query));
+		}
+		// TODO: additional processing.
+		
+		LocalRetriver.saveResults(query, results);
+	}
+	
+	/**
+	 * according to feedback from the user implicit or explicit we update the ranking of the results.
+	 */
+	public void updateResults(List<Feedback> feedbackList) {
+		LocalRetriver.learnFromFeedback(feedbackList);
+	}
+	
+	public void processPage(WebPage webPage) throws Exception {
+		// We extract the names, as the query we want to pre-process in advance:
 		List<List<String>> namesLists = nameExtractor.getNameExtractor(webPage.url);
 		Set<NGram> allNGrams = Sets.newHashSet();
 		for (List<String> namesList : namesLists) {
-			// String names = Joiner.on(" ").join(namesList);
-			// List<Token> tokens = tokenizer.tokenize(names);
-			// List<NGram> nGrams = tokenizer.combineToNGrams(tokens, NGRAM_LEN);
 			NGram nGram = tokenizer.toNgram(namesList);
 			allNGrams.add(nGram);
 		}
 
-		Map<NGram, ApiResponse> entitesMap = Maps.newHashMap();
 		for (NGram ngram : allNGrams) {
-			if (StringUtils.isEmpty(ngram.searchTerm) || entitesMap.containsKey(ngram) || storage.containsKey(ngram.toString())) {
+			if (StringUtils.isEmpty(ngram.searchTerm)) {
 				continue;
 			}
-			ApiResponse entity = entityRetriever.getTopEntity(ngram, ApiType.freebase);
-			entitesMap.put(ngram, entity);
+			deepQueryProcess(new Query(ngram.searchTerm,webPage), false) ;
 		}
 
-		storage.saveEntitesMap(webPage, entitesMap);
 		RelatedLinkSearch.index(webPage);
-		return entitesMap;
 	}
-
-	//
-	// public com.google.appengine.api.datastore.Entity matchHighlight(WebPage
-	// context, Highlight highlight) {
-	// List<Token> textTokens = tokenizer.tokenize(context.text);
-	// List<Token> highlightTokens = tokenizer.tokenizeSubstring(highlight.text,
-	// context.text);
-	// com.google.appengine.api.datastore.Entity entity =
-	// storage.matchEntity(context, textTokens, highlightTokens);
-	// return entity;
-	// }
 
 }

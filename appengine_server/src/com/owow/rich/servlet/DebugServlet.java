@@ -63,7 +63,7 @@ public class DebugServlet  extends HttpServlet {
 						"\r\n ht_score:" + highlight_title_score +
 //						"\r\n t_score:" + title_score +
 						"\r\n score:" + score +
-						"\r\n internal score:" + apiResponse.apiInternalScore +
+						"\r\n internal score:" + apiResponse.apiScore +
 						"\r\n title:" + apiResponse.title +
 						"\r\n alias:" + apiResponse.alias +
 						"\r\n text:" + apiResponse.text + "\r\n\r\n");

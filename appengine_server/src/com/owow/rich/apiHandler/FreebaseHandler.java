@@ -135,7 +135,7 @@ public class FreebaseHandler extends ApiHandler {
 				String html = "<p>" + description.replace(". ", ". </p><p>") + "</p>";
 
 				ApiResponse apiResponse = new ApiResponse(topicResponse, html, apiType, score, description, mid, title, alias);
-				if(apiResponse.apiInternalScore >= FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD) {
+				if(apiResponse.apiScore >= FREEBASE_SCORE_CAN_SKIP_CONTEXT_SCORE_THRESHOLD) {
 					apiResponse.goodEnough = true;
 				}
 				return apiResponse;

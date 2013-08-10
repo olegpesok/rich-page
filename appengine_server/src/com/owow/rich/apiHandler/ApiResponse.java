@@ -11,6 +11,8 @@ import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.appengine.api.datastore.Text;
 import com.google.common.collect.Lists;
+import com.owow.rich.items.Query;
+import com.owow.rich.items.Result;
 
 public class ApiResponse implements Serializable {
 
@@ -29,7 +31,7 @@ public class ApiResponse implements Serializable {
 	public JSONObject	         json;
 	public ApiView	            view;
 
-	public long	               apiInternalScore;
+	public long	               apiScore;
 	public String	            text;
 	public String	            id;
 	public String	            title;
@@ -41,7 +43,7 @@ public class ApiResponse implements Serializable {
 	public String filterReason = "NOT_FILTERD";
 
 	public ApiResponse(JSONObject json, String html, ApiType apiType, int score, String text, String id, String title, List<String> alias) {
-		apiInternalScore = score;
+		apiScore = score;
 		this.text = text;
 		this.json = json;
 		view = new ApiView(html);
@@ -105,7 +107,7 @@ public class ApiResponse implements Serializable {
 		// end backup
 
 		propertyContainer.setProperty(TITLEKEY, title);
-		propertyContainer.setProperty(SCOREKEY, apiInternalScore);
+		propertyContainer.setProperty(SCOREKEY, apiScore);
 		propertyContainer.setProperty(IDKEY, id);
 		propertyContainer.setProperty(FILTER_REASON_KEY, filterReason);
 
@@ -132,7 +134,7 @@ public class ApiResponse implements Serializable {
 
 		final ApiResponse ar = new ApiResponse(title, new JSONObject(), apiView, apiType);
 
-		ar.apiInternalScore = ent.hasProperty(SCOREKEY) && ent.getProperty(SCOREKEY) != null
+		ar.apiScore = ent.hasProperty(SCOREKEY) && ent.getProperty(SCOREKEY) != null
 		      ? (Long) ent.getProperty(SCOREKEY) : -1;
 		ar.id = (String) (ent.hasProperty(IDKEY) ? ent.getProperty(IDKEY) : null);
 		ar.title = (String) (ent.hasProperty(TITLEKEY) ? ent.getProperty(TITLEKEY) : null);
@@ -149,5 +151,10 @@ public class ApiResponse implements Serializable {
 //		aliasAndTitle.add(text.substring(0, Math.min(200, text.length())));
 		
 		return aliasAndTitle;
+   }
+
+	public List<Result> getResults(Query query) {
+		Result result = new Result(query, title, view.getView(), text, apiScore);
+	   return Lists.newArrayList(result);
    }
 }

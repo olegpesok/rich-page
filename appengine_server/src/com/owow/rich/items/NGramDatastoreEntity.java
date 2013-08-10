@@ -59,7 +59,7 @@ public class NGramDatastoreEntity implements Serializable {
 		{
 			FreebaseSimpleResult result = new FreebaseSimpleResult();
 			result.text = new Text(ar.view.toString());
-			result.score = ar.apiInternalScore;
+			result.score = ar.apiScore;
 			try {
 				result.id = ar.json.getString("id");
 			} catch (JSONException e) {}
