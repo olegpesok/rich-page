@@ -4,6 +4,7 @@
  * @param p
  * @param admin
  * @param ngram
+ * @param links realted_links.
  */
 {template .helloWorld}
 <head>
@@ -63,9 +64,9 @@
 					</div>
 				</div>
 				<div class="context-box-links context-box-content" id="context-box-links">
-//					{call .related_links}
-//					  {param links: $links /}
-//					{/call}
+					{call .related_links}
+					  {param links: $links /}
+					{/call}
 				</div>
 			</div>
 		</div>
