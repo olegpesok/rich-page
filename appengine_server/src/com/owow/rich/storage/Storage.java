@@ -15,7 +15,12 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PropertyContainer;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.owow.rich.apiHandler.ApiResponse;
+import com.owow.rich.apiHandler.ApiType;
+import com.owow.rich.apiHandler.ApiView;
 import com.owow.rich.items.NGram;
 import com.owow.rich.items.WebPage;
 
@@ -30,7 +35,8 @@ public class Storage {
 	public final static String	HOST_KEY	     = "Hosty";
 	public final static String	PAGE_URL	     = "Page_Url";
 	public final static String	CREATED	     = "created";
-	
+	public final static String	FILTERED	     = "filtered";
+	public final static String	FILTER_REASON	= "filtered";
 
 	// xxX Make new DB API that might be bad
 	// xxX Delete from that DB
@@ -41,6 +47,12 @@ public class Storage {
 	{
 		datastore = DatastoreServiceFactory.getDatastoreService();
 	}
+	public void dontShowNGram(String ngram, String reason)
+	{
+		ApiResponse ar = new ApiResponse(ngram, null, new ApiView(""), ApiType.custom);
+		saveApiResponse(new WebPage(), ngram, ar, false, true);
+	}
+
 	public void saveEntitesMap(WebPage context, Map<NGram, ApiResponse> entitesMap) {
 		final Set<NGram> s = entitesMap.keySet();
 		for (final NGram n : s) {
@@ -110,16 +122,18 @@ public class Storage {
 	}
 
 	public void saveApiResponse(WebPage webpage, String ngram, ApiResponse apiResponse, boolean arguable, boolean saveCurrentAsBackup)
-	      throws EntityNotFoundException
 	{
 		// TODO new
 		if (apiResponse == null) return;
 		final Key k = KeyFactory.createKey(ENTITY_KIND, ngram);
-		Entity entity;
+		Entity entity = null;
 
-		if (saveCurrentAsBackup && containsKey(ngram))
+		if (saveCurrentAsBackup && containsKey(k))
 		{
-			entity = datastore.get(k);
+			try {
+				entity = datastore.get(k);
+			} catch (EntityNotFoundException entityNotFoundException)
+			{}
 			EmbeddedEntity embeddedEntity;
 			long length;
 			if (entity.hasProperty(ApiResponse.BACKUPRESPONSEKEY)) {
@@ -173,6 +187,8 @@ public class Storage {
 	{
 		// TODO new, used
 		// TODO hanle default
+		// final Filter filteredFilter = new FilterPredicate("filtered",
+		// FilterOperator.NOT_EQUAL, true);
 		final Query query = new Query(KeyFactory.createKey(ENTITY_KIND, ngram));
 		final List<Entity> listEntities = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(1));
 
@@ -191,21 +207,41 @@ public class Storage {
 		if (listEntities.get(0).hasProperty("dont")) return null;
 		return listEntities.get(0);
 	}
-	public boolean containsKey(String ngram) {
-
-		try {
-			datastore.get(KeyFactory.createKey(ENTITY_KIND, ngram));
-			return true;
-		} catch (final EntityNotFoundException e) {
-			return false;
-		}
+	public boolean containsKey(Key key)
+	{
+		final Query query = new Query(key).setKeysOnly();
+		return !datastore.prepare(query).asList(FetchOptions.Builder.withLimit(1)).isEmpty();
+	}
+	public boolean containsKey(String kind, String ngram) {
+		return containsKey(KeyFactory.createKey(kind, ngram));
 	}
 
-	public List<Entity> queryTheDB(int offset, int length)
+	public List<Entity> queryTheDB(int offset, int length, String host)
 	{
-		final Query q = new Query(ENTITY_KIND).addSort(Entity.KEY_RESERVED_PROPERTY);
+		final Query q = new Query(ENTITY_KIND)/* .addSort("created") */.addSort(Entity.KEY_RESERVED_PROPERTY);
+		if (host != null && !host.isEmpty())
+		{
+			Filter hostFilter = new FilterPredicate(HOST_KEY,
+			      FilterOperator.EQUAL, host);
+			q.setFilter(hostFilter);
+		}
 		final List<Entity> l = datastore.prepare(q).asList(FetchOptions.Builder.withOffset(offset).limit(length));
-
 		return l;
+	}
+
+	// Bing
+	public Entity getNewEntity(String kind, String key)
+	{
+		return new Entity(KeyFactory.createKey(kind, key));
+	}
+	public Entity getSavedEntity(String kind, String key) throws EntityNotFoundException
+	{
+		return datastore.get(KeyFactory.createKey(kind, key));
+	}
+	public boolean containsNgramKey(String ngram) {
+		return containsKey(ENTITY_KIND, ngram);
+	}
+	public void save(Entity entity) {
+		datastore.put(entity);
 	}
 }

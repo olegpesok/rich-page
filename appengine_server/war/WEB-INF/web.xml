@@ -10,6 +10,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-class>com.owow.rich.servlet.SnippetServlet</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>GeneralServlet</servlet-name>
+		<servlet-class>com.owow.rich.servlet.GeneralServlet</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>ImageServlet</servlet-name>
 		<servlet-class>com.owow.rich.servlet.ImageServlet</servlet-class>
 	</servlet>
@@ -41,6 +45,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	<servlet-mapping>
 		<servlet-name>ImageServlet</servlet-name>
 		<url-pattern>/Image</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GeneralServlet</servlet-name>
+		<url-pattern>/General</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>SnippetServlet</servlet-name>

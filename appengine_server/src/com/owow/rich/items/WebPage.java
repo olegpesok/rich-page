@@ -16,6 +16,12 @@ public class WebPage {
 		this.url = url;
 	}
 
+	public WebPage( ) {
+		html = null;
+		text = null;
+		url = "";
+	}
+
 	public String getHost()
 	{
 		try {

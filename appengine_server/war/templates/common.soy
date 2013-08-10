@@ -1,7 +1,9 @@
 {namespace examples.simple}
 /**
  * Common template for the snippet
- * @param p snippet.
+ * @param p
+ * @param admin
+ * @param ngram
  */
 {template .helloWorld}
 <head>
@@ -15,6 +17,31 @@
 <script src="js/jquery.slimscroll.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="js/page_script.js"></script>
+{if $admin}
+<script type="text/javascript">
+	var ngram = "{$ngram}";
+	var server = "http://rich-page.appspot.com/";
+	server = "http://localhost:8888/";
+	$(document).ready(function() {lb}
+		$('#aDontShow').click(function() {lb}
+			$.get(server + 'admin/AdminPage?act=dontShow&ngram=' + ngram);
+			window.parent.closeOwowContextBox();	
+		{rb});
+		$('#aEdit').click(function() {lb}
+			if ($('#aEdit').text() == "Save") {lb}
+				$('#aEdit').text("Edit");
+				$('.context-box-info-description').attr('contentEditable', false);
+				$('.context-box-info-description').attr('onClick',";");
+				$.post(server + 'admin/AdminPage',{lb} act : "Add", view :$('.context-box-info-description').html(), ngram : ngram	{rb})
+				
+			{rb} else {lb}
+				$('#aEdit').text("Save");
+				$('.context-box-info-description').attr('onClick',"this.contentEditable='true';");
+			{rb}
+		{rb});
+	{rb});
+</script>
+{/if}
 </head>
 <body>
 
@@ -40,8 +67,12 @@
 				</div>
 			</div>
 		</div>
-		<div class="context-box-footer context-box-frame"></div>
+		<div class="context-box-footer context-box-frame">{if $admin}
+	<a style="z-index:100000" href="#" id="aDontShow">Don't show</a> |
+	<a style="z-index:100000" href="#" id="aEdit">Edit</a>
+	{/if}</div>
 	</div>
+
 
 
 </body>

@@ -30,7 +30,7 @@ public class SnippetServlet extends HttpServlet {
 	final static ApiType	       DEFAULT_API_TYPE	= ApiType.freebase;
 	private static final Logger	log	         = Logger.getLogger("Rich");
 	private Manager	          manager	         = new Manager();
-
+	public final static boolean	AdminMode	   = true;
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)
 	      throws IOException {
@@ -50,7 +50,7 @@ public class SnippetServlet extends HttpServlet {
 			if (apiResponse != null)
 			{// Send html:
 				if (showView != null) {
-					printApiResposeView(apiResponse, resp);
+					printApiResposeView(apiResponse, query, resp);
 					AnaliticsManager am = new AnaliticsManager(manager.storage);
 
 					am.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, webpage, apiResponse != null);
@@ -71,10 +71,9 @@ public class SnippetServlet extends HttpServlet {
 			}
 		}
 	}
-	private void printApiResposeView(ApiResponse ar, HttpServletResponse res) throws IOException
+	private void printApiResposeView(ApiResponse ar, String ngram, HttpServletResponse res) throws IOException
 	{
 		res.setContentType("text/html");
-
-		res.getWriter().write(TemplateUtil.getHtml("common.soy", new SoyMapData("p", ar.view.getView())));
+		res.getWriter().write(TemplateUtil.getHtml("common.soy", new SoyMapData("p", ar.view.getView(), "admin", AdminMode, "ngram", ngram)));
 	}
 }

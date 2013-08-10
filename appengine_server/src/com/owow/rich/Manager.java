@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.datanucleus.util.StringUtils;
 
-import com.google.api.client.http.GenericUrl;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Sets;
 import com.owow.rich.apiHandler.ApiResponse;
@@ -20,17 +19,16 @@ import com.owow.rich.storage.PreviousResultsCache;
 import com.owow.rich.storage.Storage;
 import com.owow.rich.utils.NameExtractor;
 import com.owow.rich.utils.TokenizerUtil;
-import com.sun.jndi.toolkit.url.UrlUtil;
 
 public class Manager {
 
-	private TokenizerUtil	     tokenizer;
-	private EntityRetriever	     entityRetriever;
-	private NameExtractor nameExtractor = new NameExtractor();
-	public Storage	              storage;
+	private TokenizerUtil	    tokenizer;
+	private EntityRetriever	    entityRetriever;
+	private NameExtractor	    nameExtractor	= new NameExtractor();
+	public Storage	             storage;
 
-	public final static int	     NGRAM_LEN	= 2;
-	private PreviousResultsCache	cache;
+	public final static int	    NGRAM_LEN	   = 2;
+	public PreviousResultsCache	cache;
 
 	public Manager( ) {
 		this(new TokenizerUtil(), new EntityRetriever(), new Storage(), new PreviousResultsCache());
@@ -47,7 +45,7 @@ public class Manager {
 	 * Try to find a matching result to the query, look in the cache, and
 	 * previous results in the db before sending request to external services
 	 * (e.g Free-base) in order to save time and money.
-	 *
+	 * 
 	 * @param webPage
 	 *           - The context of the query
 	 * @param query
@@ -58,11 +56,15 @@ public class Manager {
 	public ApiResponse getApiResponse(WebPage webPage, String query, String method)
 	{
 		query = TokenizerUtil.cleanUnwantedChars(query);
-		// Looks for we have the full query(highlight) in the cache.
+		// Looks for we have the full query(highlight) in the cache
 		ApiView apiView = cache.queryMemcacheForApiView(query);
 
 		if (apiView != null) return new ApiResponse(query, null, apiView, null);
-
+		// TODO Change this {
+		ApiResponse ar = storage.loadEntity(webPage, query);
+		if (ar != null) return ar; // ApiView can be an empty string, inorder to
+		                           // eliminate
+		// }
 		List<NGram> nGrams = tokenizer.getAllNgram(query, NGRAM_LEN);
 
 		ApiResponse apiResponse = null;
@@ -72,15 +74,20 @@ public class Manager {
 			apiResponse = cache.getFirstMatchingNgram(nGrams);
 
 			// db queries
-			if (apiResponse == null) apiResponse = storage.getFirstMatchingNgram(webPage, nGrams);
+			if (apiResponse == null) {
+				apiResponse = storage.getFirstMatchingNgram(webPage, nGrams);
+			}
 		}
 		// Do live retrieve.
-		if (apiResponse == null) apiResponse = ApiRetriver.getApiResponse(query, method, webPage);
+		if (apiResponse == null) {
+			apiResponse = ApiRetriver.getApiResponse(query, method, webPage);
+		}
 
-		if (apiResponse != null) cache.save(query, apiResponse.view.toString());
+		if (apiResponse != null) {
+			cache.save(query, apiResponse.view.toString());
+		}
 		return apiResponse;
 	}
-
 	public Map<NGram, ApiResponse> processPage(WebPage webPage) throws Exception {
 		// We extract the names:
 		List<List<String>> namesLists = nameExtractor.getNameExtractor(webPage.url);
@@ -95,7 +102,7 @@ public class Manager {
 
 		Map<NGram, ApiResponse> entitesMap = Maps.newHashMap();
 		for (NGram ngram : allNGrams) {
-			if (StringUtils.isEmpty(ngram.searchTerm) || entitesMap.containsKey(ngram) || storage.containsKey(ngram.toString())) {
+			if (StringUtils.isEmpty(ngram.searchTerm) || entitesMap.containsKey(ngram) || storage.containsNgramKey(ngram.toString())) {
 				continue;
 			}
 			ApiResponse entity = entityRetriever.getTopEntity(ngram, ApiType.freebase);
