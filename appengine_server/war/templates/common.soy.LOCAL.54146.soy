@@ -63,9 +63,7 @@
 					</div>
 				</div>
 				<div class="context-box-links context-box-content" id="context-box-links">
-//					{call .related_links}
-//					  {param links: $links /}
-//					{/call}
+					<!-- Related Links -->
 				</div>
 			</div>
 		</div>
@@ -78,16 +76,4 @@
 
 
 </body>
-{/template}
-
-/**
- * Common template for the snippet
- * @param links related_links.
- */
-{template .related_links}
-
-	{foreach $link in $links}
-		<p><a href="{$link.link}">{$link.title}</a></p><br/>
-	{/foreach}
-
 {/template}

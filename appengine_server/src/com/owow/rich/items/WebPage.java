@@ -19,6 +19,12 @@ public class WebPage implements Serializable{
 		this.url = url;
 	}
 
+	public WebPage( ) {
+		html = null;
+		text = null;
+		url = "";
+	}
+
 	public String getHost()
 	{
 		try {

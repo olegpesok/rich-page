@@ -46,7 +46,9 @@ public enum ApiType {
 	static Map<String, ApiType>	map;
 	public static ApiType create(String s)
 	{
-		if (map == null) setMap();
+		if (map == null) {
+	      setMap();
+      }
 		ApiType ap = map.get(s);
 		return ap == null ? custom : ap;
 	}
@@ -55,7 +57,8 @@ public enum ApiType {
 	{
 		map = Maps.newHashMap();
 		ApiType[] ats = ApiType.values();
-		for (int i = 0; i < ats.length; i++)
-			map.put(ats[i].getIdentifyer(), ats[i]);
+		for (ApiType at : ats) {
+	      map.put(at.getIdentifyer(), at);
+      }
 	}
 }

@@ -38,7 +38,7 @@ public class SnippetServlet extends HttpServlet {
 	final static ApiType	       DEFAULT_API_TYPE	= ApiType.freebase;
 	private static final Logger	log	         = Logger.getLogger("Rich");
 	private Manager	          manager	         = new Manager();
-
+	public final static boolean	AdminMode	   = true;
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)
 	      throws IOException {
@@ -59,10 +59,10 @@ public class SnippetServlet extends HttpServlet {
 			{// Send html:
 				if (showView != null) {
 					List<WebPage> relatedLinks = Lists.newArrayList();
-					if(url != null){
+					if (url != null){
 						relatedLinks = RelatedLinkSearch.search(webpage, query);
 					}
-					printApiResposeView(apiResponse, resp, relatedLinks);
+					printApiResposeView(apiResponse, query, resp);
 					AnaliticsManager am = new AnaliticsManager(manager.storage);
 
 					am.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, webpage, apiResponse != null);
@@ -83,17 +83,9 @@ public class SnippetServlet extends HttpServlet {
 			}
 		}
 	}
-	private void printApiResposeView(ApiResponse ar, HttpServletResponse res, List<WebPage> relatedLinks) throws IOException
+	private void printApiResposeView(ApiResponse ar, String ngram, HttpServletResponse res) throws IOException
 	{
-		SoyListData soyList = new SoyListData();
-		for (WebPage webPage : relatedLinks) {
-			SoyData soyData = new SoyMapData("link", webPage.url, "title", webPage.getTitle());
-			soyList.add(soyData);
-			
-      }
-		
 		res.setContentType("text/html");
-
-		res.getWriter().write(TemplateUtil.getHtml("common.soy", new SoyMapData("p", ar.view.getView(), "links", soyList) ));
+		res.getWriter().write(TemplateUtil.getHtml("common.soy", new SoyMapData("p", ar.view.getView(), "admin", AdminMode, "ngram", ngram)));
 	}
 }

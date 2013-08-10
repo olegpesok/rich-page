@@ -241,9 +241,11 @@ var markSelection = (function() {
 						jQuery("#owow_rich_div").hide();
 						console.log("no results for " + selectedText)
 					}
+				}).fail(function() { 
+					jQuery("#owow_rich_div").hide();
+					console.log("error for " + selectedText)
 				});
 			}
-
 		} else {
 			hold = false;
 		}

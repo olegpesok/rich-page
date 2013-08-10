@@ -31,8 +31,9 @@ public class Manager {
 	private NameExtractor nameExtractor = new NameExtractor();
 	public Storage	              storage;
 
-	public final static int	     NGRAM_LEN	= 2;
-	private PreviousResultsCache	cache;
+
+	public final static int	    NGRAM_LEN	   = 2;
+	public PreviousResultsCache	cache;
 
 	public Manager( ) {
 		this(new TokenizerUtil(), new Storage(), new PreviousResultsCache());
@@ -48,7 +49,7 @@ public class Manager {
 	 * Try to find a matching result to the query, look in the cache, and
 	 * previous results in the db before sending request to external services
 	 * (e.g Free-base) in order to save time and money.
-	 *
+	 * 
 	 * @param webPage
 	 *           - The context of the query
 	 * @param query
@@ -59,11 +60,15 @@ public class Manager {
 	public ApiResponse getApiResponse(WebPage webPage, String query, String method)
 	{
 		query = TokenizerUtil.cleanUnwantedChars(query);
-		// Looks for we have the full query(highlight) in the cache.
+		// Looks for we have the full query(highlight) in the cache
 		ApiView apiView = cache.queryMemcacheForApiView(query);
 
 		if (apiView != null) return new ApiResponse(query, null, apiView, null);
-
+		// TODO Change this {
+		ApiResponse ar = storage.loadEntity(webPage, query);
+		if (ar != null) return ar; // ApiView can be an empty string, inorder to
+		                           // eliminate
+		// }
 		List<NGram> nGrams = tokenizer.getAllNgram(query, NGRAM_LEN);
 
 		ApiResponse apiResponse = null;
@@ -73,12 +78,18 @@ public class Manager {
 			apiResponse = cache.getFirstMatchingNgram(nGrams);
 
 			// db queries
-			if (apiResponse == null) apiResponse = storage.getFirstMatchingNgram(webPage, nGrams);
+			if (apiResponse == null) {
+				apiResponse = storage.getFirstMatchingNgram(webPage, nGrams);
+			}
 		}
 		// Do live retrieve.
-		if (apiResponse == null) apiResponse = ApiRetriver.getApiResponse(query, method, webPage);
+		if (apiResponse == null) {
+			apiResponse = ApiRetriver.getApiResponse(query, method, webPage);
+		}
 
-		if (apiResponse != null) cache.save(query, apiResponse.view.toString());
+		if (apiResponse != null) {
+			cache.save(query, apiResponse.view.toString());
+		}
 		return apiResponse;
 	}
 	

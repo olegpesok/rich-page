@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -62,8 +63,9 @@ public class HtmlUtil {
 
 		String inputLine;
 		final StringBuilder a = new StringBuilder();
-		while ((inputLine = in.readLine()) != null)
+		while ((inputLine = in.readLine()) != null) {
 			a.append(inputLine);
+		}
 		in.close();
 
 		return a.toString();
@@ -78,20 +80,39 @@ public class HtmlUtil {
 
 		String inputLine;
 		final StringBuilder a = new StringBuilder();
-		while ((inputLine = in.readLine()) != null)
+		while ((inputLine = in.readLine()) != null) {
 			a.append(inputLine);
+		}
 		in.close();
 
 		return a.toString();
+	}
+
+	public static String encodeHTML(String s, Set<Character> chars)
+	{
+		StringBuffer out = new StringBuffer();
+		for (int i = 0; i < s.length(); i++)
+		{
+			char c = s.charAt(i);
+			if ((c > 127 || c == '"' || c == '<' || c == '>') && !chars.contains(c))
+			{
+				out.append("&#" + (int) c + ";");
+			}
+			else
+			{
+				out.append(c);
+			}
+		}
+		return out.toString();
 	}
 
 	public static JSONObject getJSONFromServerAndTitle(final String server, final String title)
 	      throws JSONException, IOException {
 		return getJSON(server + title);
 	}
-	public static JSONObject getJSON(final String url) 
+	public static JSONObject getJSON(final String url)
 	      throws JSONException, IOException {
-		String res = getUrlSource(url); 
+		String res = getUrlSource(url);
 		return new JSONObject(res);
 	}
 

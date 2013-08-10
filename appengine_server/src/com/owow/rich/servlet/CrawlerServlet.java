@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
@@ -42,19 +43,26 @@ public class CrawlerServlet extends HttpServlet {
 		usedUrls.add(startingUrl.toString());
 		int damn = fs.size();
 		List<Future<?>> deleted = new LinkedList<Future<?>>();
+		StringBuilder sb = new StringBuilder();
 		while (!fs.isEmpty()) {
 			for (Future<?> f : fs)
-				if (f.isDone()) deleted.add(f);
-			for (Future<?> f : deleted)
+				if (f.isDone()) {
+					try {
+						sb.append(f.get().toString());
+					} catch (InterruptedException e) {} catch (ExecutionException e) {}
+					deleted.add(f);
+				}
+			for (Future<?> f : deleted) {
 				fs.remove(f);
+			}
 		}
-		resp.getWriter().write("OK - " + damn);
+		resp.getWriter().write("OK - " + damn + sb.toString());
 	}
 	public void crawlInto(URL url, int depth, int maxDepth) throws IOException
 	{
 		Document document = Jsoup.parse(HtmlUtil.getUrlSource(url.toString()));
 		Elements a = document.getElementsByTag("a");
-		for (Element a2 : a)
+		for (Element a2 : a) {
 			try {
 				String s = a2.attr("href");
 				URL newUrl = new URL(url, s);
@@ -62,15 +70,18 @@ public class CrawlerServlet extends HttpServlet {
 				{
 					usedUrls.add(newUrl.toString());
 					sendToAppEngine(newUrl);
-					if (depth < maxDepth) crawlInto(newUrl, depth + 1, maxDepth);
+					if (depth < maxDepth) {
+						crawlInto(newUrl, depth + 1, maxDepth);
+					}
 				}
 			} catch (Exception e) {}
+		}
 	}
-	private void sendToAppEngine(URL url) throws UnsupportedEncodingException, MalformedURLException {
+	private void sendToAppEngine(URL url) throws UnsupportedEncodingException, MalformedURLException, InterruptedException {
 		excuteAsyncRequest("http://rich-page.appspot.com/QueueToPageProc", "url=" + URLEncoder.encode(url.toString(), "UTF-8"));
 	}
 
-	private void excuteAsyncRequest(String server, String params) throws MalformedURLException {
+	private void excuteAsyncRequest(String server, String params) throws MalformedURLException, InterruptedException {
 		makeAsyncRequest(new URL(server + "?" + params));
 
 	}
@@ -80,9 +91,24 @@ public class CrawlerServlet extends HttpServlet {
 		return !usedUrls.contains(u.toString()) && !FILTERS.matcher(href).matches() && u.getHost().contains(mHost);
 	}
 
+	public boolean canAdd()
+	{
+		List<Future<?>> deleted = new LinkedList<Future<?>>();
+		for (Future<?> f : fs)
+			if (f.isDone()) {
+				deleted.add(f);
+			}
+		for (Future<?> f : deleted) {
+			fs.remove(f);
+		}
+		return fs.size() < 10;
+	}
 	List<Future<?>>	fs	= new LinkedList<Future<?>>();
-	protected void makeAsyncRequest(URL url) throws MalformedURLException {
+	protected void makeAsyncRequest(URL url) throws MalformedURLException, InterruptedException {
 		URLFetchService fetcher = URLFetchServiceFactory.getURLFetchService();
+		while (!canAdd()) {
+	      Thread.sleep(20);
+      }
 		fs.add(fetcher.fetchAsync(url));
 	}
 }

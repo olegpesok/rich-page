@@ -2,6 +2,7 @@ package com.owow.rich.storage;
 
 import java.util.List;
 
+import com.google.appengine.api.memcache.Expiration;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiRetriver;
 import com.owow.rich.apiHandler.ApiView;
@@ -16,11 +17,18 @@ public class PreviousResultsCache {
 		{
 			String nGramString = nGram.toString();
 			ApiView apiView = queryMemcacheForApiView(nGramString);
-			if (apiView == null) apiView = ApiRetriver.queryMemcacheForView(nGramString, memcache);
+			if (apiView == null) {
+				apiView = ApiRetriver.queryMemcacheForView(nGramString, memcache);
+			}
 
 			if (apiView != null) return new ApiResponse(nGram.toString(), null, apiView, null);
 		}
 		return null;
+	}
+
+	public void delete(String ngram)
+	{
+		memcache.set(MEMCACHE_PREFIX + ngram, null, Expiration.byDeltaMillis(0));
 	}
 
 	public ApiView queryMemcacheForApiView(String query)

@@ -86,8 +86,6 @@ public class ApiResponse implements Serializable {
 	public PropertyContainer getPropertyContainerFromApiResponse(ApiResponse... apiResponses)
 	{
 		final PropertyContainer propertyContainer = new EmbeddedEntity();
-		// propertyContainer.setProperty(JSONKEY, json == null ? null : new
-		// Text(json.toString()));
 		propertyContainer.setProperty(VIEWKEY, new Text(view.getView().toString()));
 		propertyContainer.setProperty(APITYPEKEY, myType == null ? null : myType.getIdentifyer());
 
@@ -122,13 +120,6 @@ public class ApiResponse implements Serializable {
 	public static ApiResponse getApiResponseFromEntity(String title, PropertyContainer ent)
 	{
 		if (!ent.hasProperty(APITYPEKEY)) return null;
-		// JSONObject json;
-		// try {
-		// json = ent.getProperty(JSONKEY) == null ? null : new JSONObject(((Text)
-		// ent.getProperty(JSONKEY)).getValue());
-		// } catch (JSONException e) {
-		// json = null;
-		// }
 		final ApiView apiView = !ent.hasProperty(VIEWKEY) ? new ApiView("") : new ApiView(((Text) ent.getProperty(VIEWKEY)).getValue());
 		final ApiType apiType = ApiType.create((String) ent.getProperty(APITYPEKEY));
 

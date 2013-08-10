@@ -11,10 +11,10 @@ import com.owow.rich.storage.Memcache;
 import com.owow.rich.utils.ComparisonUtils;
 
 public class ApiRetriver {
-	final static String	          MEMPREFIX	      = "apiFactory/";
-	final static ApiType	          DEFAULT_API_TYPE	= ApiType.freebase;
-	private static ComparisonUtils	tfIdfUtil	   = new ComparisonUtils();
-	private static ApiResponsePicker apiResponsePicker = new ApiResponsePicker();
+	final static String	            MEMPREFIX	      = "apiFactory/";
+	final static ApiType	            DEFAULT_API_TYPE	= ApiType.freebase;
+	private static ComparisonUtils	tfIdfUtil	      = new ComparisonUtils();
+	private static ApiResponsePicker	apiResponsePicker	= new ApiResponsePicker();
 	ApiRetriver( ) {}
 
 	public static ApiResponse getApiResponse(String highlight, String method, WebPage webPage)
@@ -43,12 +43,13 @@ public class ApiRetriver {
 				try {
 					List<ApiResponse> apiResponseList = handler.getAllApiResponses(highlight, mainApiType);
 					if (apiResponseList != null && apiResponseList.size() > 0) {
-						if (apiResponseList.get(0).goodEnough == true)
-							return apiResponseList.get(0);
+						if (apiResponseList.get(0).goodEnough == true) return apiResponseList.get(0);
 
 						ApiResponse apiResponse = apiResponsePicker.choseResult(apiResponseList, webPage, highlight);
-						
-						if (apiResponse != null) pushMemcache(highlight, apiResponse.view, Memcache.getInstance());
+
+						if (apiResponse != null) {
+	                  pushMemcache(highlight, apiResponse.view, Memcache.getInstance());
+                  }
 						return apiResponse;
 					}
 				} catch (Exception e) {

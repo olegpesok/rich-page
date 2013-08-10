@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.appengine.api.datastore.Entity;
@@ -31,6 +31,11 @@ public class AdminPage extends HttpServlet {
 	private static final long	serialVersionUID	= 1061726062728111706L;
 
 	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+		doGet(req, resp);
+	}
+	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)
 	      throws IOException {
 
@@ -46,6 +51,9 @@ public class AdminPage extends HttpServlet {
 			}
 		} else if (act.equals("view")) {
 			doGetView(req, resp);
+		}
+		else if (act.equals("dontShow")) {
+			doGetDontShow(req, resp);
 		}
 
 		// resp.getWriter().write("OK - " + damn);
@@ -73,31 +81,24 @@ public class AdminPage extends HttpServlet {
 
 	private void doGetAdd(HttpServletRequest req, HttpServletResponse resp) throws IOException, EntityNotFoundException {
 		String ngram = req.getParameter("ngram");
-		ApiType at = ApiType.create(req.getParameter("m"));
 		String view = req.getParameter("view");
-		String serv = req.getParameter("serv");
 		JSONObject json = null;
-		String preJson = req.getParameter("json");
-		if (preJson != null) {
-			try {
-				json = new JSONObject(req.getParameter("json"));
-			} catch (JSONException e) {}
-		}
 		Manager m = new Manager();
-		m.storage.saveApiResponse(new WebPage(null, null, serv), ngram, new ApiResponse(ngram, json, view, at), true, true);
-
-		resp.sendRedirect("./AdminPage?act=viewAll");
+		m.cache.delete(ngram);
+		m.storage.saveApiResponse(new WebPage(), ngram, new ApiResponse(ngram, json, view, ApiType.custom), false, true);
+		resp.sendRedirect(req.getHeader("referer"));
 	}
 	int	perPage	= 100;
 
 	private void doGetViewAll(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
 		String s_page = req.getParameter("page");
+		String host = req.getParameter("host");
 		int page = s_page == null ? 0 : Integer.parseInt(s_page) - 1;
 		int offset = page * perPage;
 		int length = perPage;
 		Manager m = new Manager();
-		List<Entity> apis = m.storage.queryTheDB(offset, length);
+		List<Entity> apis = m.storage.queryTheDB(offset, length, host);
 
 		String html = "";
 		int index = 0;
@@ -106,10 +107,18 @@ public class AdminPage extends HttpServlet {
 			html += getHtmlViewOfPC("item-" + index, ent, ent.getKey().getName());
 			index++;
 		}
-
 		resp.setContentType("text/html");
-
 		resp.getWriter().write(TemplateUtil.getHtml("view.soy", new SoyMapData("p", html, "page", page + 1)));
+	}
+
+	private void doGetDontShow(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		String ngram = req.getParameter("ngram");
+		String reason = req.getParameter("reason");
+		reason = reason == null ? "No reason" : reason;
+		Manager manager = new Manager();
+
+		manager.storage.dontShowNGram(ngram, reason);
+		manager.cache.delete(ngram);
 	}
 
 	private String getHtmlViewOfPC(String id, PropertyContainer ent, String name) {

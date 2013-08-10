@@ -1,4 +1,7 @@
 eclipse.preferences.version=1
 encoding//src/com/owow/rich/apiHandler/DictionaryHandler.java=UTF-8
 encoding//src/com/owow/rich/apiHandler/WikipediaHandler.java=UTF-8
+encoding//src/com/owow/rich/generalHandler/BingHandler.java=UTF-8
 encoding//src/com/owow/rich/servlet/AdminPage.java=UTF-8
+encoding//src/com/owow/rich/servlet/GeneralServlet.java=UTF-8
+encoding//war/index.html=UTF-8

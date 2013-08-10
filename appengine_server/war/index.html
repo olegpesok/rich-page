@@ -11,9 +11,108 @@
 <script src="js/jquery.slimscroll.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="js/page_script.js"></script>
+<style type="text/css">
+.f{
+color: rgb(0, 128, 42);
+font-family: arial, sans-serif;
+font-size: 13px;
+font-style: normal;
+font-weight: normal;
+list-style-type: none;
+margin-bottom: 1px;
+text-align: left;
+visibility: visible;
+}
+strong
+{
+	color:inherit;
+}
+</style>
+<script type="text/javascript">
+String.prototype.format = function() {
+	  var s = this;
+	  for (var i = 0; i < arguments.length; i++) {       
+	    var reg = new RegExp("\\{" + i + "\\}", "gm");             
+	    s = s.replace(reg, arguments[i]);
+	  }
+
+	  return s;
+	}
+var ngram = "Danny haber";
+var bingFormat = "<div style='display:block' class='rc'>"+"<h3 class='r'>"+/*"<a href='{0}'></a>"+*/"</h3>"+ "<div class='s'><div>"/*+"<div class='f kv'><cite>{2}</cite></div>"*/+"<span class='st'>{3}</span></div></div></div>";
+var server = "http://rich-page.appspot.com/";
+server = "http://localhost:8888/";
+var pages = new Array();
+var currentPage = 0;
+$(document).ready(
+    function () {
+        $('#aDontShow').click(
+            function () {
+                $.get(server + 'admin/AdminPage?act=dontShow&ngram=' + ngram);
+            });
+        $('#aEdit').click(
+            function () {
+                if ($('#aEdit').text() == "Save") {
+                    $('#aEdit').text("Edit");
+                    $('.context-box-info-description').attr(
+                        'contentEditable', false);
+                    $('.context-box-info-description').attr(
+                        'onClick', ";");
+                    $.post(server + 'admin/AdminPage', {
+                        act: "Add",
+                        view: $('.context-box-info-description')
+                            .html(),
+                        ngram: ngram
+                    })
+
+                } else {
+                    $('#aEdit').text("Save");
+                    $('.context-box-info-description').attr(
+                        'onClick',
+                        "this.contentEditable='true';");
+                }
+            });
+        $('#aNext').click(
+
+            function () {
+                if (pages.length == 0) {
+                	isReady =false;
+                    pages.push($('.context-box-info-description').html());
+                    $.get(server + "General?type=Web&q=" + ngram, function (data) {
+                    	//data - array
+                        for (i = 0; i < data.length; i++) {
+                            pages[i + 1] = bingFormat.format(data[i].Url,data[i].Title,data[i].DisplayUrl,data[i].Description);
+                        }
+                    	$('#aPrev').click(function(){prevPage();}).parent().show();
+                        displayPage(1);
+                    });
+                }
+                else nextPage();
+            });
+        
+    });
+
+function displayPage(index) {
+	currentPage=index;
+	$('.context-box-info-description').slideToggle(100,function(){
+ 		$(this).html(pages[index % pages.length]).slideToggle(100);
+		
+	});
+	
+    
+}
+
+function nextPage() {
+	displayPage(currentPage + 1);
+}
+function prevPage() {
+	if(currentPage >0)
+	displayPage(currentPage - 1);
+}
+
+</script>
 </head>
 <body>
-
 	<div class="context-box-container">
 		<div class="context-box-header context-box-frame">
 			<div class="context-box-frame-icons">
@@ -28,15 +127,18 @@
 				<div class="context-box-info context-box-content context-box-open"
 					id="context-box-info">
 					<div class="context-box-info-description">
-
 						{$p|noAutoescape} {
 						<p>
-							The <strong>Milwaukee Brewers</strong> are a professional
-							baseball team based in <strong>Milwaukee, Wisconsin</strong>.
+							The <strong>Milwaukee Brewers</strong> are a professionalbaseball
+							team based in <strong>Milwaukee, Wisconsin</strong>.
 						<p>
-							The team is a member of the <strong>Central Division</strong> of
-							Major League Baseball's NL and plays its home games at <strong>Miller
-								Park</strong>.
+							The team is a member of the <strong>Central Division</strong>
+							ofMajor League Baseball's NL and plays its home games at <strong>MillerPark</strong>.
+
+
+
+
+						
 						<p>
 							Originating in <strong>Seattle, Washington</strong>, as the
 							Seattle Pilots, the club played for one season in <strong>1969</strong>
@@ -62,10 +164,12 @@
 			</div>
 		</div>
 		<div class="context-box-footer context-box-frame">
-			<input type="button" onclick="window.parent.closeOwowContextBox()" value="X">
+			<input type="button" onclick="window.parent.closeOwowContextBox()"
+				value="X"> <a href="#" id="aDontShow">Don't show</a> | <a
+				href="#" id="aEdit">Edit</a><span style="display: none;"> | <a href="#"  id="aPrev">Back</a> </span>| <a href="#" id="aNext">Next</a>
+
 		</div>
 	</div>
-
 
 </body>
 </html>

@@ -16,22 +16,7 @@
 		.css-treeview
 		{
 			font: normal 15px "Segoe UI", Arial, Sans-serif;
-			-moz-user-select: none;
-			-webkit-user-select: none;
-			user-select: none;
 		}
-
-		.css-treeview a
-		{
-			color: #00f;
-			text-decoration: none;
-		}
-
-		.css-treeview a:hover
-		{
-			text-decoration: underline;
-		}
-
 		.css-treeview input + label + ul
 		{
 			margin: 0 0 0 22px;
