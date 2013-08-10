@@ -62,7 +62,7 @@ public class SnippetServlet extends HttpServlet {
 					if(url != null){
 						relatedLinks = RelatedLinkSearch.search(webpage, query);
 					}
-					printApiResposeView(apiResponse, resp, relatedLinks);
+					printApiResposeView(apiResponse, query, resp);
 					AnaliticsManager am = new AnaliticsManager(manager.storage);
 
 					am.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, webpage, apiResponse != null);
