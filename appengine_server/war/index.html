@@ -38,7 +38,7 @@ String.prototype.format = function() {
 
 	  return s;
 	}
-var ngram = "Danny haber";
+var ngram = "";
 var bingFormat = "<div style='display:block' class='rc'>"+"<h3 class='r'>"+/*"<a href='{0}'></a>"+*/"</h3>"+ "<div class='s'><div>"/*+"<div class='f kv'><cite>{2}</cite></div>"*/+"<span class='st'>{3}</span></div></div></div>";
 var server = "http://rich-page.appspot.com/";
 server = "http://localhost:8888/";
@@ -97,9 +97,7 @@ function displayPage(index) {
 	$('.context-box-info-description').slideToggle(100,function(){
  		$(this).html(pages[index % pages.length]).slideToggle(100);
 		
-	});
-	
-    
+	});    
 }
 
 function nextPage() {

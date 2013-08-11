@@ -18,31 +18,98 @@
 <script src="js/jquery.slimscroll.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="js/page_script.js"></script>
-{if $admin}
+
 <script type="text/javascript">
+	String.prototype.format = function() {lb}
+	  var s = this;
+	  for (var i = 0; i < arguments.length; i++) {lb}       
+	    var reg = new RegExp("\\{lb}" + i + "\\{rb}", "gm");             
+	    s = s.replace(reg, arguments[i]);
+	  {rb}
+
+	  return s;
+	{rb};
 	var ngram = "{$ngram}";
 	var server = "http://rich-page.appspot.com/";
+	var bingFormat = "<div style='display:block' class='rc'>"+"<h3 class='r'></h3>"+ "<div class='s'><div><span class='st'>{lb}3{rb}</span></div></div></div>";
+	
 	server = "http://localhost:8888/";
-	$(document).ready(function() {lb}
-		$('#aDontShow').click(function() {lb}
-			$.get(server + 'admin/AdminPage?act=dontShow&ngram=' + ngram);
-			window.parent.closeOwowContextBox();	
-		{rb});
-		$('#aEdit').click(function() {lb}
-			if ($('#aEdit').text() == "Save") {lb}
-				$('#aEdit').text("Edit");
-				$('.context-box-info-description').attr('contentEditable', false);
-				$('.context-box-info-description').attr('onClick',";");
-				$.post(server + 'admin/AdminPage',{lb} act : "Add", view :$('.context-box-info-description').html(), ngram : ngram	{rb})
-				
-			{rb} else {lb}
-				$('#aEdit').text("Save");
-				$('.context-box-info-description').attr('onClick',"this.contentEditable='true';");
-			{rb}
-		{rb});
+	var pages = new Array();
+	var currentPage = 0;
+	
+	$(document).ready(
+    function () {lb}
+    
+    {if $admin}
+    
+        $('#aDontShow').click(
+            function () {lb}
+                $.get(server + 'admin/AdminPage?act=dontShow&ngram=' + ngram);
+            {rb});
+        $('#aEdit').click(
+            function () {lb}
+                if ($('#aEdit').text() == "Save") {lb}
+                    $('#aEdit').text("Edit");
+                    $('.context-box-info-description').attr(
+                        'contentEditable', false);
+                    $('.context-box-info-description').attr(
+                        'onClick', ";");
+                    $.post(server + 'admin/AdminPage', {lb}
+                        act: "Add",
+                        view: $('.context-box-info-description')
+                            .html(),
+                        ngram: ngram
+                    {rb})
+
+                {rb} else {lb}
+                    $('#aEdit').text("Save");
+                    $('.context-box-info-description').attr(
+                        'onClick',
+                        "this.contentEditable='true';");
+                {rb}
+            {rb});
+            
+	{/if}
+	
+        $('#aNext').click(
+
+            function () {lb}
+                if (pages.length == 0) {lb}
+                	isReady =false;
+                    pages.push($('.context-box-info-description').html());
+                    $.get(server + "General?type=Web&q=" + ngram, function (data) {lb}
+                    	//data - array
+                        for (i = 0; i < data.length; i++) {lb}
+                            pages[i + 1] = bingFormat.format(data[i].Url,data[i].Title,data[i].DisplayUrl,data[i].Description);
+                        {rb}
+                    	$('#aPrev').click(function(){lb}prevPage();{rb}).parent().show();
+                        displayPage(1);
+                    {rb});
+                {rb}
+                else nextPage();
+            {rb});
+        
+    {rb});
+
+function displayPage(index) {lb}
+	currentPage=index;
+	$('.context-box-info-description').slideToggle(100,function(){lb}
+ 		$(this).html(pages[index % pages.length]).slideToggle(100);
+		
 	{rb});
+	
+    
+{rb}
+
+function nextPage() {lb}
+	displayPage(currentPage + 1);
+{rb}
+function prevPage() {lb}
+	if(currentPage >0)
+	displayPage(currentPage - 1);
+{rb}
+
 </script>
-{/if}
 </head>
 <body>
 
@@ -72,8 +139,11 @@
 		</div>
 		<div class="context-box-footer context-box-frame">{if $admin}
 	<a style="z-index:100000" href="#" id="aDontShow">Don't show</a> |
-	<a style="z-index:100000" href="#" id="aEdit">Edit</a>
-	{/if}</div>
+	<a style="z-index:100000" href="#" id="aEdit">Edit</a>|
+	
+	{/if}
+	<span style="display: none;"><a href="#"  id="aPrev">Back</a> | </span><a href="#" id="aNext">Next</a>
+	</div>
 	</div>
 
 

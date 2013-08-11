@@ -33,7 +33,7 @@ public class SnippetServlet extends HttpServlet {
 	final static ApiType	       DEFAULT_API_TYPE	= ApiType.freebase;
 	private static final Logger	log	         = Logger.getLogger("Rich");
 	private Manager	          manager	         = new Manager();
-	public final static boolean	AdminMode	   = true;
+	public final static boolean	AdminMode	   = false;
 	
 	static {
       ObjectifyService.register(ResultSet.class);
