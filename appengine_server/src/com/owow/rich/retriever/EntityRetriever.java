@@ -1,21 +1,20 @@
 package com.owow.rich.retriever;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
+import com.owow.rich.RichLogger;
 import com.owow.rich.apiHandler.ApiHandler;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.items.Query;
 import com.owow.rich.items.Result;
+import com.owow.rich.utils.FrequencyUtil;
 import com.owow.rich.utils.StringCompareUtils;
 
 public class EntityRetriever {
 
-	public static List<Result> retrieve(Query query) {
-		List<Result> resultList = Lists.newArrayList();
-		return resultList;
-	}
 
 	public static ApiResponse getTopApiResponse(String query, ApiType at) {
 		try {
@@ -32,19 +31,55 @@ public class EntityRetriever {
 
 	private static void shouldFilter(String query, ApiResponse apiResponse) {
 		// filter if miss-match-title.
-		filterIfNGramDontMatchTitle(query, apiResponse);
+		filterIfTooFrequent(query, apiResponse);
 	}
 
-	private static void filterIfNGramDontMatchTitle(String query, ApiResponse apiResponse) {
-		for (String title : apiResponse.getTitleAndAliases()) {
-			if (StringCompareUtils.isMatch(title, query)) { return; }
-		}
-		apiResponse.filterReason = "NGram and title don't match";
-	}
+	private static void filterIfTooFrequent(String query, ApiResponse apiResponse) {
+	   int frequency = FrequencyUtil.getFrequency(query);
+	   if (frequency > 0) {
+	   	apiResponse.filterReason = "Too Frequent " + frequency;
+	   }
+   }
 
 	public static List<Result> deepRetrieve(Query query) {
-		// TODO: get more results in deep retieve:
-		return fastRetrieve(query);
+		// TODO: add crunch base and other
+//		List<Result> crunchResutls = getAllApiResponse(query, ApiType.crunch);
+//		if (crunchResutls.size() > 0) {
+//			crunchResutls = crunchResutls;
+//		}
+		
+		List<Result> results = getAllApiResponse(query, ApiType.freebase);
+		for (Result result : results) {
+	      scoreResult(result, query);
+      }
+		Collections.sort(results);
+		
+		// Temporary for debug:
+		if (results.size() <= 0) {
+			return results;
+		}
+		
+		return results;
+	}
+
+	private static void scoreResult(Result result, Query query) {
+		for (String title : result.getTitleAndAliases()) {
+			result.score =  StringCompareUtils.getTitleSimilarityScore(title, query.highlight);
+			//TODO: add more scores, tfidf, wi
+		}
+   }
+	
+	public static List<Result> getAllApiResponse(Query query, ApiType apiType) {
+		List<Result> results = Lists.newArrayList();
+		try {
+			List<ApiResponse> responses = apiType.createHandler().getAllApiResponses(query.highlight, apiType);
+			for (ApiResponse response : responses) {
+				results.addAll( response.getResults(query) );
+         }
+		} catch (Exception ex) {
+			RichLogger.logException("in get all api response", ex);
+		}
+		return results;
 	}
 
 	public static List<Result> fastRetrieve(Query query) {

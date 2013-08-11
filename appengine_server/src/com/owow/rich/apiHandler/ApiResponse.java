@@ -140,12 +140,11 @@ public class ApiResponse implements Serializable {
 		List<String> aliasAndTitle = Lists.newArrayList(alias);
 		aliasAndTitle.add(title);
 //		aliasAndTitle.add(text.substring(0, Math.min(200, text.length())));
-		
 		return aliasAndTitle;
    }
 
 	public List<Result> getResults(Query query) {
-		Result result = new Result(title, view.getView(), text, apiScore, query.highlight);
+		Result result = new Result(title, view.getView(), text, apiScore, query.highlight, filterReason, alias);
 	   return Lists.newArrayList(result);
    }
 }

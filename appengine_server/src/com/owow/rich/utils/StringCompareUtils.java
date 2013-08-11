@@ -29,38 +29,52 @@ public class StringCompareUtils {
            return distance[str1.length()][str2.length()];
    }
 
-	public static boolean isMatch(String title, String ngram) {
-		if(title.toLowerCase().contains(ngram.toLowerCase())){
-      	return true;
+	public static int getTitleSimilarityScore(String title, String ngram) {
+		if (title.equals(ngram)){
+      	return 10;
       }
+		
+		if ( title.toLowerCase().equals(ngram.toLowerCase()) ){
+      	return 9;
+      }
+		
 		
 		if(ngram.toLowerCase().contains(title.toLowerCase())){
-      	return true;
+      	return 8;
       }
 		
-		if(close(title, ngram)){
-      	return true;
+		if(title.toLowerCase().contains(ngram.toLowerCase())){
+      	return 7;
       }
+		
+		int titlesCloseness = getCloseness(title, ngram);
+		if(titlesCloseness  <= 1){
+      	return 6;
+      }
+		if(titlesCloseness  <= 2){
+      	return 5;
+      }
+		if(titlesCloseness  <= 3){
+      	return 4;
+      }
+		
 	   for (String word : title.split(" ")) {
-	      if(close(word, ngram)){
-	      	return true;
+	      if(getCloseness(word, ngram) <= 3){
+	      	return 2;
 	      }
       }
 	   
 	   for (String word : ngram.split(" ")) {
-	      if(close(word, title)){
-	      	return true;
+	      if(getCloseness(word, title) <= 3){
+	      	return 1;
 	      }
       }
-	   return false;
+	   
+	   return 0;
    }
 
-	private static boolean close(String word, String title) {
-		int d = StringCompareUtils.computeLevenshteinDistance(word.toLowerCase(), title.toLowerCase());
-		if(d <= 2) {
-			return true;
-		}
-		return false;
-   }
+	private static int getCloseness(String word, String title) {
+		return StringCompareUtils.computeLevenshteinDistance(word.toLowerCase(), title.toLowerCase());
+	}
 
 }
