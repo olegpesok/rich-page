@@ -1,12 +1,10 @@
 package com.owow.rich;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.datanucleus.util.StringUtils;
 
-import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Sets;
 import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiRetriver;

@@ -10,15 +10,13 @@ import com.owow.rich.apiHandler.ApiResponse;
 @Entity
 public class Result implements Serializable{
 	
-	public Query query;
 	public String title;
 	public String view;
 	public int score = 0;
 	public String text;
 	public long apiScore;
 	
-	public Result(Query query, String title, String view, String text, long apiScore) {
-		this.query = query;
+	public Result(String title, String view, String text, long apiScore) {
 		this.title = title;
 		this.view = view;
 		this.text = text;
@@ -29,6 +27,7 @@ public class Result implements Serializable{
 	}
 	
 	public static class Results implements Serializable{
+		public Query query;
 		public List<Result> results;
 		public boolean containsGeneralResults = false;
 		public boolean containsFastEntityResults = false;
