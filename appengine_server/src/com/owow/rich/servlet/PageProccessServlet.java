@@ -22,9 +22,7 @@ public class PageProccessServlet extends HttpServlet {
 	private Manager	          manager	= new Manager();
 	private static final Logger	log	= Logger.getLogger("Rich");
 
-	static {
-      ObjectifyService.register(ResultSet.class);
-	}
+
 	
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)

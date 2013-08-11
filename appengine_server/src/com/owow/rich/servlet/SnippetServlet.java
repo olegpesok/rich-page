@@ -15,6 +15,7 @@ import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.google.template.soy.data.SoyData;
 import com.google.template.soy.data.SoyListData;
 import com.google.template.soy.data.SoyMapData;
+import com.googlecode.objectify.ObjectifyService;
 import com.owow.rich.Manager;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.items.Query;
@@ -33,6 +34,10 @@ public class SnippetServlet extends HttpServlet {
 	private static final Logger	log	         = Logger.getLogger("Rich");
 	private Manager	          manager	         = new Manager();
 	public final static boolean	AdminMode	   = true;
+	
+	static {
+      ObjectifyService.register(ResultSet.class);
+	}
 	
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)

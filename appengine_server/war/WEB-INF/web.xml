@@ -8,6 +8,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	<servlet>
 		<servlet-name>SnippetServlet</servlet-name>
 		<servlet-class>com.owow.rich.servlet.SnippetServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>OldSnippetServlet</servlet-name>
