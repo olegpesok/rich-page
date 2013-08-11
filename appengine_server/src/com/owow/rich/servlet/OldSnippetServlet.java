@@ -16,26 +16,30 @@ import com.google.template.soy.data.SoyData;
 import com.google.template.soy.data.SoyListData;
 import com.google.template.soy.data.SoyMapData;
 import com.owow.rich.Manager;
+import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiType;
-import com.owow.rich.items.Query;
-import com.owow.rich.items.Result.Results;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.AnaliticsManager;
 import com.owow.rich.utils.RelatedLinkSearch;
 import com.owow.rich.utils.TemplateUtil;
 
+/**
+ * Handle a request for an highlight. Returns the view, or JSON mathcing this
+ * highlight.
+ */
 @SuppressWarnings("serial")
-public class SnippetServlet2 extends HttpServlet {
+public class OldSnippetServlet extends HttpServlet {
 
 	@SuppressWarnings("unused")
 	final boolean	             debug	         = true;
 	final static ApiType	       DEFAULT_API_TYPE	= ApiType.freebase;
 	private static final Logger	log	         = Logger.getLogger("Rich");
 	private Manager	          manager	         = new Manager();
-	
+	public final static boolean	AdminMode	   = true;
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)
 	      throws IOException {
+
 		final String showView = req.getParameter("v");
 		final String method = req.getParameter("m");
 		String query = req.getParameter("q");
@@ -45,25 +49,25 @@ public class SnippetServlet2 extends HttpServlet {
 
 			WebPage webpage = new WebPage(null, null, url);
 
-			Results results = manager.getFastResults(new Query(query, webpage));
+			ApiResponse apiResponse = manager.getApiResponse(webpage, query, method);
 			
 			// Send the response in json/html format:
-			if (results != null && results.results.size() > 0)
+			if (apiResponse != null)
 			{// Send html:
 				if (showView != null) {
 					List<WebPage> relatedLinks = Lists.newArrayList();
-					if(url != null) {
+					if (url != null){
 						relatedLinks = RelatedLinkSearch.search(webpage, query);
 					}
-					printApiResposeView(results, resp, relatedLinks);
+					printApiResposeView(apiResponse, query, resp, relatedLinks);
 					AnaliticsManager am = new AnaliticsManager(manager.storage);
 
-					am.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, webpage, results != null);
+					am.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, webpage, apiResponse != null);
 					// Send Json format:
 				} else {
 					JSONObject jsonObject = new JSONObject();
 					try {
-						jsonObject.put("resultOK", true);
+						jsonObject.put("resultOK", apiResponse != null && !apiResponse.view.getView().isEmpty());
 					} catch (JSONException e) {
 						log.warning("json problem in simple resultOK");
 					}
@@ -72,23 +76,20 @@ public class SnippetServlet2 extends HttpServlet {
 				}
 			} else {
 				AnaliticsManager am = new AnaliticsManager(manager.storage);
-				am.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, webpage, results != null);
+				am.saveLog(req.getHeader("User-Agent"), req.getRemoteAddr(), query, webpage, apiResponse != null);
 			}
 		}
 	}
 	
-	private void printApiResposeView(Results results, HttpServletResponse res, List<WebPage> relatedLinks) throws IOException
+	private void printApiResposeView(ApiResponse ar, String ngram, HttpServletResponse res, List<WebPage> relatedLinks) throws IOException
 	{
-		if (results.results.size() > 1) {
-			SoyListData soyList = new SoyListData();
-			for (WebPage webPage : relatedLinks) {
-				SoyData soyData = new SoyMapData("link", webPage.url, "title", webPage.getTitle());
-				soyList.add(soyData);
-	      }
+		SoyListData soyList = new SoyListData();
+		for (WebPage webPage : relatedLinks) {
+			SoyData soyData = new SoyMapData("link", webPage.url, "title", webPage.getTitle());
+			soyList.add(soyData);
 			
-			res.setContentType("text/html");
-			
-			res.getWriter().write(TemplateUtil.getHtml("common.soy", new SoyMapData("p", results.results.get(0).view, "links", soyList) ));
-		}
+      }
+		res.setContentType("text/html");
+		res.getWriter().write(TemplateUtil.getHtml("common.soy", new SoyMapData("p", ar.view.getView(), "admin", AdminMode, "ngram", ngram, "links", soyList)));
 	}
 }

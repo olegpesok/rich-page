@@ -10,8 +10,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-class>com.owow.rich.servlet.SnippetServlet</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>SnippetServlet2</servlet-name>
-		<servlet-class>com.owow.rich.servlet.SnippetServlet2</servlet-class>
+		<servlet-name>OldSnippetServlet</servlet-name>
+		<servlet-class>com.owow.rich.servlet.OldSnippetServlet</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>GeneralServlet</servlet-name>
@@ -59,8 +59,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<url-pattern>/Snippet</url-pattern>
 	</servlet-mapping>
 		<servlet-mapping>
-		<servlet-name>SnippetServlet2</servlet-name>
-		<url-pattern>/Snippet2</url-pattern>
+		<servlet-name>OldSnippetServlet</servlet-name>
+		<url-pattern>/OldSnippet</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>PageProccessServlet</servlet-name>

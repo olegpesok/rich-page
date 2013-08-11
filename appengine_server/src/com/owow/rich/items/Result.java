@@ -4,9 +4,12 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
+import com.googlecode.objectify.annotation.Entity;
 import com.owow.rich.apiHandler.ApiResponse;
 
+@Entity
 public class Result implements Serializable{
+	
 	public Query query;
 	public String title;
 	public String view;
