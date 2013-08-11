@@ -7,7 +7,8 @@ public class FrequencyUtil {
 
 	public static int getFrequency(String nGram) {
 		try{
-			GenericUrl adamUrl = new GenericUrl("http://54.213.139.165:9090/" + nGram);
+			GenericUrl adamUrl = new GenericUrl("http://54.213.139.165:9090/");
+			adamUrl.appendRawPath(nGram.toLowerCase());
 			
 			String numberString = HtmlUtil.getUrlSource(adamUrl.toString());
 			return Integer.parseInt(numberString);
