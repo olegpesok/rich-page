@@ -1,12 +1,14 @@
 package com.owow.rich.items;
 
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.jsoup.Jsoup;
 
-public class WebPage implements Serializable{
+import com.googlecode.objectify.annotation.Embed;
+
+@Embed
+public class WebPage{
 
 	public String	html;
 	public String	text;

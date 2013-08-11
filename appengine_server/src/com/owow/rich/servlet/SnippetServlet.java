@@ -18,7 +18,7 @@ import com.google.template.soy.data.SoyMapData;
 import com.owow.rich.Manager;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.items.Query;
-import com.owow.rich.items.Result.Results;
+import com.owow.rich.items.ResultSet;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.AnaliticsManager;
 import com.owow.rich.utils.RelatedLinkSearch;
@@ -46,7 +46,7 @@ public class SnippetServlet extends HttpServlet {
 
 			WebPage webpage = new WebPage(null, null, url);
 
-			Results results = manager.getFastResults(new Query(query, webpage));
+			ResultSet results = manager.getFastResults(new Query(query, webpage));
 			
 			// Send the response in json/html format:
 			if (results != null && results.results.size() > 0)
@@ -78,7 +78,7 @@ public class SnippetServlet extends HttpServlet {
 		}
 	}
 	
-	private void printApiResposeView(Results results, String ngram, HttpServletResponse res, List<WebPage> relatedLinks) throws IOException
+	private void printApiResposeView(ResultSet results, String ngram, HttpServletResponse res, List<WebPage> relatedLinks) throws IOException
 	{
 		if (results.results.size() > 0) {
 			SoyListData soyList = new SoyListData();

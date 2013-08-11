@@ -12,7 +12,7 @@ import com.owow.rich.apiHandler.ApiView;
 import com.owow.rich.items.Feedback;
 import com.owow.rich.items.NGram;
 import com.owow.rich.items.Query;
-import com.owow.rich.items.Result.Results;
+import com.owow.rich.items.ResultSet;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.retriever.EntityRetriever;
 import com.owow.rich.retriever.GeneralRetriever;
@@ -33,7 +33,7 @@ public class Manager {
 	public final static int	    NGRAM_LEN	   = 2;
 	public PreviousResultsCache	cache;
 
-	public Manager( ) {
+	public Manager() {
 		this(new TokenizerUtil(), new Storage(), new PreviousResultsCache());
 	}
 
@@ -95,16 +95,16 @@ public class Manager {
 	 * Get results, first try to see if query was process, and can find previous results,
 	 * if not gets live results from the external services.
 	 */
-	public Results getFastResults(Query query) {
+	public ResultSet getFastResults(Query query) {
 		// If not new query bring the previous results:
-		Results results = LocalRetriver.retirve(query);
+		ResultSet results = LocalRetriver.retirve(query);
 		if (!results.containsFastEntityResults) {
 			results.addFastEntityResults(EntityRetriever.fastRetrieve(query));
 		}
 		if(!results.containsGeneralResults) {
 			results.addGeneralResults(GeneralRetriever.retrieve(query));
 		}
-		LocalRetriver.saveResults(query, results);
+		LocalRetriver.saveResults(results);
 		return results;
 	}
 	
@@ -113,7 +113,7 @@ public class Manager {
 	 * And then  
 	 */
 	public void deepQueryProcess(Query query, boolean incudeGeneralResults) {
-		Results results = LocalRetriver.retirve(query);
+		ResultSet results = LocalRetriver.retirve(query);
 		if (!results.containsDeepEntityResults) {
 			results.addDeepEntityResults(EntityRetriever.deepRetrieve(query));
 		}
@@ -122,7 +122,7 @@ public class Manager {
 		}
 		// TODO: additional processing.
 		
-		LocalRetriver.saveResults(query, results);
+		LocalRetriver.saveResults(results);
 	}
 	
 	/**

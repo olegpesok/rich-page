@@ -7,7 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.googlecode.objectify.ObjectifyService;
 import com.owow.rich.Manager;
+import com.owow.rich.items.ResultSet;
 import com.owow.rich.items.WebPage;
 
 /**
@@ -20,6 +22,10 @@ public class PageProccessServlet extends HttpServlet {
 	private Manager	          manager	= new Manager();
 	private static final Logger	log	= Logger.getLogger("Rich");
 
+	static {
+      ObjectifyService.register(ResultSet.class);
+	}
+	
 	@Override
 	public void doGet(final HttpServletRequest req, final HttpServletResponse resp)
 	      throws IOException {

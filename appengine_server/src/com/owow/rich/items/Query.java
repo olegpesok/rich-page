@@ -1,12 +1,11 @@
 package com.owow.rich.items;
 
-import java.io.Serializable;
+import com.googlecode.objectify.annotation.Embed;
 
-
-public class Query implements Serializable{
+@Embed
+public class Query{
 	public String highlight;
 	public WebPage page;
-	public String method = null;
 	
 	public Query(String highlight, WebPage page){
 		this.highlight = highlight;
@@ -14,6 +13,6 @@ public class Query implements Serializable{
 	}
 
 	public String getId() {
-	   return highlight + page.url;
+	   return highlight + "_" + page.url;
    }
 }
