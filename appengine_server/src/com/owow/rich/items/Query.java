@@ -13,6 +13,6 @@ public class Query{
 	}
 
 	public String getId() {
-	   return highlight + "_" + page.url;
+	   return  page.url + "_" + highlight;
    }
 }

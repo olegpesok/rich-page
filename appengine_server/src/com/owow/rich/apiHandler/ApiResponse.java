@@ -145,7 +145,7 @@ public class ApiResponse implements Serializable {
    }
 
 	public List<Result> getResults(Query query) {
-		Result result = new Result(title, view.getView(), text, apiScore);
+		Result result = new Result(title, view.getView(), text, apiScore, query.highlight);
 	   return Lists.newArrayList(result);
    }
 }

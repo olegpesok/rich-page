@@ -17,7 +17,7 @@ public class EntityRetriever {
 		return resultList;
 	}
 
-	public static ApiResponse getTopEntity(String query, ApiType at) {
+	public static ApiResponse getTopApiResponse(String query, ApiType at) {
 		try {
 			ApiHandler apiHandler = at.createHandler();
 			ApiResponse response = apiHandler.getFirstResponse(query, at);
@@ -48,7 +48,7 @@ public class EntityRetriever {
 	}
 
 	public static List<Result> fastRetrieve(Query query) {
-		ApiResponse apiResponse = getTopEntity(query.highlight, ApiType.freebase);
+		ApiResponse apiResponse = getTopApiResponse(query.highlight, ApiType.freebase);
 		if (apiResponse != null) {
 			return apiResponse.getResults(query);
 		} else {

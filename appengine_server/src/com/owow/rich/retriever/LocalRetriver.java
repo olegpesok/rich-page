@@ -12,7 +12,7 @@ public class LocalRetriver {
 
 	public static ResultSet retirve(Query query) {
 		ResultSet results = ofy().load().type(ResultSet.class).id(query.getId()).now();
-		if(results == null) {
+		if (results == null) {
 			results =  new ResultSet(query);
 		}
 		return results;

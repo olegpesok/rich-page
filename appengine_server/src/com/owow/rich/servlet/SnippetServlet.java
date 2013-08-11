@@ -94,7 +94,7 @@ public class SnippetServlet extends HttpServlet {
 			
 			res.setContentType("text/html");
 			
-			res.getWriter().write(TemplateUtil.getHtml("common.soy", new SoyMapData("p", results.results.get(0).view, "admin", AdminMode, "ngram", ngram, "links", soyList)));
+			res.getWriter().write(TemplateUtil.getHtml("common.soy", new SoyMapData("p", results.results.get(0).view.getValue(), "admin", AdminMode, "ngram", ngram, "links", soyList)));
 		}
 	}
 }
