@@ -56,7 +56,7 @@ public class SnippetServlet extends HttpServlet {
 			ResultSet results = manager.getFastResults(new Query(query, webpage));
 			
 			// Send the response in json/html format:
-			if (results != null && results.results.size() > 0)
+			if (results != null)
 			{// Send html:
 				if (showView != null) {
 					List<WebPage> relatedLinks = Lists.newArrayList();
@@ -87,16 +87,19 @@ public class SnippetServlet extends HttpServlet {
 	
 	private void printApiResposeView(ResultSet results, String ngram, HttpServletResponse res, List<WebPage> relatedLinks) throws IOException
 	{
-		if (results.results.size() > 0) {
-			SoyListData soyList = new SoyListData();
-			for (WebPage webPage : relatedLinks) {
-				SoyData soyData = new SoyMapData("link", webPage.url, "title", webPage.getTitle());
-				soyList.add(soyData);
-	      }
-			
-			res.setContentType("text/html");
-			
-			res.getWriter().write(TemplateUtil.getHtml("common.soy", new SoyMapData("p", results.results.get(0).view.getValue(), "admin", AdminMode, "ngram", ngram, "links", soyList)));
-		}
+		// TODO: temp after moving genralretriver, should also put multiple paragraphs instead of one:
+		String paragraph = (results.results.size() > 0) ? results.results.get(0).view.getValue() : "";
+		
+		
+		SoyListData soyList = new SoyListData();
+		for (WebPage webPage : relatedLinks) {
+			SoyData soyData = new SoyMapData("link", webPage.url, "title", webPage.getTitle());
+			soyList.add(soyData);
+      }
+		
+		res.setContentType("text/html");
+		
+		res.getWriter().write(TemplateUtil.getHtml("common.soy", new SoyMapData("p", paragraph, "admin", AdminMode, "ngram", ngram, "links", soyList)));
+		
 	}
 }

@@ -41,15 +41,19 @@ public class EntityRetriever {
 	   	apiResponse.filterReason = "Too Frequent " + frequency;
 	   }
    }
+	public static List<Result> fastRetrieve(Query query) {
+		return deepRetrieve(query);
+//		ApiResponse apiResponse = getTopApiResponse(query.highlight, ApiType.freebase);
+//		if (apiResponse != null) {
+//			return apiResponse.getResults(query);
+//		} else {
+//			return Lists.newArrayList();
+//		}
+	}
+	
 
 	public static List<Result> deepRetrieve(Query query) {
 		// TODO: add crunch, linkedIn, Twitter.
-		// Recognize.
-		
-//		List<Result> crunchResutls = getAllApiResponse(query, ApiType.crunch);
-//		if (crunchResutls.size() > 0) {
-//			crunchResutls = crunchResutls;
-//		}
 		
 		List<Result> results = getAllApiResponse(query, ApiType.freebase);
 		for (Result result : results) {
@@ -72,7 +76,7 @@ public class EntityRetriever {
 			//TODO: add more scores, tfidf, wi
 		}
 		
-		result.nlpScore = (new NlpUtils()).compare(result.text.getValue(), query.page.getText());
+//		result.nlpScore = (new NlpUtils()).compare(result.text.getValue(), query.page.getText());
    }
 	
 	private static List<Result> getAllApiResponse(Query query, ApiType apiType) {
@@ -88,17 +92,6 @@ public class EntityRetriever {
 		return results;
 	}
 
-	public static List<Result> fastRetrieve(Query query) {
-		ApiResponse apiResponse = getTopApiResponse(query.highlight, ApiType.freebase);
-		if (apiResponse != null) {
-			return apiResponse.getResults(query);
-		} else {
-			return Lists.newArrayList();
-		}
-	}
-//
-//	public ApiResponse getApiResponseFromStorage(NGram ngram, ApiType apitype, Storage storage, WebPage wp)
-//	{
-//		return storage.loadEntity(wp, ngram.toString());
-//	}
+
+
 }
