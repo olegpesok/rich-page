@@ -35,6 +35,7 @@ public class TwitterTest {
 	}
 	@Test
 	public void test() throws TwitterException {
+		// All tweets that contains Mark Zuckerbarg with positive attitude
 		Query query = new Query("Mark Zuckerberg :)");
 		query.lang("en");
 		QueryResult result = twitter.search(query);
@@ -42,15 +43,13 @@ public class TwitterTest {
 		for (Status status : result.getTweets()) {
 			s += "@" + status.getUser().getScreenName() + ":" + status.getText() + "\n";
 		}
-
-		ResponseList<User> rlu = twitter.searchUsers("Mark Zuckerberg", 1);
-
-		// System.out.print(s);
+		System.out.print(s); // Printing all the results
 	}
 
 	@Test
 	public void test2() throws TwitterException {
 		String s = "";
+		// Searches for user Mark Zuckerberg, Page 1
 		ResponseList<User> rlu = twitter.searchUsers("Mark Zuckerberg", 1);
 		for (User user : rlu) {
 			s += user.getScreenName() + "\n";
@@ -65,6 +64,8 @@ public class TwitterTest {
 		ResponseList<User> rlu = twitter.searchUsers(celeb, 1);
 
 		User ourCeleb = rlu.get(0);
+		// Getting celeb screenName, get all posts that contain @celebScreenName
+		// or have #celebScreenName
 		Query query = new Query("@" + ourCeleb.getScreenName() + " OR #" + ourCeleb.getScreenName() + "");
 		query.setLang("en");
 		QueryResult result = twitter.search(query);
