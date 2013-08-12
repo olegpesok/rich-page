@@ -5,23 +5,27 @@ public class Image {
 	public int	  height;
 	public int	  width;
 	public String	title;
-	public Image(String title, String src, int height, int width) {
+	public String	subtitle;
+	public Image(String title, String subtitle, String src, int height, int width) {
 		this.title = title;
+		this.subtitle = subtitle;
 		this.src = src;
 		this.height = height;
 		this.width = width;
 	}
 
-	public String getView()
+	// context-box-link-caption
+	public String getView(String containerClasses, String titleClasses, String subtitleClasses)
 	{
-		String template = "<div class=\"context-box-link context-box-full-bleed\" style=\" background-image: url('{0}');\">" +
-		      "<div class=\"context-box-link-caption\">{1}" +
-		      "</div>" +
+		titleClasses = titleClasses == null ? "link-caption" : titleClasses;
+		containerClasses = containerClasses == null ? "link full-bleed" : containerClasses;
+		subtitleClasses = subtitleClasses == null ? "info-position caption" : subtitleClasses;
+		String template = "<div class=\"" + containerClasses + "\" style=\" background-image: url('{0}');\">" +
+		      "<div class=\"" + titleClasses + "\">{1}</div>" +
+		      (subtitle == null ? "" : "<div class=\"" + subtitleClasses + "\">{2}</div>") +
 		      "</div>";
-
-		return String.format(template, src, title);
+		return String.format(template, src, title, subtitle);
 	}
-
 	@Override
 	public String toString() {
 		return src;

@@ -17,6 +17,7 @@ public enum ApiType {
 	geo(GeographicHandler.class, "ge"),
 	freebase(FreebaseHandler.class, "fr"),
 	yelp(YelpHandler.class, "ye"),
+	twitter(TwitterHandler.class, "tw"),
 	stackoverflaw(StackOverflowHandler.class, "st"),
 	custom(StackOverflowHandler.class, "cu");
 
@@ -47,8 +48,8 @@ public enum ApiType {
 	public static ApiType create(String s)
 	{
 		if (map == null) {
-	      setMap();
-      }
+			setMap();
+		}
 		ApiType ap = map.get(s);
 		return ap == null ? custom : ap;
 	}
@@ -58,7 +59,7 @@ public enum ApiType {
 		map = Maps.newHashMap();
 		ApiType[] ats = ApiType.values();
 		for (ApiType at : ats) {
-	      map.put(at.getIdentifyer(), at);
-      }
+			map.put(at.getIdentifyer(), at);
+		}
 	}
 }

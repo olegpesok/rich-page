@@ -25,12 +25,15 @@ public class CrunchBaseHandler extends ApiHandler {
 		final JSONObject ret = new JSONObject();
 		ret.put("data", jsonData);
 
-		return new ApiResponse(title, ret, type);
+		ApiResponse ar = new ApiResponse(title, ret, type);
+		ar.view = getView(ar);
+		return ar;
 	}
 
 	@Override
 	public ApiView getView(ApiResponse fromGetData) throws Exception {
-		// TODO Auto-generated method stub
+		String view = "";
+		
 		return null;
 	}
 }

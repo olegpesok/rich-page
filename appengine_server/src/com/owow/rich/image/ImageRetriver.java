@@ -41,7 +41,7 @@ public class ImageRetriver {
 			String src = result.getString("SourceUrl");
 			int height = Integer.parseInt(result.getString("Height"));
 			int width = Integer.parseInt(result.getString("Width"));
-			images.add(new Image(title, src, height, width));
+			images.add(new Image(title, null, src, height, width));
 		}
 		return images;
 	}
