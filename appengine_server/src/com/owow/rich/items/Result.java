@@ -39,9 +39,12 @@ public class Result implements Comparable<Result>{
    public int compareTo(Result other) {
 	   if(other.score != this.score){
 	   	return other.score - this.score;
-	   } else {
+	   } else if( other.apiScore != 0 && this.apiScore != 0){
 	   	return (int)(other.apiScore - this.apiScore);
+	   } else if(other.nlpScore != null && this.nlpScore != null){
+	   	return (int) (10000*(other.nlpScore.score - this.nlpScore.score));
 	   }
+	   return (int)(other.apiScore - this.apiScore);
    }
 	
 	public List<String> getTitleAndAliases() {

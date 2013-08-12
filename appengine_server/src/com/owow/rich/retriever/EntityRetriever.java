@@ -43,7 +43,9 @@ public class EntityRetriever {
    }
 
 	public static List<Result> deepRetrieve(Query query) {
-		// TODO: add crunch base and other
+		// TODO: add crunch, linkedIn, Twitter.
+		// Recognize.
+		
 //		List<Result> crunchResutls = getAllApiResponse(query, ApiType.crunch);
 //		if (crunchResutls.size() > 0) {
 //			crunchResutls = crunchResutls;
@@ -73,7 +75,7 @@ public class EntityRetriever {
 		result.nlpScore = (new NlpUtils()).compare(result.text.getValue(), query.page.getText());
    }
 	
-	public static List<Result> getAllApiResponse(Query query, ApiType apiType) {
+	private static List<Result> getAllApiResponse(Query query, ApiType apiType) {
 		List<Result> results = Lists.newArrayList();
 		try {
 			List<ApiResponse> responses = apiType.createHandler().getAllApiResponses(query.highlight, apiType);
