@@ -4,9 +4,9 @@ import java.net.URLDecoder;
 import java.util.List;
 
 import com.google.common.collect.Iterables;
+import com.owow.rich.items.ScoredResult;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.utils.NlpUtils;
-import com.owow.rich.utils.NlpUtils.ScoredResult;
 import com.owow.rich.utils.StringCompareUtils;
 
 /**

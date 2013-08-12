@@ -22,6 +22,7 @@ import com.owow.rich.items.Query;
 import com.owow.rich.items.ResultSet;
 import com.owow.rich.items.WebPage;
 import com.owow.rich.storage.AnaliticsManager;
+import com.owow.rich.utils.NlpUtils.TagSet;
 import com.owow.rich.utils.RelatedLinkSearch;
 import com.owow.rich.utils.TemplateUtil;
 
@@ -37,6 +38,7 @@ public class SnippetServlet extends HttpServlet {
 	
 	static {
       ObjectifyService.register(ResultSet.class);
+      ObjectifyService.register(TagSet.class);
 	}
 	
 	@Override

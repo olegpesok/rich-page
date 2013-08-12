@@ -11,6 +11,8 @@ public class Result implements Comparable<Result>{
 	
 	// Temp just for testing:
 	public String titleHighlight;
+	public ScoredResult nlpScore;
+	
 	
 	public String title;
 	public Text view;
@@ -20,7 +22,7 @@ public class Result implements Comparable<Result>{
 	public String filterReason;
 	public List<String> alias;
 	
-	public Result(){
+	public Result() {
 	}
 	
 	public Result(String title, String view, String text, long apiScore, String highlight, String filterReason, List<String> alias) {

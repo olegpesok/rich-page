@@ -1,6 +1,5 @@
 package com.owow.rich.servlet;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -16,12 +15,10 @@ import com.owow.rich.apiHandler.ApiResponse;
 import com.owow.rich.apiHandler.ApiResponsePicker;
 import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.apiHandler.FreebaseHandler;
+import com.owow.rich.items.ScoredResult;
 import com.owow.rich.items.WebPage;
-import com.owow.rich.storage.PersistentCahce;
 import com.owow.rich.utils.ComparisonUtils;
 import com.owow.rich.utils.NlpUtils;
-import com.owow.rich.utils.NlpUtils.ScoredResult;
-import com.owow.rich.utils.NlpUtils.Tag;
 
 @SuppressWarnings("serial")
 public class DebugServlet  extends HttpServlet {

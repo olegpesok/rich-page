@@ -1,13 +1,13 @@
 package com.owow.rich.utils;
 
-import java.io.Serializable;
+import static com.googlecode.objectify.ObjectifyService.ofy;
+
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -18,30 +18,52 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 
 import com.alchemyapi.api.AlchemyAPI;
+import com.google.appengine.api.datastore.Text;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Lists;
 import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 import com.google.appengine.labs.repackaged.org.json.XML;
+import com.googlecode.objectify.annotation.Embed;
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
 import com.owow.rich.RichLogger;
+import com.owow.rich.items.ScoredResult;
 import com.owow.rich.storage.PersistentCahce;
+
 
 public class NlpUtils {
 
 	private String getAlchemyApiKey(){
-//		return "f73a4e3d28fbb12206ba958524e55e9d1c3f265f";
+		return "f73a4e3d28fbb12206ba958524e55e9d1c3f265f";
 //		return "dc86318ce4f5cf5ae2872376afe43940938d7edf";
 //		return "d5f35667e3dbc7bba2936fb03991144dba85c18d";
 //		return "7765f99062f08e86ad5caab7db048a57f3179384";
-		return "d511edb07905973cec006dee63a2110cca933e41";
+//		return "d511edb07905973cec006dee63a2110cca933e41";
    }
 	
 	private final AlchemyAPI ALCHEMY_API	= AlchemyAPI.GetInstanceFromString(getAlchemyApiKey());
 
+	@Entity
+	public static class TagSet {
+		@Id long id;
+		List<Tag> tags;
+		private Text text;
+		
+		public TagSet(){}
+		public TagSet(List<Tag> tags, int id, String text){
+			this.id = id;
+			this.tags = tags;
+			this.text = new Text(text);
+		}
+	}
 	
-	public static class Tag implements Serializable{
+	@Embed
+	public static class Tag{
 		public String	text;
 		public double	score;
 		public String	type;
+		
+		public Tag(){};
 		public Tag(String text, double score, String type) {
 			this.text = text;
 			this.score = score;
@@ -52,6 +74,7 @@ public class NlpUtils {
 		public String toString() {
 			return text + " s:" + score + " t:" + type;
 		}
+		
 		@Override
 		public int hashCode() {
 			return text.hashCode();
@@ -64,60 +87,17 @@ public class NlpUtils {
 		}
 	}
 
-	public class ScoredResult implements Comparable<ScoredResult> {
-		public List<Tag>	firstTagList;
-		public List<Tag>	seconTagdList;
-		public Set<Tag>	matchingTagSet;
-		public String		firstText;
-		public String		secondText;
-		public double		score;
-
-		public ScoredResult(List<Tag> firstTagList, List<Tag> secondTagList, Set<Tag> mathcingTagSet, double score) {
-			this.firstTagList = firstTagList;
-			seconTagdList = secondTagList;
-			matchingTagSet = mathcingTagSet;
-			this.score = score;
-		}
-
-		@Override
-		public String toString() {
-			return "score:" + score + " matching tags:" + matchingTagSet;
-		}
-
-		@Override
-		public int compareTo(ScoredResult o) {
-			return (int) ((score - o.score) * 10000);
-		}
-	}
-
-	public List<ScoredResult> rankResults(String text, List<String> textList) throws UnsupportedEncodingException {
-		text = URLDecoder.decode(text, "UTF-8");
-
-		List<ScoredResult> scoredResults = Lists.newArrayList();
-		List<Tag> tagList = extractAllTags(text);
-		for (String otherText : textList) {
-			otherText = URLDecoder.decode(otherText, "UTF-8");
-			List<Tag> otherTagList = extractAllTags(otherText);
-			ScoredResult scoreResult = compare(tagList, otherTagList);
-			scoredResults.add(scoreResult);
-		}
-		Collections.sort(scoredResults);
-		return scoredResults;
-	}
-
 	public ScoredResult compare(String text1, String text2) {
 		try {
 			text1 = URLDecoder.decode(text1, "UTF-8");
 			text2 = URLDecoder.decode(text2, "UTF-8");
-		} catch(Exception e) {
-//			RichLogger.log.log(Level.SEVERE, "fucking encoding " + text1 + " AND " + text2, e);
+		} catch(Exception ex) {
+			RichLogger.logException("error encoding", ex);
 		}
-
-		List<Tag> tagsList1 = extractAllTags(text1);
-		List<Tag> tagsList2 = extractAllTags(text2);
+		
+		List<Tag> tagsList1 = getAllTagsLiveOrCahced(text1);
+		List<Tag> tagsList2 = getAllTagsLiveOrCahced(text2);
 		ScoredResult result = compare(tagsList1, tagsList2);
-		result.firstText = text1;
-		result.secondText = text2;
 		return result;
 	}
 
@@ -133,25 +113,26 @@ public class NlpUtils {
 				score += 1;//tag.score;
 			}
 		score /= Math.log(1 + tagsList1.size() + tagsList2.size());
-		return new ScoredResult(tagsList1, tagsList2, mathcingTagSet, score);
+		return new ScoredResult(mathcingTagSet, score);
 	}
 
-	public List<Tag> extractAllTags(String text) {
-		// get from cache.
-		final String CAHCE_NAME = "extractAllTags";
-		List<Tag> cahcedList = (List<Tag>)PersistentCahce.get(""+text.hashCode(), CAHCE_NAME);
-		if(cahcedList != null){ return cahcedList; }
+	private List<Tag> getAllTagsLiveOrCahced(String text) {
+		TagSet tagSet = ofy().load().type(TagSet.class).id(text.hashCode()).now();
+		if (tagSet != null) {
+			return tagSet.tags;
+		}
 		
-		List<Tag> results = Lists.newArrayList();
-		results.addAll(extractConcepts(text));
-		results.addAll(extractEntities(text));
-		results.addAll(extractKeyWords(text));
+		List<Tag> tagList = Lists.newArrayList();
+		tagList.addAll(extractConcepts(text));
+		tagList.addAll(extractEntities(text));
+		tagList.addAll(extractKeyWords(text));
 		
-		// save in cahce:
-		PersistentCahce.set(""+text.hashCode(),results, CAHCE_NAME);
 		
-		return results;
+		tagSet = new TagSet(tagList, text.hashCode(), text);
+		ofy().save().entity(tagSet).now();
+		return tagSet.tags;
 	}
+
 
 	public List<Tag> extractConcepts(String text) {
 		try {
@@ -235,8 +216,5 @@ public class NlpUtils {
 	public String categorizeText(String text) {
 		return null;
 	}
-	
-
-	
 
 }

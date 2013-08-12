@@ -11,6 +11,7 @@ import com.owow.rich.apiHandler.ApiType;
 import com.owow.rich.items.Query;
 import com.owow.rich.items.Result;
 import com.owow.rich.utils.FrequencyUtil;
+import com.owow.rich.utils.NlpUtils;
 import com.owow.rich.utils.StringCompareUtils;
 
 public class EntityRetriever {
@@ -65,8 +66,11 @@ public class EntityRetriever {
 	private static void scoreResult(Result result, Query query) {
 		for (String title : result.getTitleAndAliases()) {
 			result.score =  StringCompareUtils.getTitleSimilarityScore(title, query.highlight);
+			// TODO: add classScore, TFIDFScore and 
 			//TODO: add more scores, tfidf, wi
 		}
+		
+		result.nlpScore = (new NlpUtils()).compare(result.text.getValue(), query.page.getText());
    }
 	
 	public static List<Result> getAllApiResponse(Query query, ApiType apiType) {
